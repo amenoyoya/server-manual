@@ -1,0 +1,408 @@
+ git branch -v
+  develop                    9bb327d Initial commit
+* feature_implement-app-base cb84ec6 Add: index.html
+  master                     f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (feature_implement-app-base)
+$ git checkout develop
+Switched to branch 'develop'
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git merge feature_implement-app-base
+Updating 9bb327d..cb84ec6
+Fast-forward
+ index.html | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 index.html
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git branch -v
+* develop                    cb84ec6 Add: index.html
+  feature_implement-app-base cb84ec6 Add: index.html
+  master                     f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git branch -d feature_implement-app-base
+Deleted branch feature_implement-app-base (was cb84ec6).
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git branch -v
+* develop cb84ec6 Add: index.html
+  master  f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git flow feature start implement-fizz-buzz
+Switched to a new branch 'featureimplement-fizz-buzz'
+
+Summary of actions:
+- A new branch 'featureimplement-fizz-buzz' was created, based on 'develop'
+- You are now on branch 'featureimplement-fizz-buzz'
+
+Now, start committing on your feature. When done, use:
+
+     git flow feature finish implement-fizz-buzz
+
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git branch -v
+  develop                    cb84ec6 Add: index.html
+* featureimplement-fizz-buzz cb84ec6 Add: index.html
+  master                     f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git add --all
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git commit -m "Add: app.js"
+[featureimplement-fizz-buzz a74b238] Add: app.js
+ 1 file changed, 12 insertions(+)
+ create mode 100644 app.js
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git branch -v
+  develop                    cb84ec6 Add: index.html
+* featureimplement-fizz-buzz a74b238 Add: app.js
+  master                     f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git log
+commit a74b23812be807b765a7476c4629f14b4231783d (HEAD -> featureimplement-fizz-buzz)
+Author: user <user@example.jp>
+Date:   Mon Apr 8 15:15:54 2019 +0900
+
+    Add: app.js
+
+commit cb84ec658c8e8827563ffe031abd52d0c4ba1b6d (develop)
+Author: user <user@example.jp>
+Date:   Mon Apr 8 15:06:53 2019 +0900
+
+    Add: index.html
+
+commit 9bb327de3969d3e021d2dce47f945c23778070f5
+Author: user <user@example.jp>
+Date:   Mon Apr 8 14:54:21 2019 +0900
+
+    Initial commit
+
+commit f8ece927b0efbe2a8461ab859f31ea4d71eaed38 (master)
+Author: user <user@example.jp>
+Date:   Mon Apr 8 14:38:01 2019 +0900
+
+    Initial commit
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git log --graph
+* commit a74b23812be807b765a7476c4629f14b4231783d (HEAD -> featureimplement-fizz-buzz)
+| Author: user <user@example.jp>
+| Date:   Mon Apr 8 15:15:54 2019 +0900
+|
+|     Add: app.js
+|
+* commit cb84ec658c8e8827563ffe031abd52d0c4ba1b6d (develop)
+| Author: user <user@example.jp>
+| Date:   Mon Apr 8 15:06:53 2019 +0900
+|
+|     Add: index.html
+|
+* commit 9bb327de3969d3e021d2dce47f945c23778070f5
+| Author: user <user@example.jp>
+| Date:   Mon Apr 8 14:54:21 2019 +0900
+|
+|     Initial commit
+|
+* commit f8ece927b0efbe2a8461ab859f31ea4d71eaed38 (master)
+  Author: user <user@example.jp>
+  Date:   Mon Apr 8 14:38:01 2019 +0900
+
+      Initial commit
+
+user@MSI ~/dev/git-flow-training (featureimplement-fizz-buzz)
+$ git flow feature finish implement-fizz-buzz
+Switched to branch 'develop'
+Updating cb84ec6..a74b238
+Fast-forward
+ app.js | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 app.js
+Deleted branch featureimplement-fizz-buzz (was a74b238).
+
+Summary of actions:
+- The feature branch 'featureimplement-fizz-buzz' was merged into 'develop'
+- Feature branch 'featureimplement-fizz-buzz' has been locally deleted
+- You are now on branch 'develop'
+
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git branch -v
+* develop a74b238 Add: app.js
+  master  f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git flow release start 1.0
+Switched to a new branch 'release1.0'
+
+Summary of actions:
+- A new branch 'release1.0' was created, based on 'develop'
+- You are now on branch 'release1.0'
+
+Follow-up actions:
+- Bump the version number now!
+- Start committing last-minute fixes in preparing your release
+- When done, run:
+
+     git flow release finish '1.0'
+
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git branch -v
+  develop    a74b238 Add: app.js
+  master     f8ece92 Initial commit
+* release1.0 a74b238 Add: app.js
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git tag
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git status
+On branch release1.0
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   index.html
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git add --all
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git commit -m "Released: v1.0"
+[release1.0 72a2423] Released: v1.0
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git branch -v
+  develop    a74b238 Add: app.js
+  master     f8ece92 Initial commit
+* release1.0 72a2423 Released: v1.0
+
+user@MSI ~/dev/git-flow-training (release1.0)
+$ git flow release finish 1.0
+Switched to branch 'master'
+hint: Waiting for your editor to close the file...
+Merge made by the 'recursive' strategy.
+ README.md  |  8 ++++++++
+ app.js     | 12 ++++++++++++
+ index.html | 21 +++++++++++++++++++++
+ 3 files changed, 41 insertions(+)
+ create mode 100644 README.md
+ create mode 100644 app.js
+ create mode 100644 index.html
+Already on 'master'
+hint: Waiting for your editor to close the file...
+Switched to branch 'develop'
+hint: Waiting for your editor to close the file...
+Merge made by the 'recursive' strategy.
+ index.html | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Deleted branch release1.0 (was 72a2423).
+
+Summary of actions:
+- Release branch 'release1.0' has been merged into 'master'
+- The release was tagged '1.0'
+- Release tag '1.0' has been back-merged into 'develop'
+- Release branch 'release1.0' has been locally deleted
+- You are now on branch 'develop'
+
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git branch -v
+* develop 55bd60b Merge tag '1.0' into develop
+  master  3efd0bf 初回リリース
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git tag
+1.0
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git flow hotfix start 1.1
+Switched to a new branch 'hotfix1.1'
+
+Summary of actions:
+- A new branch 'hotfix1.1' was created, based on 'master'
+- You are now on branch 'hotfix1.1'
+
+Follow-up actions:
+- Start committing your hot fixes
+- Bump the version number now!
+- When done, run:
+
+     git flow hotfix finish '1.1'
+
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git branch -v
+  develop   55bd60b Merge tag '1.0' into develop
+* hotfix1.1 3efd0bf 初回リリース
+  master    3efd0bf 初回リリース
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git log --oneline --graph
+*   3efd0bf (HEAD -> hotfix1.1, tag: 1.0, master) 初回リリース
+|\
+| * 72a2423 Released: v1.0
+| * a74b238 Add: app.js
+| * cb84ec6 Add: index.html
+| * 9bb327d Initial commit
+|/
+* f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git log --graph
+*   commit 3efd0bf09e38b1c01150f79400464fc824cbb457 (HEAD -> hotfix1.1, tag: 1.0, master)
+|\  Merge: f8ece92 72a2423
+| | Author: user <user@example.jp>
+| | Date:   Mon Apr 8 15:23:11 2019 +0900
+| |
+| |     初回リリース
+| |
+| * commit 72a24235d6a989d8e41fd5c84e9c48c2e4cc615b
+| | Author: user <user@example.jp>
+| | Date:   Mon Apr 8 15:22:20 2019 +0900
+| |
+| |     Released: v1.0
+| |
+| * commit a74b23812be807b765a7476c4629f14b4231783d
+| | Author: user <user@example.jp>
+| | Date:   Mon Apr 8 15:15:54 2019 +0900
+| |
+| |     Add: app.js
+| |
+| * commit cb84ec658c8e8827563ffe031abd52d0c4ba1b6d
+| | Author: user <user@example.jp>
+| | Date:   Mon Apr 8 15:06:53 2019 +0900
+| |
+| |     Add: index.html
+| |
+| * commit 9bb327de3969d3e021d2dce47f945c23778070f5
+|/  Author: user <user@example.jp>
+|   Date:   Mon Apr 8 14:54:21 2019 +0900
+|
+|       Initial commit
+|
+* commit f8ece927b0efbe2a8461ab859f31ea4d71eaed38
+  Author: user <user@example.jp>
+  Date:   Mon Apr 8 14:38:01 2019 +0900
+
+      Initial commit
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git status
+On branch hotfix1.1
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   app.js
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git add --all
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git status
+On branch hotfix1.1
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   app.js
+
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git commit -m "Fix: show numbers directly"
+[hotfix1.1 6013ab7] Fix: show numbers directly
+ 1 file changed, 2 insertions(+)
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git branch -v
+  develop   55bd60b Merge tag '1.0' into develop
+* hotfix1.1 6013ab7 Fix: show numbers directly
+  master    3efd0bf 初回リリース
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git log --oneline --graph
+* 6013ab7 (HEAD -> hotfix1.1) Fix: show numbers directly
+*   3efd0bf (tag: 1.0, master) 初回リリース
+|\
+| * 72a2423 Released: v1.0
+| * a74b238 Add: app.js
+| * cb84ec6 Add: index.html
+| * 9bb327d Initial commit
+|/
+* f8ece92 Initial commit
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git flow hotfix finish fix-fizz-buzz
+Fatal: Branch 'hotfixfix-fizz-buzz' does not exist and is required.
+
+user@MSI ~/dev/git-flow-training (hotfix1.1)
+$ git flow hotfix finish 1.1
+Switched to branch 'master'
+hint: Waiting for your editor to close the file...
+[main 2019-04-08T07:21:50.563Z] update#setState idle
+Merge made by the 'recursive' strategy.
+ app.js | 2 ++
+ 1 file changed, 2 insertions(+)
+hint: Waiting for your editor to close the file...
+[main 2019-04-08T07:21:59.373Z] update#setState idle
+[main 2019-04-08T07:22:29.375Z] update#setState checking for updates
+[main 2019-04-08T07:22:29.499Z] update#setState idle
+Switched to branch 'develop'
+hint: Waiting for your editor to close the file...
+[main 2019-04-08T07:22:37.197Z] update#setState idle
+Merge made by the 'recursive' strategy.
+ app.js | 2 ++
+ 1 file changed, 2 insertions(+)
+Deleted branch hotfix1.1 (was 6013ab7).
+
+Summary of actions:
+- Hotfix branch 'hotfix1.1' has been merged into 'master'
+- The hotfix was tagged '1.1'
+- Hotfix tag '1.1' has been back-merged into 'develop'
+- Hotfix branch 'hotfix1.1' has been locally deleted
+- You are now on branch 'develop'
+
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git branch -v
+* develop 08d0e78 Merge tag '1.1' into develop
+  master  5aa183e Merge branch 'hotfix1.1'
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git tag
+1.0
+1.1
+
+user@MSI ~/dev/git-flow-training (develop)
+$ git log --oneline --graph
+*   08d0e78 (HEAD -> develop) Merge tag '1.1' into develop
+|\
+| *   5aa183e (tag: 1.1, master) Merge branch 'hotfix1.1'
+| |\
+| | * 6013ab7 Fix: show numbers directly
+| |/
+* |   55bd60b Merge tag '1.0' into develop
+|\ \
+| |/
+| *   3efd0bf (tag: 1.0) 初回リリース
+| |\
+| | * 72a2423 Released: v1.0
+| |/
+|/|
+* | a74b238 Add: app.js
+* | cb84ec6 Add: index.html
+* | 9bb327d Initial commit
+|/
+* f8ece92 Initial commit
