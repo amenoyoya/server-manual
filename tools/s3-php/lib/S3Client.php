@@ -26,11 +26,11 @@ function S3Client_backupDirectoryCallback($result, $fileFullPath, $subDir) {
 }
 
 /**
- * ディレクトリバックアップ世代ローテーション時のデフォルトコールバックメソッド
+ * バックアップ世代ローテーション時のデフォルトコールバックメソッド
  * @param bool $result 直前のファイル削除が成功したか
  * @param string $s3filePath 削除された S3 ファイル名
  */
-function S3Client_rotateDirectoryBackupCallback($result, $s3filePath) {
+function S3Client_rotateBackupCallback($result, $s3filePath) {
     if ($result) {
         echo "deleted: $s3filePath\n";
     } else {
@@ -91,6 +91,46 @@ class S3Client extends S3 {
     }
 
     /**
+     * S3 にバックアップされたファイルを世代管理
+     * 指定した世代数を超えたバックアップは古い順に削除
+     * @param string $filename バックアップするファイル名
+     * @param int $generations 世代数
+     * @param string $bucket バックアップ先の S3 バケット
+     * @param string $destDir バックアップ先のディレクトリ名
+     * @param function $callback (bool $result, string $fileFullPath, string $subDir) => void
+     * @return bool
+     */
+    public function rotateFileBackup($filename, $geneations, $bucket, $destDir = '', $callback = 'S3Client_rotateBackupCallback')
+    {
+        $destDir = rtrim($destDir, '/') . '/';
+        if ($destDir === '/') {
+            $destDir = ''; // ルートディレクトリ
+        }
+        // S3 バケット内ファイルを全て取得
+        $files = $this->getBucket($bucket);
+        if (!is_array($files)) {
+            return true;
+        }
+        // 指定ファイルのバックアップファイルパスを取得
+        $targets = $this->filterBackupFiles($destDir . basename($filename), $files);
+        if (count($targets) <= $geneations) {
+            return true;
+        }
+        // 世代数を超えた分のバックアップファイルを古い順に削除
+        $result = true;
+        foreach ($this->filterRotationBackupFiles($geneations, $targets) as $data) {
+            $res = $this->deleteObject($bucket, $data['name']);
+            if (!$res) {
+                $result = false;
+            }
+            if (is_callable($callback)) {
+                $callback($res, $data['name']);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * ディレクトリ丸ごと S3 バックアップ
      * @param string $dirname バックアップ対象ディレクトリ
      * @param string $bucket バックアップ先の S3 バケット
@@ -124,9 +164,9 @@ class S3Client extends S3 {
      * @param string $bucket バックアップ先の S3 バケット
      * @param string $destDir バックアップ先のディレクトリ名
      * @param function $callback (bool $result, string $s3filePath) => void
-     * @return bool s3://$bucket/$destDir/$dirname.eachFile.YYYYmmdd-HHiiss に全てバックアップされたら true
+     * @return bool
      */
-    public function rotateDirectoryBackup($dirname, $geneations, $bucket, $destDir = '', $callback = 'S3Client_rotateDirectoryBackupCallback')
+    public function rotateDirectoryBackup($dirname, $geneations, $bucket, $destDir = '', $callback = 'S3Client_rotateBackupCallback')
     {
         $destDir = rtrim($destDir, '/') . '/';
         if ($destDir === '/') {
