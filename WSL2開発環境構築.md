@@ -15,14 +15,15 @@ WSL2 を使うと、VirtualBox + Vagrant や VMware を使うよりシームレ�
     - OS: `Ubuntu 20.04`
     - Linuxbrew: `2.4.2`
     - anyenv: `1.1.1`
+        - pyenv: `1.2.19`
+            - Python2: `2.7.18`
+            - Python3: `3.7.7`
+            - pip package manager: `20.1.1`
+            - AWS CLI: `1.18.93`
         - nodenv: `1.3.2`
             - Node.js: `10.17.0`
             - Yarn package manager: `1.22.4`
             - Gulp task runner: `2.3.0`
-        - pyenv: `1.2.19`
-            - Python: `3.7.7`
-            - pip package manager: `20.1.1`
-            - AWS CLI: `1.18.93`
     - PHP: `7.4.3`
         - composer package manager: `1.10.8`
     - Docker: `19.03.12`
@@ -155,11 +156,11 @@ $ sudo apt update && sudo apt upgrade -y
 
 # Linuxbew の動作に必要な curl, git, ruby をインストール
 ## openjdk は android 開発を行う時など必要になるタイミングが多いため一応インストールしている
-## libsqlite3-dev, libffi-dev は Python ビルドに必要
+## zlib1g-dev, libssl-dev, libbz2-dev, libsqlite3-dev, libffi-dev は Python ビルドに必要
 ## add-apt-repository コマンドを使うために software-properties-common もインストールしておく
 ## https通信を可能にするために apt-transport-https, ca-certificates もインストールしておく
-$ sudo apt install -y vim curl git ruby \
-    openjdk-14-jdk libsqlite3-dev libffi-dev \
+$ sudo apt install -y vim curl git ruby openjdk-14-jdk \
+    zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev libffi-dev \
     software-properties-common apt-transport-https ca-certificates
 
 # Linuxbrew (Linux版の Homebrew パッケージマネージャ) 導入
@@ -206,6 +207,50 @@ $ anyenv update
 # バージョン確認
 $ anyenv -v
 anyenv 1.1.1
+```
+
+### Python 環境構築
+Python は、AWS CLI や Ansible の他にも、Node.js の native-addon-build-tool などにも使われている
+
+Python 自体を開発言語として使わなくても、様々なツールの動作に必要になることが多いため、必ず導入しておく
+
+```bash
+# -- Ubuntu 20.04 on WSL2
+
+# anyenv を使って pyenv 導入
+## pyenv を使うことで、複数バージョンの Python 環境を構築できる
+$ anyenv install pyenv
+$ exec $SHELL -l
+
+# pyenv で Python 2.7.18 と 3.7.7 をインストール
+$ pyenv install 2.7.18
+$ pyenv install 3.7.7
+
+# pyenv では 2系 と 3系 を同時に指定できる
+## python  => 2.7.18
+## python3 => 3.7.7
+$ pyenv global 2.7.18 3.7.7
+
+# 現在選択されているバージョンを確認
+$ pyenv versions
+* 2.7.18 (set by /home/user/.anyenv/envs/pyenv/version)
+* 3.7.7 (set by /home/user/.anyenv/envs/pyenv/version)
+
+$ python --version
+2.7.18
+
+$ python --version
+3.7.7
+
+# pip パッケージマネージャを更新しておく
+$ pip install --upgrade pip setuptools
+$ pip3 install --upgrade pip setuptools
+
+$ pip --version
+pip 20.1.1 from /home/user/.anyenv/envs/pyenv/versions/2.7.18/lib/python2.7/site-packages/pip (python 2.7)
+
+$ pip3 --version
+pip 20.1.1 from /home/user/.anyenv/envs/pyenv/versions/3.7.7/lib/python3.7/site-packages/pip (python 3.7)
 ```
 
 ### Node.js 環境構築
@@ -279,42 +324,16 @@ $ composer --version
 Composer version 1.10.8 2020-06-24 21:23:30
 ```
 
-### Python 環境 + AWS CLI 導入
+### AWS CLI 導入
 最近の WEB 開発では静的ファイルやバックアップなどを AWS S3 に保存することが多い
 
 そのため AWS CLI を導入しておくと何かと便利である
 
-AWS CLI は Python 製のツールであるため、Python も一緒に導入する
-
 ```bash
 # -- Ubuntu 20.04 on WSL2
 
-# anyenv を使って pyenv 導入
-## pyenv を使うことで、複数バージョンの Python 環境を構築できる
-$ anyenv install pyenv
-$ exec $SHELL -l
-
-# pyenv で Python 3.7.7 をインストール
-$ pyenv install 3.7.7
-
-# Python 3.7.7 に切り替え
-$ pyenv global 3.7.7
-
-# 現在選択されているバージョンを確認
-$ pyenv versions
-* 3.7.7 (set by /home/user/.anyenv/envs/pyenv/version)
-
-$ python --version
-3.7.7
-
-# pip パッケージマネージャを更新しておく
-$ pip install --upgrade pip setuptools ctypes
-
-$ pip --version
-pip 20.1.1 from /home/user/.anyenv/envs/pyenv/versions/3.7.7/lib/python3.7/site-packages/pip (python 3.7)
-
-# pip を使って AWS CLI を導入
-$ pip install awscli
+# pip3 を使って AWS CLI を導入
+$ pip3 install awscli
 
 $ aws --version
 aws-cli/1.18.93 Python/3.7.7 Linux/4.19.84-microsoft-standard botocore/1.17.16

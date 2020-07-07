@@ -30,10 +30,10 @@
     - Provisioning Tool:
         - `ansible`
     - Development Tool:
-        - `docker`
+        - `python`
         - `nodejs`
         - `php`
-        - `python`
+        - `docker`
 - Server:
     - OS:
         - `CentOS 7`
@@ -52,6 +52,40 @@
 一昔前までは、VirtualBox + Vagarant で Linux 仮想環境を構築することが多かったが、2020年5月の Windows Update で WSL2 が正式リリースされたため、本マニュアルでは WSL2 の上に Ubuntu Linux 環境を構築することを前提にしている
 
 WSL2 + Ubuntu 20.04 環境（＋Docker等）の構築手順については [WSL2開発環境構築.md](./WSL2開発環境構築.md) を参照
+
+### Setup VSCode
+VSCode は、WSL2 環境との相性も良く、便利なプラグインが無料で多数公開されている
+
+そのため、本マニュアルではエディタとして VSCode を採用している
+
+まずは、Chocolatey パッケージマネージャを導入し、それを用いて VSCode をインストールする
+
+```powershell
+# Win + X |> A => 管理者権限 PowerShell 起動
+
+# Chocolatey パッケージマネージャ導入
+> Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+# Chocolatey で VSCode インストール
+> choco install -y vscode
+
+# PATH に code（code.cmd） が追加されるため、環境変数をリロードする
+> refreshenv
+
+# バージョン確認
+> code -v
+1.46.1
+
+# よく使うプラグインをインストール
+## ※それぞれの環境に合わせて適宜インストールすれば良いが、
+##   WSL2 環境で VSCode を使うためには、remote-wsl プラグインは必須
+> code --install-extension MS-CEINTL.vscode-language-pack-ja # 日本語パッケージ
+> code --install-extension ms-vscode-remote.remote-wsl # WSL2 で VSCode を起動するためのプラグイン
+> code --install-extension mhutchie.git-graph # git ブランチをグラフィカルに表示するプラグイン
+> code --install-extension vector-of-bool.gitflow # git-flow 実行プラグイン
+> code --install-extension hediet.vscode-drawio # フローチャート等の作図ツール
+> code --install-extension Perkovec.emoji # 絵文字挿入プラグイン
+```
 
 ***
 
