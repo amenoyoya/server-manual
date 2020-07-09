@@ -184,6 +184,27 @@ Git GUI が起動すれば OK
 
 ![git-gui.png](./img/git-gui.png)
 
+### VcxSrv のスタートアップ登録
+上記設定をすると、VcxSrv が起動していないと WSL2 も起動しない状態になる
+
+そのため、Windows 起動時に VcXsrv が起動するようにする
+
+```powershell
+# `Win + X` |> `A` => 管理者権限 PowerShell
+
+# WSH を使って Windows スタートアップディレクトリに VcxSrv のショートカット作成
+> $wsh = New-Object -ComObject WScript.Shell
+> $shortcut = $wsh.CreateShortcut("$env:USERPROFILE\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\vcxsrv.lnk")
+
+# ショートカット: vcxsrv.exe -multiwindow -ac
+> $shortcut.TargetPath = "C:\Program Files\VcXsrv\vcxsrv.exe"
+> $shortcut.IconLocation = "C:\Program Files\VcXsrv\vcxsrv.exe"
+> $shortcut.Arguments = "-multiwindow -ac"
+> $shortcut.Save()
+```
+
+これで、Windows 起動時に VcxSrv が `-multiwindow -ac` オプションで起動するようになる
+
 ### GUI 日本語化
 ```bash
 $ sudo apt install -y fontconfig
