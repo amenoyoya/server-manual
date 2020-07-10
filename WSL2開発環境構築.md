@@ -177,8 +177,7 @@ $ source ~/.bashrc
 
 # Linuxbrew で各種開発ツールを導入
 ## curl や git などは、最新版を使う方が良いため、改めて Linuxbrew で導入しなおす
-## ※ bison ～ libxslt は PHP 7 をビルドする場合に必要
-$ brew install curl git gcc zlib libzip bzip2 readline openssl pkg-config autoconf
+$ brew install curl git wget gcc zlib libzip bzip2 readline openssl pkg-config autoconf
 ```
 
 ### anyenv 導入
