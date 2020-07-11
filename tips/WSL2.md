@@ -8,6 +8,36 @@
 
 ***
 
+## ネットワークドライブ接続
+
+ネットワークドライブをマウントして、WSL2 からネットワークドライブ内ファイルにアクセスできるように設定する
+
+ここでは、ネットワークドライブの共有ディレクトリを `//192.168.1.10/share/`, 接続ユーザを `nas`, 接続パスワードを `pwd` として接続設定を行う
+
+```bash
+# -- Ubuntu 20.04 on WSL2
+
+# cifs マウントできるように必要ツールを導入
+$ sudo apt install -y cifs-utils
+
+# マウント用ディレクトリ: /mnt/192.168.1.10/ を作成
+$ sudo mkdir -p /mnt/192.168.1.10/
+
+# //192.168.1.10/share/ を /mnt/192.168.1.10/ に cifs マウント
+$ sudo mount -t cifs -o 'username=nas,password=pwd,sec=ntlm,iocharset=utf8,vers=1.0' //192.168.1.10/share/ /mnt/192.168.1.10/
+
+# => 以降 /mnt/192.168.1.10/ を通して //192.168.1.10/share/ にアクセスできるようになる
+# => マウントを解除する場合は
+## $ sudo umount /mnt/192.168.1.10/
+
+# システム再起動時に自動でマウントするように設定
+$ sudo tee -a /etc/fstab << EOS
+//192.168.1.10/share/ /mnt/192.168.1.10/ cifs username=nas,password=pwd,sec=ntlm,iocharset=utf8,vers=1.0
+EOS
+```
+
+***
+
 ## bashプロンプトの表示設定
 
 bashプロンプトの表示は環境変数 `PS1` で変更可能
