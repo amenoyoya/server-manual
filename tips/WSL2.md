@@ -31,9 +31,10 @@ $ sudo mount -t cifs -o 'username=nas,password=pwd,sec=ntlm,iocharset=utf8,vers=
 ## $ sudo umount /mnt/192.168.1.10/
 
 # システム再起動時に自動でマウントするように設定
-$ sudo tee -a /etc/fstab << EOS
-//192.168.1.10/share/ /mnt/192.168.1.10/ cifs username=nas,password=pwd,sec=ntlm,iocharset=utf8,vers=1.0
-EOS
+## ネットワークドライブに接続できない場合、WSL2 が起動しなくなるので設定しない方が良い
+# $ sudo tee -a /etc/fstab << EOS
+# //192.168.1.10/share/ /mnt/192.168.1.10/ cifs username=nas,password=pwd,sec=ntlm,iocharset=utf8,vers=1.0
+# EOS
 ```
 
 ***
