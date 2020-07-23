@@ -98,18 +98,18 @@ VSCode は、WSL2 環境との相性も良く、便利なプラグインが無�
 参考: [The 2020 Web Developer Roadmap](https://levelup.gitconnected.com/the-2020-web-developer-roadmap-76503ddfb327#f309)
 
 ### 基礎知識
-- [Linuxコマンド入門](./basic/Linuxコマンド入門/README.md)
+- [Linuxコマンド入門](./01-basic/Linuxコマンド入門/README.md)
     - WEB開発に限らず、コマンド操作はあらゆる場面に必要になる
     - プログラミングの本質が自動化にあり、自動化とコマンド操作が密接に関わっている以上、コマンド操作を避けて通ることはできない
     - 特に世の中のほとんどのWEBサーバがLinuxマシンであることから、WEB開発者は必ずどこかでLinuxコマンドを使う必要が出てくる
-- [Git入門](./basic/Git入門/README.md)
+- [Git入門](./01-basic/Git入門/README.md)
     - 最近のソフトウェア開発はGitでバージョン管理するのが主流である
         - バージョン管理を行わないと、重大なバグが発生した場合に元に戻せなかったり、コードのどこを変更したのか分からなくなる
     - 特にオープンソースソフトウェアは大抵の場合 GitHub からダウンロードして利用することが多い
     - そのため、最低でもGitを使った開発手順と、GitHub の使い方は覚えておくと良い
-        - [git-flow開発入門](./basic/Git入門/git-flow.md)
-        - [GitHubの使い方](./basic/Git入門/GitHub.md)
-        - [Git Tips](./basic/Git入門/Tips.md)
+        - [git-flow開発入門](./01-basic/Git入門/git-flow.md)
+        - [GitHubの使い方](./01-basic/Git入門/GitHub.md)
+        - [Git Tips](./01-basic/Git入門/Tips.md)
 - WEB基礎知識
-    - [WEBを支える技術](./basic/WEB/WEBを支える技術.md)
-    - [WEBサーバとAPサーバ](./basic/WEB/WEBサーバとAPサーバ.md)
+    - [WEBを支える技術](./01-basic/WEB/WEBを支える技術.md)
+    - [WEBサーバとAPサーバ](./01-basic/WEB/WEBサーバとAPサーバ.md)
