@@ -1,0 +1,4 @@
+# mod_rewrite拡張が有効な場合の処理
+<IfModule mod_rewrite.c>
+  RewriteEngine On # ReqriteEngine有効化
+</IfModule>

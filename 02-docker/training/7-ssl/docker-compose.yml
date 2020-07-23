@@ -1,0 +1,12 @@
+version: '2' # composeファイルバージョン
+services:
+  # 必要なのはPHP(+Apache)サービス用のコンテナのみ
+  php:
+    build: ./php # php/Dockerfileからビルド
+    ports:
+      - '80:80' # ホスト80番ポートとゲスト(PHPコンテナ)80番ポートをつなぐ
+      - '443:443' # SSL通信用に443番ポートをつなぐ
+    volumes:
+      # ホストの ./html とゲスト(PHPコンテナ)の /var/www/html をつなぐ
+      # => Windows側からPHPコンテナのドキュメントルートにアクセス可
+      - ./html:/var/www/html

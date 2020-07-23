@@ -1,0 +1,27 @@
+version: '2' # composeファイルバージョン
+services:
+  # MySQLデータ格納ボリューム用のコンテナ
+  ## 永続的なデータをコンテナ間で共有したい場合や非永続コンテナから使用したい場合、DataVolumeContainerを作成し、そこからデータをマウントするのが良い
+  mysqldata:
+    image: busybox # ベースイメージにbusybox(OSの最低限の機能を詰め込んだ万能コマンド)を利用
+    container_name: docker-mysqldata # コンテナ名を"docker-mysqldata"に
+    volumes:
+      - /var/lib/mysql # ボリュームを /var/lib/mysql ディレクトリに設定
+  # MySQLサービス用のコンテナ
+  mysql:
+    build: ./mysql # ./mysql/Dockerfile の内容をもとにイメージをビルド
+    container_name: docker-mysql # コンテナ名を"docker-mysql"に
+    environment:
+      MYSQL_ROOT_PASSWORD: pass # MySQLルートパスワードを"pass"に
+    volumes_from:
+      - mysqldata # mysqldataコンテナからボリュームをマウント
+  # PHPサービス用のコンテナ
+  php:
+    build: ./php # ./php/Dockerfile の内容をもとにイメージをビルド
+    container_name: docker-php # コンテナ名を"docker-php"に
+    ports:
+      - '80:80' # ホスト側のポート80番とコンテナ側のポート80番を結ぶ
+    volumes:
+      - ./html:/var/www/html # ホスト側の ./html ディレクトリをコンテナ側のドキュメントルート /var/www/html にマウント
+    depends_on:
+      - mysql # mysqlコンテナが起動してからphpコンテナを起動する

@@ -1,0 +1,28 @@
+Options +FollowSymLinks
+
+# mod_rewriteが有効な場合の設定
+<IfModule mod_rewrite.c>
+  RewriteEngine on # RewriteEngine有効化
+
+  # RewriteBaseを / に設定
+  ## デフォルト(/var/www/html/)のまま置換が行われると以下のように置換されてしまう
+  ##  http://localhost/index.php => http://localhost/var/www/html/
+  RewriteBase /
+
+  # RewriteRuleにより index.php を / に置換する（302リダイレクト）
+  RewriteRule ^index\.php$ / [R=302]
+
+  # 正規表現のグルーピングで補足された文字列は $1, $2, ... で使用可能
+  # リダイレクトするわけではないのでフラグは不要
+  RewriteRule ^([0-9]+)/$ ?q=$1
+
+  # HTTP_HOST が site1.example.com の場合、
+  # http://example.com/vhosts/test1/ にリダイレクト（リバースプロキシ[P]を使い、URLをそのままにする）
+  RewriteCond %{HTTP_HOST} ^site1\.example\.com$ [NC]
+  RewriteRule (.*) http://example.com/vhosts/test1/$1 [P,L]
+
+  # HTTP_HOST が site2.example.com の場合、
+  # http://example.com/vhosts/test2/ にリダイレクト（リバースプロキシ[P]を使い、URLをそのままにする）
+  RewriteCond %{HTTP_HOST} ^site2\.example\.com$ [NC]
+  RewriteRule (.*) http://example.com/vhosts/test2/$1 [P,L]
+</IfModule>

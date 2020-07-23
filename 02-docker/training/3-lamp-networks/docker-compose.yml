@@ -1,0 +1,46 @@
+version: '2' # composeファイルバージョン
+# Docker Composeアプリケーション・ネットワークの設定
+networks:
+  app_net:
+    driver: bridge # コンテナごとのネットワークをブリッジ接続
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.30.0.0/24 # ComposeアプリケーションのネットワークIPを設定
+services:
+  # MySQLデータ格納ボリューム用のコンテナ
+  ## 永続的なデータをコンテナ間で共有したい場合や非永続コンテナから使用したい場合、DataVolumeContainerを作成し、そこからデータをマウントするのが良い
+  mysqldata:
+    image: busybox # ベースイメージにbusybox(OSの最低限の機能を詰め込んだ万能コマンド)を利用
+    container_name: docker-mysqldata # コンテナ名を"docker-mysqldata"に
+    volumes:
+      - /var/lib/mysql # ボリュームを /var/lib/mysql ディレクトリに設定
+  # MySQLサービス用のコンテナ
+  mysql:
+    build: ./mysql # ./mysql/Dockerfile の内容をもとにイメージをビルド
+    container_name: docker-mysql # コンテナ名を"docker-mysql"に
+    environment:
+      MYSQL_ROOT_PASSWORD: pass # MySQLルートパスワードを"pass"に
+    volumes_from:
+      - mysqldata # mysqldataコンテナからボリュームをマウント
+    # MySQLコンテナのネットワーク設定
+    networks:
+      app_net: # 設定したアプリケーション・ネットワークを使用
+        # MySQLのIPアドレスを設定
+        ## 上位3組（ネットワーク部）は、アプリケーション・ネットワークのIPアドレスと合わせる（172.30.0）
+        ## 下位1組（ホスト部）は、被らない数値にする（今回は 10）
+        ipv4_address: 172.30.0.10
+  # PHPサービス用のコンテナ
+  php:
+    build: ./php # ./php/Dockerfile の内容をもとにイメージをビルド
+    container_name: docker-php # コンテナ名を"docker-php"に
+    ports:
+      - '80:80' # ホスト側のポート80番とコンテナ側のポート80番を結ぶ
+    volumes:
+      - ./html:/var/www/html # ホスト側の ./html ディレクトリをコンテナ側のドキュメントルート /var/www/html にマウント
+    depends_on:
+      - mysql # mysqlコンテナが起動してからphpコンテナを起動する
+    # PHPコンテナのネットワーク設定
+    networks:
+      app_net:
+        ipv4_address: 172.30.0.11 # PHPコンテナIPのホスト部は11にした
