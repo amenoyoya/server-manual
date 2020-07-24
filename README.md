@@ -114,8 +114,7 @@ VSCode は、WSL2 環境との相性も良く、便利なプラグインが無�
         - [git-flow開発入門](./01-basic/Git入門/git-flow.md)
         - [GitHubの使い方](./01-basic/Git入門/GitHub.md)
         - [Git Tips](./01-basic/Git入門/Tips.md)
-- WEB基礎知識
-    - [WEBを支える技術](./01-basic/WEB/WEBを支える技術.md)
+- [WEB基礎知識](./01-basic/WEB/README.md)
     - [WEBサーバとAPサーバ](./01-basic/WEB/WEBサーバとAPサーバ.md)
 
 ### Docker入門
