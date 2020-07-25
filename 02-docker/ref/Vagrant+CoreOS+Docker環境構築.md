@@ -194,6 +194,49 @@ docker-compose version 1.24.0, build 0aa59064
 
 ***
 
+## Vagrant基本コマンド
+
+### Vagrantfile のあるディレクトリ内で打てるコマンド
+- `vagrant up`
+    - 仮想マシン起動
+- `vagrant halt`
+    - 仮想マシン終了
+    - ちゃんとこのコマンドで終了しないと `vagrant global-status` に反映されないため注意
+- `vagrant reload`
+    - 仮想マシン再起動
+- `vagrant destroy`
+    - 仮想マシン削除
+    - ちゃんとこのコマンドで削除しないと `vagrant global-status` に反映されないため注意
+- `vagrant status`
+    - 仮想マシンの状態表示
+- `vagrant ssh`
+    - 仮想マシンにSSH接続
+
+### グローバルで打てるコマンド
+
+#### boxイメージ関連
+- `vagrant box add <name, url or path>`
+    - boxイメージをローカルに保存: `~/.vagrant.d/boxes` に保存される
+- `vagrant box list`
+    - ローカルに保存されているboxイメージを一覧表示
+- `vagrant box remove <name>`
+    - ローカルに保存されたboxイメージを削除
+- `vagrant box repackage <name> <provider> <version>`
+    - boxイメージを再パッケージ化
+
+#### 仮想マシン関連
+- `vagrant init [name [url]]`
+    - 新規仮想マシンを作成 or 初期化
+    - 生成される`Vagrantfile`に仮想マシンの設定を記述する
+- `vagrant global-status`
+    - 全ての仮想環境の状態を表示
+    - `vagrant global-status` が参照しているファイルは `C:\Users\<user>\.vagrant.d\data\machine-index\index`
+        - 仮想環境のパスを変更したときなどはこのファイルを更新すれば良い
+
+※ 仮想マシン自体は、`C:\Users\<user>\VirtualBox VMs`フォルダ内に保存される
+
+***
+
 ## Vagrantのネットワーク処理が異常に遅い場合の解決策
 
 - 参考:
