@@ -136,8 +136,8 @@ latest: Pulling from library/nginx
 # webserver コンテナを nginx イメージから作成し、ローカルポート8080番をコンテナの80番ポートに繋げる
 ## $ docker run [options] <image>
 ## -d: daemonモード（バックグラウンドでコンテナを起動）
-## -p: ポート接続（ローカルポート:コンテナポート）
-## --name: コンテナ名指定
+## -p <ローカルポート:コンテナポート>: ポート接続
+## --name <name>: コンテナ名指定
 $ docker run -d -p 8080:80 --name webserver nginx
 ```
 
@@ -158,6 +158,9 @@ d0b48cd50872    nginx   "/docker-entrypoint..."   5 minutes ago    Up 5 minutes 
 
 # コンテナIDを指定して停止
 $ docker stop d0b48cd50872
+
+# コンテナ名で停止することも可能
+# $ docker stop webserver
 
 # 確認
 $ docker ps
