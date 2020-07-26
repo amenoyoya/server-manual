@@ -31,91 +31,97 @@ grepはメモリをほとんど使わない
 
 ※この演習では、作業ディレクトリを明示するため `作業ディレクトリ$ コマンド` という形式でコマンドラインを表示している
 
-- 作業ディレクトリ `practice-01` を作る
-    ```sh
-    # practice-01 ディレクトリ作成
-    ~/$ mkdir practice-01
+### 課題01
+- ファイルを統合的に操作する `ed` エディタと、`ed` から各種機能を分離した `grep`, `sed` コマンドを実際に使ってみる
+- `ed` エディタで行うのと同等の作業を、`grep`, `sed` コマンドの組み合わせで実現できることを実感する
 
-    # practice-01 ディレクトリに移動
-    ~/$ cd practice-01
-    ```
-- 演習用ファイル `practice-01/file-01` を作成する
-    ```bash
-    # file-01 ファイルを新規作成
-    ~/practice-01/$ touch file-01
+### 準備
+```bash
+# 演習用ディレクトリ practice-01 作成
+~/$ mkdir practice-01
 
-    # file-01 ファイルを編集
-    ~/practice-01/$ vi file-01
-    ### <file-01>
-    # i キー => 編集モードで以下のテキストを入力
-    This is contents of file!
-    This file is created by Linux terminal.
-    # Esc キー => :wq => 保存・終了
-    ### </file-01>
-    ```
-- [ ] `ed`エディタを使ってファイル編集
-    - 以下の `※コメント` は、McIlroyがメモリ不足になった原因
-    - `:` は ed エディタのコマンド入力を明示する接頭辞のため、実際には入力しない
-        ```sh
-        # ed ターミナルエディタを使って file-01 を開く
-        ~/practice-01/$ ed file-01
-        66 # <= 最初にファイルの情報（文字数）が表示される（※メモリ上に全ての内容が読み込まれる）
-        : 1p  # <= 1行目を表示(print)せよ（: は入力しない）
-        This is contents of file!
-        : 3p  # <= 3行目を表示(print)せよ
-        ? # <= エラー: 存在しない行
-        : g/Linux/p  # <= "Linux"を含む行を全体(global)から検索して表示(print)せよ
-                     #    `g/<re>/p` => grep というコマンド名の基になったコマンド
-        This file is created Linux terminal.
-        : s/Linux/Ubuntu/  # <= "Linux"を"Ubuntu"に置換(substitute)せよ
-        : 2p  # <= 2行目を表示(print)せよ
-        This file is created by Ubuntu terminal.
-            # ↑ Linux が Ubuntu に変換されている
-            ## ※この時点では、ファイルに反映はされておらず、メモリ上に保存されているだけ
-        : w  # <= ファイルに書き込み(write)せよ
-        67  # <= 書き換え後のファイルの情報（文字数）
-        : q  # <= 終了(quit)せよ
-        ```
-- [ ] `grep` で文字列検索
-    ```bash
-    # grep で file-01 ファイルから "Ubuntu" を含む行を検索
-    ## grep '検索対象文字列' <ファイル> (※正規表現使用可)
-    ~/practice-01/$ grep 'Ubuntu' file-01
-    This file is created by Ubuntu terminal.
-    ```
-- [ ] `sed` でファイル編集
-    ```bash
-    # sed で file-01 ファイルの1行目表示
-    ## sed -n <行>p <ファイル>
-    ~/practice-01/$ sed -n 1p file-01
-    This is contents of file!
+# practice-01 ディレクトリに移動
+~/$ cd practice-01
 
-    # file-01 ファイル内の "Ubuntu" を "Linux" に置換
-    ## sed 's/<置換対象文字列>/<置換後文字列>/' <ファイル> (※正規表現使用可)
-    ~/practice-01/$ sed 's/Ubuntu/Linux/' file-01
-    This is contents of file!
-    This file is created by Linux terminal.
+# 演習用ファイル file-01 を新規作成
+~/practice-01/$ touch file-01
 
-    # ※↑ 実際に file-01 の中身が書き換わるわけではない
+# file-01 ファイルを編集
+~/practice-01/$ vi file-01
+### <file-01>
+# i キー => 編集モードで以下のテキストを入力
+This is contents of file!
+This file is created by Linux terminal.
+# Esc キー => :wq => 保存・終了
+### </file-01>
+```
 
-    # file-01 ファイル内の "Ubuntu" を "Linux" に置換し、file-02 ファイルにリダイレクト
-    ## リダイレクトにより、edエディタにおける `w` コマンドの代わりの操作が可能
-    ## なお、file-02 ではなく直接 file-01 ファイルにリダイレクト(上書き)しようとすると中身が全部消えるため注意！
-    ~/practice-01/$ sed 's/Ubuntu/Linux/' file-01 > file-02
+### ed エディタを使ってファイル編集
+- 以下の `※コメント` は、McIlroyがメモリ不足になった原因
+- `:` は ed エディタのコマンド入力を明示する接頭辞のため、実際には入力しない
 
-    # file-01 を sed で置換して直接 file-01 に上書きリダイレクトしてみる
-    ## => file-01 の中身が消えてしまうのを確認する（cat <ファイル> コマンド）
-    ~/practice-01/$ sed 's/Ubuntu/Linux/' file-01 > file-01
-    ~/practice-01/$ cat file-01
+```bash
+# ed ターミナルエディタを使って file-01 を開く
+~/practice-01/$ ed file-01
+66 # <= 最初にファイルの情報（文字数）が表示される（※メモリ上に全ての内容が読み込まれる）
+: 1p  # <= 1行目を表示(print)せよ（: は入力しない）
+This is contents of file!
+: 3p  # <= 3行目を表示(print)せよ
+? # <= エラー: 存在しない行
+: g/Linux/p # <= "Linux"を含む行を全体(global)から検索して表示(print)せよ
+            #    `g/<re>/p` => grep というコマンド名の基になったコマンド
+This file is created Linux terminal.
+: s/Linux/Ubuntu/  # <= "Linux"を"Ubuntu"に置換(substitute)せよ
+: 2p  # <= 2行目を表示(print)せよ
+This file is created by Ubuntu terminal.
+    # ↑ Linux が Ubuntu に変換されている
+    ## ※この時点では、ファイルに反映はされておらず、メモリ上に保存されているだけ
+: w  # <= ファイルに書き込み(write)せよ
+67  # <= 書き換え後のファイルの情報（文字数）
+: q  # <= 終了(quit)せよ
+```
 
-    # file-02 を file-01 にリネーム（上書き）
-    ~/practice-01/$ mv file-02 file-01
+### grep コマンドで文字列検索
+```bash
+# grep で file-01 ファイルから "Ubuntu" を含む行を検索
+## grep '検索対象文字列' <ファイル> (※正規表現使用可)
+~/practice-01/$ grep 'Ubuntu' file-01
+This file is created by Ubuntu terminal.
+```
 
-    # 内容を確認
-    ~/practice-01/$ cat file-01
-    This is contents of file!
-    This file is created by Linux terminal.  # <= "Ubuntu" が "Linux" に置換されている
-    ```
+### sed コマンドでファイル編集
+```bash
+# sed で file-01 ファイルの1行目表示
+## sed -n <行>p <ファイル>
+~/practice-01/$ sed -n 1p file-01
+This is contents of file!
+
+# file-01 ファイル内の "Ubuntu" を "Linux" に置換
+## sed 's/<置換対象文字列>/<置換後文字列>/' <ファイル> (※正規表現使用可)
+~/practice-01/$ sed 's/Ubuntu/Linux/' file-01
+This is contents of file!
+This file is created by Linux terminal.
+
+# ※↑ 実際に file-01 の中身が書き換わるわけではない
+
+# file-01 ファイル内の "Ubuntu" を "Linux" に置換し、file-02 ファイルにリダイレクト
+## リダイレクトにより、edエディタにおける `w` コマンドの代わりの操作が可能
+## なお、file-02 ではなく直接 file-01 ファイルにリダイレクト(上書き)しようとすると中身が全部消えるため注意！
+~/practice-01/$ sed 's/Ubuntu/Linux/' file-01 > file-02
+
+# file-01 を sed で置換して直接 file-01 に上書きリダイレクトしてみる
+## => file-01 の中身が消えてしまうのを確認する（cat <ファイル> コマンド）
+~/practice-01/$ sed 's/Ubuntu/Linux/' file-01 > file-01
+~/practice-01/$ cat file-01
+
+# file-02 を file-01 にリネーム（上書き）
+~/practice-01/$ mv file-02 file-01
+
+# 内容を確認
+~/practice-01/$ cat file-01
+This is contents of file!
+This file is created by Linux terminal.  # <= "Ubuntu" が "Linux" に置換されている
+```
 
 ***
 
@@ -184,3 +190,374 @@ UNIXのように、データをほかと連携しやすい形式に保つとい�
 - 効率と移植性を高めるためにシェルスクリプトを利用せよ
 - 束縛するインターフェースは作るな
 - すべてのプログラムはフィルタとして振る舞うようにせよ
+
+***
+
+## パイプ演習
+
+### 課題02
+1. `/etc/passwd` ファイルを読んで、Linuxシステム上のすべてのユーザ名を確認する
+2. 1 で得た内容を `cut` コマンドで分解し、ログインシェルのみ出力する
+3. 2 で得たログインシェルの内、重複するものを削除する（`uniq` コマンド）
+4. 1～3の処理をパイプでつなげる
+
+### /etc/passwd の内容読み込み
+```bash
+# 演習用ディレクトリ準備
+$ mkdir practice-02
+$ cd practice-02
+
+# cat <ファイル名> でファイルを読み込んで標準出力（ターミナル）に出力
+## パーミッションエラーが発生する場合は $ sudo cat /etc/passwd
+$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+ :
+
+# 出力結果を一旦 ./1-passwd に保存
+$ cat /etc/passwd > ./1-passwd
+```
+
+### cut コマンドでログインシェルのみ出力
+`cut` コマンドは、ファイル or 標準入力（標準出力のパイプ）を読み込んで、それぞれの行から指定した部分のみを切り出すコマンド
+
+```bash
+# Usage: ファイル読み込み
+$ cut [options] <ファイル名>
+
+# Usage: 標準入力
+## 標準入力ヒアドキュメント: `<< マーク` ～ `マーク` までを標準入力とすることができる
+$ cut [options] << EOS
+標準入力テキスト
+EOS
+
+# Usage: 標準入力（パイプ）
+$ 標準出力を行うコマンド | cut [options]
+
+# 指定文字数でカット
+## -c <[最初の文字位置][-<最後の文字位置>]>: 出力するテキストの位置を指定; ','で複数指定可
+
+### "Hello, World!" の2文字目と13文字目を出力
+$ echo 'Hello, World!' | cut -c 2,13
+e!
+
+### 8～12文字目を出力
+$ echo 'Hello, World!' | cut -c 8-12
+World
+
+# 指定区切り文字でカット
+## -d <区切り文字>: 入力テキストを指定区切り文字でカット
+## -f <フィールド番号>: 出力するフィールド番号（区切り文字でカットした後の配列のインデックス）を指定
+##                     指定の方法は -c と同じ記法が使える
+
+### "I,am,Linux,cut,command" を "," でカットして 3, 5番目のフィールドを出力
+$ echo 'I,am,Linux,cut,command' | cut -d ',' -f 3,5
+Linux,command
+```
+
+ここで、`/etc/passwd` は `ユーザ名:暗号化パスワード:ユーザID:グループID:コメント:ホームディレクトリ:ログインシェル` という形式で記述されている
+
+そのため `:` を区切り文字としてカットし、7番目のフィールドを出力すればログインシェルのみ抽出できる
+
+```bash
+# 1の処理結果を読み込み、":" でカット => 7番目のフィールドを出力
+## 1の処理結果: ./1-passwd ファイルから読み込み
+$ cut -d ':' -f 7 ./1-passwd
+/bin/bash
+/usr/sbin/nologin
+/usr/sbin/nologin
+/usr/sbin/nologin
+ :
+
+# 処理結果を一旦 ./2-cut に保存
+$ cut -d ':' -f 7 ./1-passwd > ./2-cut
+```
+
+### uniq コマンドで重複行を削除
+`uniq` コマンドは、ファイル or 標準入力を読み込んで、それぞれの行の内、重複した行を削除するコマンド
+
+ただし、**隣り合った行しか比較しない**ため、先に `sort` コマンドで**並び替えを行う**のが一般的
+
+```bash
+# Usage: ファイル読み込み
+$ uniq [options] <ファイル名>
+
+# Usage: 標準入力
+$ uniq [options] << EOS
+標準入力テキスト
+EOS
+
+# Usage: 標準入力（パイプ）
+$ 標準出力を行うコマンド | uniq [options]
+
+# 使用例: sort で並び替え => uniq で重複削除
+## 重複行: 3, 5 行目削除
+$ echo '
+aaa
+bbb
+aaa
+ccc
+bbb' | sort | uniq
+
+aaa
+bbb
+ccc
+```
+
+同様にして、2の処理結果 `2-cut` を読み込んで、`sort` => `uniq` のコマンド合わせ技で重複行を削除する
+
+```bash
+# sort コマンドも ファイル or 標準入力 を受け取るため以下のように書ける
+$ sort ./2-cut | uniq
+/bin/bash
+/bin/false
+/bin/sync
+/usr/sbin/nologin
+
+# 処理結果を ./3-uniq に保存（最終結果）
+$ sort ./2-cut | uniq > ./3-uniq
+```
+
+### パイプでつなぐ
+ここまでで何となく想像できるかもしれないが、基本的にLinuxコマンドはほぼすべて **ファイル or 標準入力** を受け取って **標準出力** に結果を出力するという形式になっている
+
+この 標準入力・標準出力 というアイディアがあることにより、コマンドをパイプでつなげて処理することが可能となっている
+
+今回 1～3 の処理を行う際は、それぞれの処理結果を一旦ファイルに保存し、次の処理を行う際は前の処理結果ファイルを読み込む、という手順で行っていた
+
+しかし、ファイルにいちいち保存せず、標準入出力を利用することにより、すべての処理をパイプでつないで一気に処理することが可能となる
+
+```bash
+# 以下の処理を一気に行う
+## 1. /etc/passwd 読み込み
+## 2. 1 の結果を cut し、ログインシェルのみ出力
+## 3. 2 の結果を sort => uniq し、重複行を削除
+$ cat /etc/passwd | cut -d ':' -f 7 | sort | uniq
+/bin/bash
+/bin/false
+/bin/sync
+/usr/sbin/nologin
+```
+
+***
+
+## シェルスクリプト
+
+上記のような経緯で、コマンドを組み合わせて処理を実装していく方法が普及していった
+
+しかし、多くのコマンドを組み合わせるようになると、ターミナルにコマンドをつなげて打つよりも、コマンドをエディタに書き込んでプログラムとして保存するほうが何かと便利になってくる
+
+こうして、UNIX(Linux)コマンドを一連の処理として記述したものが **シェルスクリプト** である
+
+### シェルスクリプトの作成
+シェルスクリプトは、複数のコマンドラインコマンドをファイルにまとめたものであるため、作成にあたって特に変わったことを行う必要はない
+
+ただし、シェルスクリプトとして実行させるにあたり以下の2点は気を付けておく必要がある
+
+1. 1行目に shebang（シバン）を記述する
+    - shebang は `#!/bin/bash` のような形式で記述される
+    - このスクリプトファイルを何のプログラムに実行して欲しいのかを記述する
+        - `#!/bin/bash` の場合は bash というシェル実行環境に実行してもらうことを期待している
+2. スクリプトファイルに実行権限を付与する
+    - 実行パーミッションのないファイルはシェルスクリプトとして実行することができない
+    - `chmod +x <ファイル名>` コマンドを実行すれば、所有ユーザ・グループ・その他すべてに実行権限を付与することができる
+
+※ なお、スクリプトファイルを単純に実行プログラムの引数として渡して処理させる場合は、上記の処理は不要である
+
+※ 例えば、`/bin/bash <ファイル名>` という形で実行させる場合、実行プログラムが `/bin/bash` であることは間違いないので shebang は不要であるし、ファイルそのものを実行する訳ではないので実行権限も不要である
+
+### シェルスクリプトの実行
+上記のようにして作成したシェルスクリプトファイルは、それ単体でコマンドのように実行することが可能である
+
+しかし、カレントディレクトリにあるスクリプトファイルを実行する場合は必ず **./ファイル名** という形式で（カレントディレクトリにあることを明示して）実行する必要がある
+
+これは、カレントディレクトリにあることを明示しない場合、Linuxシステムは `/bin/` や `/usr/bin/` のような PATH に定義されているディレクトリからコマンド（スクリプトファイル）を探そうとするためである
+
+### 制御構文
+シェルスクリプトは一つのプログラミング言語であり、条件分岐やループ処理といった制御構文をしっかりと備えている
+
+#### if
+条件分岐を行うことができる
+
+基本的に if 文は、`test` コマンド（条件式の真偽判定コマンド）とセットで使う
+
+```bash
+# Usage
+if test 'a' = 'b'
+then
+    echo '「a」と「b」は同じ文字'
+elif test 'b' = 'c'
+then
+    echo '「b」と「c」は同じ文字'
+else
+    echo '「a」「b」「c」は全て違う文字'
+fi
+
+# test コマンドは [ 条件式 ] という短縮記法を持つ
+## [条件式] のように "[", 条件式, "]" をくっつけて書くことはできない
+## 改行せずに ";" で繋げることも可能
+if [ 'a' = 'b' ]; then echo '「a」と「b」は同じ文字'
+elif [ 'b' = 'c' ]; then echo '「b」と「c」は同じ文字'
+else echo '「a」「b」「c」は全て違う文字'
+fi
+```
+
+`test` コマンドの詳しい条件式等については https://www.atmarkit.co.jp/ait/articles/1807/05/news041.html 参照
+
+#### while
+while 文は「ある条件が成り立っている間のみ繰り返し処理を実行する」といった、不定回のループ制御文
+
+```bash
+# Usage: 特定の条件が成り立っている間ループ処理する
+while [ 条件式 ]
+do
+    処理
+done
+
+# Usage: ファイル or 標準入力を一行ずつ処理する
+while read 変数名
+do
+    {$変数名 = 行} に対する処理
+done <ファイル名
+
+## ワンライナーでも書ける
+標準出力を行うコマンド | while read line; do echo $line; done
+
+# Usage: 無限ループ
+while :
+do
+    if [ 条件式 ]; then break; fi
+    処理
+done
+```
+
+#### for
+不定回数ループの while 文に対して、for 文は特定回数ループの制御文である
+
+配列を一つずつ処理したり、連番処理を行う場合などに使われる
+
+```bash
+# Usage: 配列処理
+for 変数名 in "${配列[@]}"
+do
+    {$変数名 = 要素} に対する処理
+done
+
+## 例
+### 配列の宣言: 変数名=(要素1 要素2 要素3)
+### ※ シェルスクリプトの変数宣言では「=」の前後にスペースを入れることはできない
+$ items=('apple' 'banana' 'orange')
+$ for item in "${items[@]}"; do echo $item; done
+apple
+banana
+orange
+
+# Usage: 連番処理
+for 変数名 in {start..end}
+do
+    {$変数名 = start から end までの連番} に対する処理
+done
+
+# 算術式: $((...)) を利用すると複雑な連番処理も可能
+## 例: 10 から 0 まで -2 刻みで処理
+$ for ((i = 10; i >= 0; i -= 2)); do echo $i; done
+10
+8
+6
+4
+2
+0
+```
+
+***
+
+## シェルスクリプト演習
+
+### 課題03
+- シェルスクリプトの制御構文を駆使してじゃんけんゲームを作成する
+- スクリプトファイル名は `RPS.sh` で、Shebang は `/bin/bash` とする
+- ゲームの流れ:
+    1. 標準入力からプレイヤーの入力を受け付ける
+        - `read <変数名>` コマンド: 標準入力を受け付け `$変数名` に値を格納
+        - 入力: `0 = グー`, `1 = チョキ`, `2 = パー` として、それ以外の入力があった場合はゲーム終了
+    2. コンピュータの手をランダムに決定
+        - bash の場合、環境変数 `$RANDOM` に 0～32767 の乱数が入っているため利用する
+    3. プレイヤーの入力（手）とコンピュータの手を比較し、勝敗を決める
+    4. 1 に戻る
+
+### 実装例
+```bash
+$ mkdir practice-03
+$ cd practice-03
+
+# じゃんけんゲーム シェルスクリプト作成
+## tee コマンド: 標準入力から受け取ったテキストを標準出力とファイルの両方に出力する
+##               ファイルリダイレクトより柔軟な書き方ができるため便利
+## 標準入力ヒアドキュメント: `<< マーク` ～ `マーク` までを標準入力とすることができる
+##                          マーク を \マーク や 'マーク' の形式で記述すると内部テキストで変数展開を行わない
+$ tee ./RPS.sh << \EOS
+#!/bin/bash
+
+echo 'Rock-Paper-Scissors: じゃんけんゲーム'
+
+# 無限ループ
+while :
+do
+    # プレイヤー入力を促す
+    ## echo -n: 後ろに改行をつけずにテキストを出力
+    echo -n '手を入力 (0: グー, 1: チョキ, 2: パー): '
+    ## read <変数名>: 標準入力を変数に格納
+    read input
+
+    # 入力値が 0, 1, 2 のいずれでもない場合はゲーム終了
+    if [ $input != 0 ] && [ $input != 1 ] && [ $input != 2 ]; then
+        break
+    fi
+    
+    # コンピュータの手をランダムに選択: $((算術式)) を利用
+    ## $RANDOM 環境変数: 0..32767 の乱数を出力
+    ## $RANDOM を 3 で割った余り => 0..2 の乱数
+    ## ※ bash の変数代入は「=」の前後にスペースを入れられないため注意
+    com_input=$(($RANDOM % 3))
+
+    # 数字 => 手 変換用配列
+    hands=('グー' 'チョキ' 'パー')
+
+    # 出した手を表示
+    echo "あなたの手: ${hands[$input]}"
+    echo "コンピュータの手: ${hands[$com_input]}"
+
+    # 勝敗計算: $((プレイヤーの手 - コンピュータの手))
+    ## 0 => あいこ
+    ## -1 || 2 => プレイヤーの勝ち
+    ## -2 || 1 => コンピュータの勝ち
+    result=$(($input - $com_input))
+    if [ $result = 0 ]; then
+        echo 'あいこです'
+    elif [ $result = -1 ] || [ $result = 2 ]; then
+        echo 'あなたの勝ちです'
+    else
+        echo 'あなたの負けです'
+    fi
+
+    # 見やすさのため改行
+    echo ''
+done
+EOS
+
+# RPS.sh のパーミッション確認
+$ ls -l RPS.sh
+-rw-r--r-- 1 user user 1526  7月 27 00:30 RPS.sh
+
+# RPS.sh に実行権限（x パーミッション）付与
+$ chmod +x RPS.sh
+
+# パーミッション確認
+$ ls -l RPS.sh
+-rwxr-xr-x 1 user user 1526  7月 27 00:30 RPS.sh
+
+# RPS.sh 実行
+$ ./RPS.sh
+```
