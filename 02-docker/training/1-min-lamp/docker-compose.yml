@@ -1,0 +1,32 @@
+version: "3" # composeファイルバージョン指定
+
+# 各種コンテナの定義
+services:
+  # webサービス: php:7.4-apache イメージから構築
+  ## コンテナ名: training1_web
+  web:
+    image: php:7.4-apache
+    container_name: training1_web
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    tty: true # コンテナ内でターミナル利用可能に（docker -it オプションと同等）
+    ports:
+      - "80:80" # http://localhost:80 => service://web:80
+    links:
+      - db # dbサービス（training1_dbコンテナ）とリンク
+           ## これにより tcp://db:3306 => service://db:3306 の接続が可能になる
+  
+  # dbサービス: mysql:5.7 イメージから構築
+  ## コンテナ名: training1_db
+  db:
+    image: mysql:5.7
+    container_name: training1_db
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    tty: true # コンテナ内でターミナル利用可能に（docker -it オプションと同等）
+    # 環境変数定義
+    environment:
+      # MySQL rootユーザパスワードを指定しないとMySQLのDockerコンテナは起動しない
+      MYSQL_ROOT_PASSWORD: root
