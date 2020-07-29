@@ -1,27 +1,32 @@
-version: '2' # composeファイルバージョン
+version: "3" # composeファイルバージョン指定
+
+# 各種コンテナの定義
 services:
-  # MySQLデータ格納ボリューム用のコンテナ
-  ## 永続的なデータをコンテナ間で共有したい場合や非永続コンテナから使用したい場合、DataVolumeContainerを作成し、そこからデータをマウントするのが良い
-  mysqldata:
-    image: busybox # ベースイメージにbusybox(OSの最低限の機能を詰め込んだ万能コマンド)を利用
-    container_name: docker-mysqldata # コンテナ名を"docker-mysqldata"に
-    volumes:
-      - /var/lib/mysql # ボリュームを /var/lib/mysql ディレクトリに設定
-  # MySQLサービス用のコンテナ
-  mysql:
-    build: ./mysql # ./mysql/Dockerfile の内容をもとにイメージをビルド
-    container_name: docker-mysql # コンテナ名を"docker-mysql"に
-    environment:
-      MYSQL_ROOT_PASSWORD: pass # MySQLルートパスワードを"pass"に
-    volumes_from:
-      - mysqldata # mysqldataコンテナからボリュームをマウント
-  # PHPサービス用のコンテナ
-  php:
-    build: ./php # ./php/Dockerfile の内容をもとにイメージをビルド
-    container_name: docker-php # コンテナ名を"docker-php"に
+  # webサービス: php:7.4-apache イメージから構築
+  ## コンテナ名: training2_web
+  web:
+    # ./docker/web/Dockerfile をビルド
+    build: ./docker/web/
+    container_name: training2_web
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
     ports:
-      - '80:80' # ホスト側のポート80番とコンテナ側のポート80番を結ぶ
-    volumes:
-      - ./html:/var/www/html # ホスト側の ./html ディレクトリをコンテナ側のドキュメントルート /var/www/html にマウント
-    depends_on:
-      - mysql # mysqlコンテナが起動してからphpコンテナを起動する
+      - "80:80" # http://localhost:80 => service://web:80
+    links:
+      - db # dbサービス（training2_dbコンテナ）とリンク
+           ## これにより tcp://db:3306 => service://db:3306 の接続が可能になる
+  
+  # dbサービス: mysql:5.7 イメージから構築
+  ## コンテナ名: training2_db
+  db:
+    # ./docker/db/Dockerfile をビルド
+    build: ./docker/db/
+    container_name: training2_db
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    # 環境変数定義
+    environment:
+      # MySQL rootユーザパスワードを指定しないとMySQLのDockerコンテナは起動しない
+      MYSQL_ROOT_PASSWORD: root

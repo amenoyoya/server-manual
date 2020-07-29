@@ -209,6 +209,10 @@ services:
       MYSQL_ROOT_PASSWORD: root
 ```
 
+- **docker-compose.yml**
+    - 使うコンテナやパラメータなどを記述した設定ファイル
+    - YAML形式のためインデントに注意！
+
 docker-compose では、サービス名とコンテナ名という似たような概念が出てくるが以下のような違いがある
 
 - サービス名:
@@ -323,3 +327,20 @@ $ docker-compose down
 - `docker-compose exec <サービス名> <コマンド>`
     - 指定したDockerサービス内のコマンドを実行する
     - `docker exec -it <コンテナ名> <コマンド>` と同じ動作をするが、コンテナ名ではなく、サービス名を指定することに注意
+
+***
+
+## 研修
+
+- [Dockerfileで始めるIaC](./1-dockerfile.md)
+    - DockerHubに登録されているイメージをカスタマイズして使う方法
+    - Infrastructure as Code (IaC) の考え方を学ぶ
+    - データベースやソースコードなど、永続化したいデータの扱い方
+- [Apacheサーバの基本技](./2-apache.md)
+    - `.htaccess` ファイルを使ったアクセス制御
+    - VirtualHostを用いた複数サイト運営方法
+    - WEBセキュリティを考慮した Apache 設定方法
+- [PHP開発入門](./3-php.md)
+    - composerパッケージマネージャの導入と使い方
+    - PHPからのメール送信方法とSMTPについて
+    - MVCモデルの考え方を学ぶ
