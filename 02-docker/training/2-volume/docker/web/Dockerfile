@@ -1,8 +1,5 @@
 FROM php:7.4-apache
 
-# PHP設定ファイルをコンテナ内にコピー
-COPY ./php.ini /usr/local/etc/php/
-
 RUN : 'mbstring の代わりに鬼車を導入（PHP 7.4～）, ついでに vim も入れておく' && \
     apt-get update && apt-get install -y libonig-dev vim && \
     : '必要なPHPエクステンションを導入' && \

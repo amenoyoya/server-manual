@@ -16,12 +16,21 @@ services:
     links:
       - db # dbサービス（training2_dbコンテナ）とリンク
            ## これにより tcp://db:3306 => service://db:3306 の接続が可能になる
+    # Volumeマウント
+    volumes:
+      # ./html/ => service://web:/var/www/html/
+      ## コンテナ側からデータ読み書きできるように rw モードでマウント
+      - ./html/:/var/www/html/:rw
+
+      # PHP設定ファイルをコンテナ内にマウント
+      ## 基本的に設定ファイル系は read-only でマウントする
+      - ./docker/web/php.ini:/usr/local/etc/php/php.ini:ro
   
   # dbサービス: mysql:5.7 イメージから構築
   ## コンテナ名: training2_db
   db:
-    # ./docker/db/Dockerfile をビルド
-    build: ./docker/db/
+    # mysql:5.7 イメージから構築
+    image: mysql:5.7
     container_name: training2_db
     # ログ出力フォーマット: 基本的に json-file で良い
     logging:
@@ -32,3 +41,12 @@ services:
       MYSQL_ROOT_PASSWORD: root
       # 初期作成データベース
       MYSQL_DATABASE: training2
+    # Volumeマウント
+    volumes:
+      # ./db-data/ => service://db:/var/lib/mysql/
+      ## コンテナ側からデータ読み書きできるように rw モードでマウント
+      - ./db-data/:/var/lib/mysql/:rw
+
+      # MySQL設定ファイルをコンテナ内にマウント
+      ## World-writable エラーを防ぐため read-only にする
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro

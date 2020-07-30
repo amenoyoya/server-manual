@@ -1,6 +1,6 @@
-<mxfile host="embed.diagrams.net" modified="2020-07-29T13:53:41.416Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.47.3 Chrome/78.0.3904.130 Electron/7.3.2 Safari/537.36" etag="lnvfdAmjCjEzij1j64EL" version="13.5.5">
+<mxfile host="embed.diagrams.net" modified="2020-07-30T16:28:28.319Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.47.3 Chrome/78.0.3904.130 Electron/7.3.2 Safari/537.36" etag="KlLocuOKgBMyFJQJTDot" version="13.5.7">
     <diagram id="6hGFLwfOUW9BJ-s0fimq" name="Page-1">
-        <mxGraphModel dx="602" dy="264" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="602" dy="567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -48,6 +48,97 @@
                 </mxCell>
                 <mxCell id="20" value="MySQLデータベース通信はポート3306 を介して行われる" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;strokeColor=#000000;fontSize=14;direction=south;base=13;size=30;position=0.41;" parent="1" vertex="1">
                     <mxGeometry x="210" y="149" width="260" height="51" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="600" y="174" width="200" height="116" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="webコンテナ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="645" y="174" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="/var/www/index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="209.5" width="160" height="71" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/97_Docker-128.png;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="590" y="159" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="850" y="174" width="200" height="116" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="webコンテナ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="895" y="174" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="/var/www/index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="870" y="210" width="160" height="71" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/97_Docker-128.png;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1000" y="159" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="http://localhost" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="50" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="" style="dashed=0;outlineConnect=0;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.weblogos.chrome;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="715" y="40" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;exitX=0;exitY=0;exitDx=130;exitDy=0;exitPerimeter=0;entryX=0.35;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="23" target="30">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="760" y="200" as="sourcePoint"/>
+                        <mxPoint x="810" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;entryX=0.638;entryY=0.993;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.14;exitY=0.004;exitDx=0;exitDy=0;exitPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="27" target="30">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="800" y="470" as="sourcePoint"/>
+                        <mxPoint x="850" y="420" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="実体 index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1120" y="209.5" width="160" height="71" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fontSize=14;exitX=0.995;exitY=0.521;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#fff2cc;strokeColor=#d6b656;" edge="1" parent="1" source="27" target="35">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1050" y="380" as="sourcePoint"/>
+                        <mxPoint x="1100" y="330" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="Volume&lt;br&gt;マウント" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1050" y="174" width="70" height="64" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="600" y="375" width="200" height="116" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="410.5" width="160" height="71" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="699.5" y="295" as="sourcePoint"/>
+                        <mxPoint x="699.5" y="365" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="コンテナと一緒にデータやソースコードも消える" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="710" y="300" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="850" y="375" width="200" height="116" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="870" y="410.5" width="160" height="71" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="949.5" y="295" as="sourcePoint"/>
+                        <mxPoint x="949.5" y="365" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="50" value="コンテナが消えても&lt;br&gt;ホスト側にデータが残る" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1000" y="300" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;exitX=0;exitY=0;exitDx=160;exitDy=30;exitPerimeter=0;" edge="1" parent="1" source="46" target="35">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1200" y="441"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>
