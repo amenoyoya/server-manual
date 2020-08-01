@@ -1,0 +1,16 @@
+# RewriteEngine有効化
+RewriteEngine On
+
+# RewriteBaseを / に設定
+## デフォルトのまま置換が行われると以下のように置換されてしまう
+##  http://localhost/index.php => http://localhost/var/www/html/
+RewriteBase /
+
+# RewriteRuleにより index.php, index.html を / に置換する（302リダイレクト）
+## 演習用に302（一時的）リダイレクトとしているが本来は301（恒久的）リダイレクトが望ましい
+RewriteRule ^index\.(php|html)$ / [R=302,L]
+
+# /{id}/ | /{id} => /?q={id} と同等のページを表示
+## 正規表現のグルーピングで補足された文字列は $1, $2, ... で使用可能
+## リダイレクトするわけではないのでRフラグは不要
+RewriteRule ^([0-9]+)/?$ ?q=$1 [L]

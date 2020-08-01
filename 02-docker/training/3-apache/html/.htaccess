@@ -1,0 +1,5 @@
+# mod_rewriteが有効な場合の設定
+<IfModule mod_rewrite.c>
+  # RewriteEngine有効化
+  RewriteEngine on
+</IfModule>

@@ -1,0 +1,37 @@
+version: "3" # composeファイルバージョン指定
+
+# 各種コンテナの定義
+services:
+  # webサービス: php:7.4-apache イメージから構築
+  ## コンテナ名: training3_web
+  web:
+    # ./docker/web/Dockerfile をビルド
+    build: ./docker/web/
+    container_name: training3_web
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    ports:
+      - "80:80" # http://localhost:80 => service://web:80
+    # Volumeマウント
+    volumes:
+      # ./html/ => service://web:/var/www/html/
+      ## コンテナ側からデータ読み書きできるように rw モードでマウント
+      - ./html/:/var/www/html/:rw
+      
+      # 演習01動作確認用
+      # - ./training/01/html/:/var/www/html/
+      # 演習02動作確認用
+      # - ./training/02/html/:/var/www/html/
+      # 演習03動作確認用
+      # - ./training/03/html/:/var/www/html/
+
+      # PHP設定ファイルをコンテナ内にマウント
+      ## 基本的に設定ファイル系は read-only でマウントする
+      - ./docker/web/conf/php.ini:/usr/local/etc/php/php.ini:ro
+
+      # Apache設定ファイルをコンテナ内にマウント
+      # - ./docker/web/conf/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
+
+      # 演習04動作確認用
+      - ./training/04/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro

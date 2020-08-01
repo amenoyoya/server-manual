@@ -1,0 +1,7 @@
+# .htaccess ファイルへのアクセス禁止
+<Files ~ "^\.htaccess$">
+    Deny from All
+</Files>
+
+# 環境変数 APP_ENV 定義
+SetEnv APP_ENV "LOCAL"

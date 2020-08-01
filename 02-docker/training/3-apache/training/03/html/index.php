@@ -1,0 +1,1 @@
+<?= getenv('APP_ENV') ?>

@@ -336,7 +336,7 @@ $ docker-compose down
     - DockerHubに登録されているイメージをカスタマイズして使う方法
     - Infrastructure as Code (IaC) の考え方を学ぶ
     - データベースやソースコードなど、永続化したいデータの扱い方
-- [Apacheサーバの基本技](./2-apache.md)
+- [Apacheサーバ入門](./2-apache.md)
     - `.htaccess` ファイルを使ったアクセス制御
     - VirtualHostを用いた複数サイト運営方法
     - WEBセキュリティを考慮した Apache 設定方法
