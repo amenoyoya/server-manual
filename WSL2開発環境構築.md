@@ -269,6 +269,7 @@ $ git clone https://github.com/pine/nodenv-yarn-install.git "$(nodenv root)/plug
 $ echo 'export PATH="$HOME/.yarn/bin:$PATH"' >> ~/.bashrc
 
 # Node.js 10.17.0 インストール
+$ touch $(nodenv root)/default-packages
 $ nodenv install 10.17.0
 
 # Node.js 10.17.0 に切り替え
