@@ -1,1 +1,0 @@
-<?php echo 'This is site "1" by VirtualHost' ?>

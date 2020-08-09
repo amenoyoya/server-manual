@@ -127,5 +127,5 @@ VSCode は、WSL2 環境との相性も良く、便利なプラグインが無�
     - CentOS レンタルサーバを実際に借りる代わりに、Docker で CentOS コンテナを起動して実習を行う
 - [Docker基礎研修](./02-docker/training/README.md)
     - Docker 本来の使い方でWEBサーバを構築する
-    - Apache WEBサーバの .htaccess の基本的な使い方を学ぶ
-    - PHPを使ったWEB開発の基礎を学ぶ
+    - Apache WEBサーバの基礎知識を身につける
+    - Docker をそれなりに自在に使えるようになる

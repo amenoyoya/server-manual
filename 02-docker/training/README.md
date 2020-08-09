@@ -339,7 +339,7 @@ $ docker-compose down
 - [Apacheサーバ入門](./2-apache.md)
     - `.htaccess` ファイルを使ったアクセス制御
     - VirtualHostを用いた複数サイト運営方法
-    - WEBセキュリティを考慮した Apache 設定方法
+    - SSI を使った動的サイト構築
 - [PHP開発入門](./3-php.md)
     - composerパッケージマネージャの導入と使い方
     - PHPからのメール送信方法とSMTPについて

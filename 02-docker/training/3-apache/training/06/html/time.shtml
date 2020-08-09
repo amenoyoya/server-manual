@@ -1,0 +1,3 @@
+<!-- 現在日時表示: Y/m/d H:M:S -->
+<!--#config timefmt="%Y/%m/%d %H:%M:%S" -->
+<!--#echo var="DATE_LOCAL" -->

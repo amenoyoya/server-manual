@@ -1,0 +1,17 @@
+# .htaccess ファイルへのアクセス禁止
+<Files ~ "^\.htaccess$">
+    Deny from All
+</Files>
+
+# SSI 機能有効化
+## mod_include が有効化されている必要がある
+Options +Includes
+
+# .shtml ファイルを html ファイルとして扱う
+AddType text/html .shtml
+
+# .shtml ファイルで SSI ディレクティブ解析を有効化する
+AddOutputFilter INCLUDES .shtml
+
+# index 処理対象: index.html, index.php, index.shtml
+DirectoryIndex index.html index.php index.shtml

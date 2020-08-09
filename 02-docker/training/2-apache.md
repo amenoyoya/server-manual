@@ -194,6 +194,15 @@ AddType text/html .shtml
 AddOutputFilter INCLUDES .shtml
 ```
 
+SSI ディレクティブの基本的な書き方は以下の通り
+
+```html
+<!--#element attribute=value attribute=value ... -->
+
+<!-- 例: 他のファイルを読み込んで表示する -->
+<!--#include virtual="otherfile.html" -->
+```
+
 ***
 
 ## 演習用 Apache 環境構築
@@ -504,253 +513,92 @@ $ docker-compose exec web vi ...
 
 ***
 
-# コンテナ内ApacheでVirtualHost
-
 ## VirtualHostによる複数サイト運営
 
-一つのコンテナ内で複数サイトを運営できるようにする
+一つのApacheサーバコンテナ内で複数サイトを運営できるようにする
 
-**※ 本当はサイトごとにコンテナを分けるべきだが、ここではあえてDockerの原則から外れた学習を行う**
+※ 本当はサイトごとにコンテナを分けるべきだが、ここではあえてDockerの原則から外れた学習を行う
 
-- [ ] サイト1は`8000`番ポート, サイト2は`8001`番ポートを使うこととする
-- フォルダ構成は以下の通り（[5-vhosts](./5-vhosts)フォルダを参考に）
-    ```ini
-    training/
-     |- html/
-     |  `- vhosts/    # VirtualHostサイト用フォルダ
-     |     |- test1/  # サイト1のドキュメントルート
-     |     |  `- index.php
-     |     `- test2/  # サイト2のドキュメントルート
-     |        `- index.php
-     |- php/
-     |  |- apache2/    # Apache2の設定ファイル関連を入れるフォルダ
-     |  |  |- sites-available/  # VirtualHostサイト関連の設定フォルダ
-     |  |  |  |- vhost_test1.conf  # 1つ目のVirtualHostサイトのための設定ファイル
-     |  |  |  `- vhost_test2.conf  # 2つ目のVirtualHostサイトのための設定ファイル
-     |  |  `- ports.conf        # ポート設定ファイル
-     |  |- Dockerfile
-     |  `- php.ini
-     `- docker-compose.yml
-    ```
-    - `html/vhosts/test1/index.php`
-        ```php
-        <?php echo 'This is site "1" by VirtualHost' ?>
-        ```
-    - `html/vhosts/test2/index.php`
-        ```php
-        <?php echo 'This is site "2" by VirtualHost' ?>
-        ```
-    - `php/apache2/ports.conf`
-        ```ruby
-        # ポート8000～8001番を使用可能にする
-        Listen 8000
-        Listen 8001
-        ```
-    - `php/apache2/site-available/vhost_test1.conf`
-        ```ruby
-        # VirtualHostサイト1(ポート8000番)の設定
-        <VirtualHost *:8000>
-            # サイト1のドキュメントルートは /var/www/html/vhosts/test1 とする
-            DocumentRoot /var/www/html/vhosts/test1
-        </VirtualHost>
-        ```
-    - `php/apache2/site-available/vhost_test2.conf`
-        ```ruby
-        # VirtualHostサイト2(ポート8001番)の設定
-        <VirtualHost *:8001>
-            # サイト2のドキュメントルートは /var/www/html/vhosts/test2 とする
-            DocumentRoot /var/www/html/vhosts/test2
-        </VirtualHost>
-        ```
-    - `php/Dockerfile`
-        ```ruby
-        FROM php:7-apache
-        COPY ./php.ini /usr/local/etc/php/
+### 演習課題 05
+- ホスト名 `site1.localhost` と `site2.localhost` の2サイトを運営する
+    - ※ `***.localhost` という形で localhost のサブドメインを切ると、`hosts` ファイルの設定をしなくてもローカル環境で VirtualHost が使える
+    - ※ 本番サーバでは2つのドメイン（or サブドメイン）をレジストラで取得して、サーバIPとドメインを紐付ける形になる
+- 各ホストの DocumentRoot は以下の通り
+    - `site1.localhost`
+        - DocumentRoot: `service://web:/var/www/site1/`
+        - 「サイト1」と表示する
+    - `site2.localhost`
+        - DocumentRoot: `service://web:/var/www/site2/`
+        - 「サイト2」と表示する
 
-        # -- Docker公式のPHP+ApacheイメージはDebianベースのためVirtualHostの設定は以下のように行う --
-        # ポート設定ファイルをコンテナ内にコピー
-        COPY ./vhosts/ports.conf /etc/apache2/
-        # VirtualHostに関する設定ファイルをコンテナ内にコピー
-        COPY ./vhosts/vhost_test1.conf /etc/apache2/sites-available/
-        COPY ./vhosts/vhost_test2.conf /etc/apache2/sites-available/
-        # VirtualHost有効化
-        ## /etc/apache2/sites-available/ 内にあるconfファイルの名前で有効化できる
-        RUN a2ensite vhost_test1
-        RUN a2ensite vhost_test2
+#### 実装
+[3-apache/training/05/](./3-apache/training/05/) 参照
 
-        # ※Apacheは、COPYやRUNの後に起動するようなので再起動は不要
-        # Apache再起動
-        #RUN service apache2 restart
-        ```
-    - `php/php.ini`: 内容変更なし
-    - `docker-compose.yml`
-        ```yaml
-        version: '2'
-        services:
-        php:
-            build: ./php
-            ports:
-            # ホストとPHPコンテナのポートをつなぐための設定
-            # ポート8000と8001を使用するため、以下のように設定する
-            # ※範囲指定で '8000-8001:8000-8001' と1行で記述することも可能
-            - '8000:8000'
-            - '8001:8001'
-            volumes:
-            - ./html:/var/www/html
-        ```
-- DockerComposeを環境をリビルドする
-    ```bash
-    $ docker-compose down  # コンテナ削除
-    $ docker-compose up -d --build  # コンテナをリビルドしながらバックグラウンド起動
-    ```
-- `http://localhost:8000`でサイト1、`http://localhost:8001`でサイト2が運営されていることを確認
-    - なお、80番ポートの設定をしないため、`http://localhost`にアクセスしてもエラーとなる
+#### 動作確認
+- http://site1.localhost
+    - 「サイト1」と表示されればOK
+- http://site2.localhost
+    - 「サイト2」と表示されればOK
+
+実装済みファイルを使って動作確認したい場合は、`docker-compose.yml` の volumes を以下のように書き換える
+
+```diff
+  volumes:
+-   - ./html/:/var/www/html/:rw
++   - ./training/05/site1/:/var/www/site1/
++   - ./training/05/site2/:/var/www/site2/
+    :
+-   - ./docker/web/conf/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
++   - ./training/05/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
+```
+
+```bash
+# docker-compose.yml を書き換えた状態でコンテナ再構築する
+$ docker-compose up -d
+
+# コンテナ起動ログを確認し、設定ファイルの記述ミスがないかどうか確認
+$ docker-compose logs web
+```
 
 ***
 
-## ローカルIPにホスト名割り当て（Vagrant環境のみ）
+## SSI
 
-> 以下は、Vagrant環境のみの実習である
->
-> 時間を見つけて nginx-proxy コンテナによる virtual host 設定の研修課題を追加したい
+SSI (Server Side Includes) は、PHP などのスクリプト言語が現れる以前に、動的なコンテンツ生成を行うために使われていた技術である
 
-- 現状IPアドレスでローカルホストにアクセスしているため、ホスト名でアクセスできるように設定する
-    - `http://localhost` => `http://example.com`
-    - `http://localhost:8000` => `http://site1.example.com`
-    - `http://localhost:8001` => `http://site2.example.com`
-- Vagrantに`vagrant-hostsupdater`プラグインを導入する
-    ```bash
-    # プラグインインストール
-    > vagrant plugin install vagrant-hostsupdater
+現在では、セキュリティ的にも機能的にも PHP 等のスクリプト言語を使うのが一般的だが、古いサイトでは今でも SSI を使っていることもあるため、体験しておくに越したことはない
 
-    # 確認
-    > vagrant plugin list
-    vagrant-hostsupdater (1.1.1.160, global)
-    vagrant-ignition (0.0.3, global)
-    vagrant-vbguest (0.17.2, global)
-    vagrant-winnfsd (1.4.0, global)
-    ```
-- `Vagrantfile`に割り当てるホスト名を記述する
-    ```ruby
-    : (略)
-    Vagrant.configure("2") do |config|
-        # ローカルホストにホスト名割り当て
-        config.hostsupdater.aliases = [
-        "example.com", # デフォルトサイト: localhost 用ドメイン
-        "site1.example.com", # サイト1: localhost:8000 用ドメイン
-        "site2.example.com", # サイト2: localhost:8001 用ドメイン
-        ]
-        : (略)
-    ```
-- **管理者権限**のコマンドプロンプトで `vagrant up` する
-- `training\docker-compose.yml`にホスト名の設定を追加する
-    ```yaml
-    version: '2'
-    services:
-      php:
-        build: ./php
-        ports:
-          - 80:80 # デフォルトサイト: 80番ポートをつなぐ
-          - 8000-8001:8000-8001 # VirtualHostサイト: 8000-8001番ポートをつなぐ
-        volumes:
-          - ./html:/var/www/html
-        # ホスト名設定: 環境変数`VIRTUAL_HOST`にドメイン名を設定する
-        environment:
-          VIRTUAL_HOST: example.com
-    ```
-- `training\php\apache2\sites-available\000-default.conf`にホスト名設定を追加
-    ```conf
-    <VirtualHost *:80>
-        # デフォルトサイトのホスト名を example.com に
-        ServerName example.com
-        ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/html
-        : (略)
-    </VirtualHost>
+### 演習課題 06
+- ファイル拡張子 `.shtml` のファイルを SSI 処理の対象とする
+    - 今回は動作確認のしやすさを優先して `.htaccess` に記述する
+- index ファイルとして処理する対象を `index.html`, `index.php`, `index.shtml` の3つとする
+- ファイル構成は以下の通り
+    - `service://web:/var/www/html/index.shtml`
+        - http://localhost で表示される index ファイル
+        - `time.shtml` ファイルを読み込んで表示する
+    - `service://web:/var/www/html/time.shtml`
+        - アクセスされた日時を表示する
+        - 表示形式は `Y/m/d H:M:S` とする
 
-    # VirtualHostサイト1のホスト名設定
-    <VirtualHost *:80>
-        ServerName site1.example.com
-        ProxyPreserveHost On
-        ProxyRequests Off
-        # site1は http://localhost:8000/ に転送
-        ProxyPass / http://localhost:8000/
-        ProxyPassReverse / http://localhost:8000/
-    </VirtualHost>
+#### 実装
+[3-apache/training/06/](./3-apache/training/06/) 参照
 
-    # VirtualHostサイト2のホスト名設定
-    <VirtualHost *:80>
-        ServerName site2.example.com
-        ProxyPreserveHost On
-        ProxyRequests Off
-        # site2は http://localhost:8001/ に転送
-        ProxyPass / http://localhost:8001/
-        ProxyPassReverse / http://localhost:8001/
-    </VirtualHost>
-    ```
-- リバースプロキシを使用しているため、`proxy_http`モジュールを有効化する
-    - `training\php\Dockerfile`を編集
-        ```ruby
-        FROM php:7-apache
-        COPY ./php.ini /usr/local/etc/php/
+#### 動作確認
+- http://localhost
+    - 現在日時が「西暦年/月/日 時:分:秒」の形式で表示されればOK
 
-        # -- mod_rewrite settings --
-        RUN a2enmod rewrite
-        COPY ./apache2/ports.conf /etc/apache2/
-        COPY ./apache2/sites-available/000-default.conf /etc/apache2/sites-available/
-        # -- /end mod_rewrite settings --
+実装済みファイルを使って動作確認したい場合は、`docker-compose.yml` の volumes を以下のように書き換える
 
-        # -- VirtualHost settings --
-        RUN a2enmod proxy_http # proxy_http有効化
-        COPY ./apache2/sites-available/vhost_test1.conf /etc/apache2/sites-available/
-        COPY ./apache2/sites-available/vhost_test2.conf /etc/apache2/sites-available/
-        RUN a2ensite vhost_test1
-        RUN a2ensite vhost_test2
-        # -- /end VirtualHost settings --
-        ```
-- `docker-compose up -d --build` でコンテナを起動し `http://example.com`, `http://site1.example.com`, `http://site2.example.com` にアクセス
-    - それぞれのサイトが想定通り動作すればOK
-- 以上の設定を行ったDockerCompose構成ファイルは、[5-vhosts_domain](./5-vhosts_domain)フォルダにまとめてある
+```diff
+  volumes:
+-   - ./html/:/var/www/html/:rw
++   - ./training/06/html/:/var/www/html/
+```
 
+```bash
+# docker-compose.yml を書き換えた状態でコンテナ再構築する
+$ docker-compose up -d
 
-### ローカルIPにホスト名割り当て（htaccess使用）
-
-- htaccessを使えば、複数ポートを使わずシンプルにホスト名を割り当てられる
-- `training\php\apache2\sites-available\000-default.conf`から、VirtualHostサイト1, 2の設定を削除
-    ```conf
-    <VirtualHost *:80>
-        # デフォルトサイトのホスト名を example.com に
-        ServerName example.com
-        ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/html
-        : (略)
-    </VirtualHost>
-    # 以下の設定は削除
-    ```
-- `training\php\Dockerfile`から、VirtualHostサイト1, 2の設定を削除
-    ```ruby
-    FROM php:7-apache
-    COPY ./php.ini /usr/local/etc/php/
-
-    # -- mod_rewrite settings --
-    RUN a2enmod rewrite
-    RUN a2enmod proxy_http # mod_proxy_http有効化（htaccessで[P]フラグを使うために必須）
-    COPY ./apache2/ports.conf /etc/apache2/
-    COPY ./apache2/sites-available/000-default.conf /etc/apache2/sites-available/
-    # -- /end mod_rewrite settings --
-    ```
-- `training\html\.htaccess`に、サブドメイン => サブディレクトリ 書き換えの設定を追加
-    ```conf
-    # HTTP_HOST が site1.example.com の場合、
-    # http://example.com/vhosts/test1/ にリダイレクト（リバースプロキシ[P]を使い、URLをそのままにする）
-    RewriteCond %{HTTP_HOST} ^site1\.example\.com$ [NC]
-    RewriteRule (.*) http://example.com/vhosts/test1/$1 [P,L]
-
-    # HTTP_HOST が site2.example.com の場合、
-    # http://example.com/vhosts/test2/ にリダイレクト（リバースプロキシ[P]を使い、URLをそのままにする）
-    RewriteCond %{HTTP_HOST} ^site2\.example\.com$ [NC]
-    RewriteRule (.*) http://example.com/vhosts/test2/$1 [P,L]
-    ```
-- `docker-compose up -d --build` でコンテナを起動し `http://example.com`, `http://site1.example.com`, `http://site2.example.com` にアクセス
-    - それぞれのサイトが想定通り動作すればOK
-- 以上の設定を行ったDockerCompose構成ファイルは、[5-vhosts_htaccess](./5-vhosts_htaccess)フォルダにまとめてある
+# .htaccessファイルの記述ミス等がすぐわかるようにログフォローしておくと良い
+$ docker-compose logs -f web
+```
