@@ -602,3 +602,16 @@ $ docker-compose up -d
 # .htaccessファイルの記述ミス等がすぐわかるようにログフォローしておくと良い
 $ docker-compose logs -f web
 ```
+
+***
+
+## 後片付け
+
+演習が完了したら Docker コンテナは停止 => 削除してしまって良い
+
+```bash
+# -- user@localhost
+
+# docker-compose.yml に定義された全コンテナを停止 => 削除
+$ docker-compose down
+```

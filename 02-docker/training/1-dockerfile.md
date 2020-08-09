@@ -528,3 +528,17 @@ $ docker volume <volume_name>
 # docker-compose でコンテナ削除と同時に、docker-compose 内で定義されているボリュームも削除
 $ docker-compose down -v
 ```
+
+***
+
+## 後片付け
+
+演習が完了したら Docker コンテナは停止 => 削除してしまって良い
+
+```bash
+# -- user@localhost
+
+# docker-compose.yml に定義された全コンテナを停止 => 削除
+# -v オプション: 作成したボリュームデータも削除
+$ docker-compose down -v
+```
