@@ -35,7 +35,7 @@ grepはメモリをほとんど使わない
 - ファイルを統合的に操作する `ed` エディタと、`ed` から各種機能を分離した `grep`, `sed` コマンドを実際に使ってみる
 - `ed` エディタで行うのと同等の作業を、`grep`, `sed` コマンドの組み合わせで実現できることを実感する
 
-### 準備
+#### 準備
 ```bash
 # 演習用ディレクトリ practice-01 作成
 ~/$ mkdir practice-01
@@ -56,7 +56,7 @@ This file is created by Linux terminal.
 ### </file-01>
 ```
 
-### ed エディタを使ってファイル編集
+#### ed エディタを使ってファイル編集
 - 以下の `※コメント` は、McIlroyがメモリ不足になった原因
 - `:` は ed エディタのコマンド入力を明示する接頭辞のため、実際には入力しない
 
@@ -81,7 +81,7 @@ This file is created by Ubuntu terminal.
 : q  # <= 終了(quit)せよ
 ```
 
-### grep コマンドで文字列検索
+#### grep コマンドで文字列検索
 ```bash
 # grep で file-01 ファイルから "Ubuntu" を含む行を検索
 ## grep '検索対象文字列' <ファイル> (※正規表現使用可)
@@ -89,7 +89,7 @@ This file is created by Ubuntu terminal.
 This file is created by Ubuntu terminal.
 ```
 
-### sed コマンドでファイル編集
+#### sed コマンドでファイル編集
 ```bash
 # sed で file-01 ファイルの1行目表示
 ## sed -n <行>p <ファイル>
@@ -201,7 +201,7 @@ UNIXのように、データをほかと連携しやすい形式に保つとい�
 3. 2 で得たログインシェルの内、重複するものを削除する（`uniq` コマンド）
 4. 1～3の処理をパイプでつなげる
 
-### /etc/passwd の内容読み込み
+#### /etc/passwd の内容読み込み
 ```bash
 # 演習用ディレクトリ準備
 $ mkdir practice-02
@@ -220,7 +220,7 @@ sys:x:3:3:sys:/dev:/usr/sbin/nologin
 $ cat /etc/passwd > ./1-passwd
 ```
 
-### cut コマンドでログインシェルのみ出力
+#### cut コマンドでログインシェルのみ出力
 `cut` コマンドは、ファイル or 標準入力（標準出力のパイプ）を読み込んで、それぞれの行から指定した部分のみを切り出すコマンド
 
 ```bash
@@ -275,7 +275,7 @@ $ cut -d ':' -f 7 ./1-passwd
 $ cut -d ':' -f 7 ./1-passwd > ./2-cut
 ```
 
-### uniq コマンドで重複行を削除
+#### uniq コマンドで重複行を削除
 `uniq` コマンドは、ファイル or 標準入力を読み込んで、それぞれの行の内、重複した行を削除するコマンド
 
 ただし、**隣り合った行しか比較しない**ため、先に `sort` コマンドで**並び替えを行う**のが一般的
@@ -320,7 +320,7 @@ $ sort ./2-cut | uniq
 $ sort ./2-cut | uniq > ./3-uniq
 ```
 
-### パイプでつなぐ
+#### パイプでつなぐ
 ここまでで何となく想像できるかもしれないが、基本的にLinuxコマンドはほぼすべて **ファイル or 標準入力** を受け取って **標準出力** に結果を出力するという形式になっている
 
 この 標準入力・標準出力 というアイディアがあることにより、コマンドをパイプでつなげて処理することが可能となっている
@@ -487,7 +487,7 @@ $ for ((i = 10; i >= 0; i -= 2)); do echo $i; done
     3. プレイヤーの入力（手）とコンピュータの手を比較し、勝敗を決める
     4. 1 に戻る
 
-### 実装例
+#### 実装例
 ```bash
 $ mkdir practice-03
 $ cd practice-03
@@ -560,4 +560,134 @@ $ ls -l RPS.sh
 
 # RPS.sh 実行
 $ ./RPS.sh
+```
+
+***
+
+## ファイル差分抽出
+
+### 前提知識: BusyBox について
+大抵の Linux OS には BusyBox と呼ばれるプログラムが提供されている
+
+これは、標準UNIXコマンドで重要な多数のプログラムを単一の実行ファイルに「詰め込んで」提供する、特殊な方式のプログラムである
+
+BusyBox の実行ファイルはLinux上で最小の実行ファイルとなるよう設計されており、各コマンドの実行ファイルをインストールするのに比べディスクの使用量を大幅に削減することができる
+
+そのため、特定用途のLinuxディストリビューションや組み込みシステムに適しており、「組み込みLinuxの十徳ナイフ」とも呼ばれている
+
+一般に Linux における基本コマンドは、`/bin/` ディレクトリ内に格納されているが、このディレクトリを誤って削除してしまった場合、ほぼあらゆるコマンドが使用できなくなる
+
+しかし、BusyBox という十徳ナイフを利用することで、基本コマンドを緊急的に利用することが可能となる
+
+参考: [busyboxに救われた話](https://qiita.com/S_Katz/items/a82554447491fb8079f0)
+
+### 課題 04: BusyBox と Ubuntu 20.04 基本コマンド比較
+BusyBox には標準UNIXコマンドが網羅的に格納されているが、それが Ubuntu 20.04 の基本コマンドとどの程度同じで、どの程度違うのかを知っておくことは重要である
+
+そのため本演習では、コマンドとパイプを用いて、BusyBox, Ubuntu 20.04 それぞれで使えるコマンドを整理する
+
+1. BusyBoxで使えるコマンドを `busybox --list` で取得し `busybox.list` ファイルに保存
+2. Ubuntu 20.04 の基本コマンドを列挙し `ubuntu.list` ファイルに保存
+    - `ls -l /bin/` コマンドで `/bin/` ディレクトリ内にあるファイルを列挙する => これが基本コマンド
+    - ただし、シンボリックリンクやディレクトリ等は除外し、通常ファイルのみ抽出する
+    - `ls -l` では、連続した空白でフィールドを区切られているため `\t` (タブ) 区切りに変換することで `cut` コマンドで必要なフィールドを抽出できる
+        - `ls -l` の結果:
+            - `パーミッション リンク数 所有者 所有グループ サイズ 更新月 更新日 更新時間or年 ファイル名`
+        - 上記より9番目のフィールドを抽出すれば良い
+3. `comm` コマンドで `busybox.list` と `ubuntu.list` を比較し、共通して使えるコマンドを抽出 => `common.list` に保存
+    - 基本的な使い方: `comm [option] <file1> <file2>`
+        - `-1` オプション: 1列目（ファイル1のみに含まれる行）を出力しない
+        - `-2` オプション: 2列目（ファイル2のみに含まれる行）を出力しない
+        - `-3` オプション: 3列目（両方のファイルに含まれる行）を出力しない
+    - `comm` コマンドは、`uniq` コマンド同様、`sort` しながら比較を行う必要がある
+        - `comm [option] <(sort <file1>) <(sort <file2>)`
+            - `<(コマンド)`: カッコ内のコマンドの実行結果を標準入力（ファイル）として渡す
+4. `comm` コマンドで BusyBox でしか使えないコマンドを抽出 => `busybox-only.list` に保存
+5. 同様に Ubuntu 20.04 でしか使えないコマンドを抽出 => `ubuntu-only.list` に保存
+6. `common.list` の各行を `busybox.list`, `ubuntu.list` と比較し、存在しない行がある場合はその行をエラーとして出力する
+    - 共通して存在する行を抽出しているので、何も出力されなければOK
+7. `busybox-only.list` の各行を `busybox.list`, `ubuntu.list` と比較し以下の条件でエラーとして出力する
+    - `busybox.list` に存在しない行がある場合: `! コマンド名` と出力
+    - `ubuntu.list` に存在する行がある場合: `? コマンド名` と出力
+8. `ubuntu-only.list` の各行を `busybox.list`, `ubuntu.list` と比較し以下の条件でエラーとして出力する
+    - `busybox.list` に存在する行がある場合: `? コマンド名` と出力
+    - `ubuntu.list` に存在しない行がある場合: `! コマンド名` と出力
+
+#### busybox.list, ubuntu.list の作成
+```bash
+# 演習用ディレクトリ practice-04 作成
+$ mkdir practice-04
+
+# practice-04 ディレクトリに移動
+$ cd practice-04
+
+# BusyBox で使えるコマンド一覧を busybox.list に保存
+$ busybox --list > busybox.list
+
+# Ubuntu 20.04 で使える基本コマンド一覧を ubuntu.list に保存
+## /bin/ 内ファイルを列挙
+## |> 先頭が '-' (通常ファイル) の行のみ抽出
+## |> 連続した空白を '\t' (タブ) に置換
+## |> '\t' 区切りで cut して 9番目のフィールドのみ抽出
+$ ls -l /bin/ | grep '^-' | sed 's/[\t ]\+/\t/g' | cut -f 9 > ubuntu.list
+
+# => 環境ごとに利用可能なコマンドは異なるはず
+```
+
+#### 2つのファイルの比較
+```bash
+# busybox.list のソート結果と ubuntu.list のソート結果を comm コマンドで比較
+# => 共通行のみ抽出して common.list に保存
+$ comm -1 -2 <(sort busybox.list) <(sort ubuntu.list) > common.list
+
+# file1 のみに含まれる行を抽出して busybox-only.list に保存
+$ comm -2 -3 <(sort busybox.list) <(sort ubuntu.list) > busybox-only.list
+
+# file2 のみに含まれる行を抽出して ubuntu-only.list に保存
+$ comm -1 -3 <(sort busybox.list) <(sort ubuntu.list) > ubuntu-only.list
+```
+
+#### 抽出結果の確認
+```bash
+# common.list の各行を busybox.list, ubuntu.list と比較 => 存在しない行がある場合はエラー文出力
+## ファイルの各行に対する処理: cat <ファイル名> | while read <変数>; do ...; done
+## 指定したテキストがファイル内に存在しないどうか: test "$(grep <テキスト> <ファイル名>)" = ""
+$ cat common.list | while read line; do
+    # grep で特殊文字をエスケープしないで検索するには -F オプションを使う
+    ## [ コマンドなどは正規表現の特殊文字なので、本来は \[ のようにエスケープして検索する必要がある
+    # 行全体と正確にマッチする行を検索するために -x オプションを使う
+    ## 例えば普通に `grep zip` などとすると 'zipinfo' などもマッチしてしまう
+    if [ "$(grep -xF $line busybox.list)" = "" ]; then
+        echo $line
+    fi
+    if [ "$(grep -xF $line ubuntu.list)" = "" ]; then
+        echo $line
+    fi
+done
+
+# => 何も表示されなければOK
+
+# busybox-only.list の各行を busybox.list, ubuntu.list と比較 => エラーある場合はエラー文出力
+$ cat busybox-only.list | while read line; do
+    if [ "$(grep -xF $line busybox.list)" = "" ]; then
+        echo "! $line"
+    fi
+    if [ "$(grep -xF $line ubuntu.list)" != "" ]; then
+        echo "? $line"
+    fi
+done
+
+# => 何も表示されなければOK
+
+# ubuntu-only.list の各行を busybox.list, ubuntu.list と比較 => エラーある場合はエラー文出力
+$ cat ubuntu-only.list | while read line; do
+    if [ "$(grep -xF $line ubuntu.list)" = "" ]; then
+        echo "! $line"
+    fi
+    if [ "$(grep -xF $line busybox.list)" != "" ]; then
+        echo "? $line"
+    fi
+done
+
+# => 何も表示されなければOK
 ```
