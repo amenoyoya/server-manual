@@ -296,3 +296,66 @@ $ exec $SHELL -l
 ```
 
 設定後、適当な GUI アプリケーションを実行し、日本語入力できるようになっていれば OK
+
+***
+
+## CUDA on WSL2
+
+WSL2 で GPU (CUDA) を使えるようにする
+
+- 参考:
+    - https://qiita.com/ksasaki/items/ee864abd74f95fea1efa
+    - https://qiita.com/yukoba/items/c4a45435c6ee5d66706d
+
+### Environment
+- OS: Windows 10 Insider Preview Build 20150 以降
+    - Insider Preview に参加していない場合:
+        1. `Win + X` |> `N` => 設定ダイアログ
+        2. 更新とセキュリティ > Window Insider Preview > 開始する
+        3. 「DEVチャンネル」に参加する
+            - ![windows-insider-preview.png](./img/windows-insider-preview.png)
+        4. 再起動する
+        5. `Win + X` |> `N` => 設定 > 更新とセキュリティ > Windows Update
+            - 更新のチェックから最新ビルドバージョンをダウンロード＆インストールする
+        6. Updateのインストールが完了して OS Build version 20150 以降になればOK
+            - OS Build version は 設定 > システム > 詳細情報 から確認
+- GPU: nVidia GeForce RTX 2060
+
+### WSL2 起動時にマウントエラーが起こる場合
+Ubuntu 20.04 on WSL2 を起動したときに、「ファイル システムの 1 つをマウント中にエラーが発生しました。」という旨のエラーメッセージが出ることがある
+
+この場合は https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi から最新の WSL2 Linux カーネルをダウンロードし、インストールする
+
+その後、`wsl --shutdown` コマンドで一旦 WSL2 をシャットダウンし、再び `wsl` を起動すれば大抵直る
+
+### Setup
+[NVIDIA Drivers for CUDA on WSL](https://developer.nvidia.com/cuda/wsl/download) から WSL2 用の CUDA ドライバをダウンロードする（nVidia Developer メンバー登録が必要）
+
+CUDA on WSL ドライバをインストールしたら WSL2 環境で nvidia-docker2 (GPU対応コンテナを作成するためのDocker拡張) をインストールする
+
+```bash
+# -- Ubuntu 20.08 on WSL2
+
+# CUDA Toolkit 11.0 インストール
+## DockerでしかCUDAを使わない場合はインストール不要
+## WSL2 環境では Linux 用の NVIDIA ドライバをインストールしてはいけない => cuda-toolkit-<version> をインストール
+# $ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+# $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
+# $ sudo apt update && sudo apt install -y cuda-toolkit-11-0
+
+# NVIDIA Container Toolkit (nvidia-docker2) 導入
+$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+$ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+$ curl -s -L https://nvidia.github.io/libnvidia-container/experimental/$distribution/libnvidia-container-experimental.list | sudo tee /etc/apt/sources.list.d/libnvidia-container-experimental.list
+$ sudo apt update && sudo apt install -y nvidia-docker2
+
+# docker 再起動
+$ sudo service docker restart
+
+# 動作確認
+$ docker run --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --gpus all --rm -it nvcr.io/nvidia/tensorflow:20.03-tf2-py3
+
+# => 「nvidia-container-cli: detection error: stat failed: /dev/dxg: no such file or directory」のエラーが発生
+# => 頓挫
+```
