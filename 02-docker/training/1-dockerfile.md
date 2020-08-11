@@ -173,10 +173,10 @@ Linuxパッケージマネージャ（Debian の `apt-get`, CentOS の `yum`, Al
     - ※ my.cnf はパーミッション 644 に設定すること
 
 #### 構成
-構成は案の一つである（参照: [2-lamp](./2-lamp)）
+構成は案の一つである（参照: [2-lamp/lamp/](./2-lamp/lamp/)）
 
 ```bash
-2-lamp/
+lamp/
 |_ docker/ # dockerコンテナ設定
 |  |_ db/
 |  |  |_ Dockerfile # dbサービスのビルド手順
@@ -200,7 +200,7 @@ Linuxパッケージマネージャ（Debian の `apt-get`, CentOS の `yum`, Al
 # -- user@localhost
 
 # docker-compose.yml のあるディレクトリに移動する
-# $ cd /path/to/2-lamp/
+# $ cd /path/to/2-lamp/lamp/
 
 # docker-compose.yml に記述してある全てのサービス（コンテナ）をビルドする
 $ docker-compose build
@@ -450,10 +450,10 @@ services:
     - `./web-data/` をdbサービスコンテナ内のMySQLデータ `/var/lib/mysql/` にマウント
 
 #### 構成
-[2-volume](./2-volume) を参照
+[2-lamp/volume/](./2-lamp/volume/) を参照
 
 ```bash
-2-volume/
+volume/
 |_ docker/ # dockerコンテナ設定
 |  |_ db/
 |  |  |_ my.cnf # MySQL設定ファイル => service://db:/etc/mysql/conf.d/my.cnf
@@ -510,9 +510,9 @@ services:
 演習課題 02 のMySQLデータを新規ボリューム `db-data` で永続化する
 
 #### 構成
-[2-volume2](./2-volume2) 参照
+[2-lamp/volume2/](./2-lamp/volume2/) 参照
 
-特に [docker-compose.yml](./2-volume2/docker-compose.yml) の内容をよく確認しておく
+特に [docker-compose.yml](./2-lamp/volume2/docker-compose.yml) の内容をよく確認しておく
 
 ### Dockerデータボリュームの確認・削除
 ```bash
