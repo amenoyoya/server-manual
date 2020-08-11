@@ -1,9 +1,18 @@
-<mxfile host="embed.diagrams.net" modified="2020-07-30T16:28:28.319Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.47.3 Chrome/78.0.3904.130 Electron/7.3.2 Safari/537.36" etag="KlLocuOKgBMyFJQJTDot" version="13.5.7">
+<mxfile host="embed.diagrams.net" modified="2020-08-10T17:25:26.805Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.47.3 Chrome/78.0.3904.130 Electron/7.3.2 Safari/537.36" etag="W4pHeMPcGykw0fC-dFv4" version="13.6.2">
     <diagram id="6hGFLwfOUW9BJ-s0fimq" name="Page-1">
-        <mxGraphModel dx="602" dy="567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="741" dy="667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="57" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="160" y="740" width="560" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="仮想スイッチ" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontSize=14;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="810" width="300" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="670" y="560" width="310" height="170" as="geometry"/>
+                </mxCell>
                 <mxCell id="10" value="" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#000000;fontSize=14;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="70" y="40" width="260" height="245" as="geometry"/>
                 </mxCell>
@@ -49,96 +58,342 @@
                 <mxCell id="20" value="MySQLデータベース通信はポート3306 を介して行われる" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;strokeColor=#000000;fontSize=14;direction=south;base=13;size=30;position=0.41;" parent="1" vertex="1">
                     <mxGeometry x="210" y="149" width="260" height="51" as="geometry"/>
                 </mxCell>
-                <mxCell id="21" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="21" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="600" y="174" width="200" height="116" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="webコンテナ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="22" value="webコンテナ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="645" y="174" width="110" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" value="/var/www/index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="23" value="/var/www/index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="620" y="209.5" width="160" height="71" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/97_Docker-128.png;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="24" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/97_Docker-128.png;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="590" y="159" width="60" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="25" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="25" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="850" y="174" width="200" height="116" as="geometry"/>
                 </mxCell>
-                <mxCell id="26" value="webコンテナ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="26" value="webコンテナ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="895" y="174" width="110" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="27" value="/var/www/index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" vertex="1" parent="1">
+                <mxCell id="27" value="/var/www/index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="870" y="210" width="160" height="71" as="geometry"/>
                 </mxCell>
-                <mxCell id="28" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/97_Docker-128.png;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="28" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/97_Docker-128.png;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="1000" y="159" width="60" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" value="http://localhost" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="30" value="http://localhost" style="rounded=1;whiteSpace=wrap;html=1;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="720" y="50" width="200" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="29" value="" style="dashed=0;outlineConnect=0;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.weblogos.chrome;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="29" value="" style="dashed=0;outlineConnect=0;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.weblogos.chrome;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="715" y="40" width="40" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="31" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;exitX=0;exitY=0;exitDx=130;exitDy=0;exitPerimeter=0;entryX=0.35;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="23" target="30">
+                <mxCell id="31" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;exitX=0;exitY=0;exitDx=130;exitDy=0;exitPerimeter=0;entryX=0.35;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="23" target="30" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="760" y="200" as="sourcePoint"/>
                         <mxPoint x="810" y="150" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="32" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;entryX=0.638;entryY=0.993;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.14;exitY=0.004;exitDx=0;exitDy=0;exitPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="27" target="30">
+                <mxCell id="32" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;entryX=0.638;entryY=0.993;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.14;exitY=0.004;exitDx=0;exitDy=0;exitPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="27" target="30" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="800" y="470" as="sourcePoint"/>
                         <mxPoint x="850" y="420" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="35" value="実体 index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="35" value="実体 index.php" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="1120" y="209.5" width="160" height="71" as="geometry"/>
                 </mxCell>
-                <mxCell id="37" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fontSize=14;exitX=0.995;exitY=0.521;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#fff2cc;strokeColor=#d6b656;" edge="1" parent="1" source="27" target="35">
+                <mxCell id="37" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fontSize=14;exitX=0.995;exitY=0.521;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" source="27" target="35" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="1050" y="380" as="sourcePoint"/>
                         <mxPoint x="1100" y="330" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="38" value="Volume&lt;br&gt;マウント" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="38" value="Volume&lt;br&gt;マウント" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="1050" y="174" width="70" height="64" as="geometry"/>
                 </mxCell>
-                <mxCell id="39" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+                <mxCell id="39" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="600" y="375" width="200" height="116" as="geometry"/>
                 </mxCell>
-                <mxCell id="41" value="" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" vertex="1" parent="1">
+                <mxCell id="41" value="" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="620" y="410.5" width="160" height="71" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1">
+                <mxCell id="43" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="699.5" y="295" as="sourcePoint"/>
                         <mxPoint x="699.5" y="365" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="44" value="コンテナと一緒にデータやソースコードも消える" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="44" value="コンテナと一緒にデータやソースコードも消える" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="710" y="300" width="170" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="45" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+                <mxCell id="45" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="850" y="375" width="200" height="116" as="geometry"/>
                 </mxCell>
-                <mxCell id="46" value="" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" vertex="1" parent="1">
+                <mxCell id="46" value="" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fontSize=14;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="870" y="410.5" width="160" height="71" as="geometry"/>
                 </mxCell>
-                <mxCell id="47" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;fillColor=#f8cecc;strokeColor=#b85450;" edge="1" parent="1">
+                <mxCell id="47" value="" style="shape=flexArrow;endArrow=classic;html=1;fontSize=14;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="949.5" y="295" as="sourcePoint"/>
                         <mxPoint x="949.5" y="365" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="50" value="コンテナが消えても&lt;br&gt;ホスト側にデータが残る" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=14;" vertex="1" parent="1">
+                <mxCell id="50" value="コンテナが消えても&lt;br&gt;ホスト側にデータが残る" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="1000" y="300" width="170" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;exitX=0;exitY=0;exitDx=160;exitDy=30;exitPerimeter=0;" edge="1" parent="1" source="46" target="35">
+                <mxCell id="51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;exitX=0;exitY=0;exitDx=160;exitDy=30;exitPerimeter=0;" parent="1" source="46" target="35" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1200" y="441"/>
                         </Array>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="83" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=14;" edge="1" parent="1" source="52" target="53">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="" style="aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image;image=img/lib/active_directory/internet_globe.svg;" vertex="1" parent="1">
+                    <mxGeometry x="75" y="910" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontSize=14;" edge="1" parent="1" source="53" target="63">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="" style="image;html=1;image=img/lib/clip_art/networking/Wireless_Router_128x128.png" vertex="1" parent="1">
+                    <mxGeometry x="190" y="910" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="" style="fontColor=#0066CC;verticalAlign=top;verticalLabelPosition=bottom;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.pc;" vertex="1" parent="1">
+                    <mxGeometry x="345" y="915" width="60" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="89" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="58" target="59">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/wpzoom-developer-icon-set/500/29-128.png;fillColor=#ffffff;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="820" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.physical_network_adapter;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="750" width="50" height="28.999999999999996" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;fontSize=14;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="245" y="560" width="140" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="TCP/IPスタック&lt;br&gt;Windowsカーネル" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;fontSize=14;strokeColor=#9673a6;" vertex="1" parent="1">
+                    <mxGeometry x="245" y="680" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="ホスト&lt;br&gt;Windows 10" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="265" y="590" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=14;" edge="1" parent="1" source="63" target="58">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.physical_network_adapter;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="920.5" width="50" height="28.999999999999996" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="64" target="65">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/wpzoom-developer-icon-set/500/29-128.png;fillColor=#ffffff;" vertex="1" parent="1">
+                    <mxGeometry x="530" y="820" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.physical_network_adapter;" vertex="1" parent="1">
+                    <mxGeometry x="525" y="750" width="50" height="28.999999999999996" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;fontSize=14;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="560" width="140" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="仮想イーサネット&lt;br&gt;アダプター&lt;br&gt;(vEthernet)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="160" y="740" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="172.16.0.0～&lt;br&gt;172.31.255.255&lt;br&gt;の任意IPが振られる" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="370" y="741.25" width="140" height="62.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="71" value="仮想イーサネット&lt;br&gt;アダプター&lt;br&gt;(eth0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="575" y="745" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="72" target="73">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="825" y="630"/>
+                            <mxPoint x="730" y="630"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;" edge="1" parent="1" source="72" target="74">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="825" y="630"/>
+                            <mxPoint x="850" y="630"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="72" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn2.iconfinder.com/data/icons/fatcow/32x32/network_ethernet.png;fillColor=#ffffff;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="805" y="565" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" value="コンテナ1&lt;br&gt;172.17.0.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;fontSize=14;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="680" y="660" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="74" value="コンテナ2&lt;br&gt;172.17.0.2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;fontSize=14;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="800" y="660" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="75" value="・・・" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="920" y="680" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="72">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="825" y="605" as="sourcePoint"/>
+                        <mxPoint x="950" y="660" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="825" y="630"/>
+                            <mxPoint x="950" y="630"/>
+                            <mxPoint x="950" y="660"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="81" value="仮想イーサネット&lt;br&gt;アダプター&lt;br&gt;(docker0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="845" y="560" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="通常は&lt;br&gt;172.17.0.0/16" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="675" y="565" width="125" height="47.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="63" target="64">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="315" y="890"/>
+                            <mxPoint x="550" y="890"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="88" value="Hyper-V" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="170" y="840" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;fontSize=14;strokeColor=#9673a6;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="680" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;fontStyle=1" edge="1" parent="1" source="65" target="72">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="550" y="520"/>
+                            <mxPoint x="825" y="520"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="93" value="TCP/IPスタック&lt;br&gt;Linuxカーネル" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fillColor=#e1d5e7;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="685" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="ホスト&lt;br&gt;Ubuntu 20.04" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fillColor=#dae8fc;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="590" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/97_Docker_logo_logos-128.png;fillColor=#ffffff;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="670" y="520" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="規定のスイッチが eth0 の場合&lt;br&gt;localhost はこのイーサネットを指す&lt;br&gt;127.0.0.1 = 172.X.Y.Z" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#fff2cc;fontSize=14;direction=south;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="700" y="750" width="300" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="インターネット" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="960" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="スイッチングハブ／ルータ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="167.5" y="960" width="95" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="物理イーサネットアダプター／Wifi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="285" y="955" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1160" y="780" width="560" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="101" value="仮想スイッチ" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontSize=14;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+                    <mxGeometry x="1280" y="850" width="300" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" source="105" target="103" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="103" value="" style="aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image;image=img/lib/active_directory/internet_globe.svg;" vertex="1" parent="1">
+                    <mxGeometry x="1075" y="950" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="104" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="114" target="105" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="105" value="" style="image;html=1;image=img/lib/clip_art/networking/Wireless_Router_128x128.png" vertex="1" parent="1">
+                    <mxGeometry x="1190" y="950" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="106" value="" style="fontColor=#0066CC;verticalAlign=top;verticalLabelPosition=bottom;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.pc;" vertex="1" parent="1">
+                    <mxGeometry x="1345" y="955" width="60" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" source="109" target="108" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="108" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/wpzoom-developer-icon-set/500/29-128.png;fillColor=#ffffff;" vertex="1" parent="1">
+                    <mxGeometry x="1295" y="860" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.physical_network_adapter;" vertex="1" parent="1">
+                    <mxGeometry x="1290" y="790" width="50" height="28.999999999999996" as="geometry"/>
+                </mxCell>
+                <mxCell id="110" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;fontSize=14;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="1245" y="600" width="140" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="111" value="TCP/IPスタック&lt;br&gt;Windowsカーネル" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;fontSize=14;strokeColor=#9673a6;" vertex="1" parent="1">
+                    <mxGeometry x="1245" y="720" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="112" value="ホスト&lt;br&gt;Windows 10" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1265" y="630" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="113" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" source="108" target="114" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="114" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.physical_network_adapter;" vertex="1" parent="1">
+                    <mxGeometry x="1290" y="960.5" width="50" height="28.999999999999996" as="geometry"/>
+                </mxCell>
+                <mxCell id="115" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" source="117" target="116" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="116" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn3.iconfinder.com/data/icons/wpzoom-developer-icon-set/500/29-128.png;fillColor=#ffffff;" vertex="1" parent="1">
+                    <mxGeometry x="1530" y="860" width="40" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="117" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.physical_network_adapter;" vertex="1" parent="1">
+                    <mxGeometry x="1525" y="790" width="50" height="28.999999999999996" as="geometry"/>
+                </mxCell>
+                <mxCell id="118" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;fontSize=14;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="1480" y="600" width="140" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="119" value="仮想イーサネット&lt;br&gt;アダプター&lt;br&gt;(vEthernet)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1160" y="780" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="120" value="172.16.0.0～&lt;br&gt;172.31.255.255&lt;br&gt;の任意IPが振られる" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1370" y="781.25" width="140" height="62.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="121" value="仮想イーサネット&lt;br&gt;アダプター&lt;br&gt;(eth0)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1575" y="785" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" source="116" target="114" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1550" y="930"/>
+                            <mxPoint x="1315" y="930"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="123" value="Hyper-V" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1170" y="880" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="124" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;fontSize=14;strokeColor=#9673a6;" vertex="1" parent="1">
+                    <mxGeometry x="1480" y="720" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="125" value="TCP/IPスタック&lt;br&gt;Linuxカーネル" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fillColor=#e1d5e7;" vertex="1" parent="1">
+                    <mxGeometry x="1485" y="725" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="126" value="ホスト&lt;br&gt;Ubuntu 20.04" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fillColor=#dae8fc;" vertex="1" parent="1">
+                    <mxGeometry x="1500" y="630" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="128" value="インターネット" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1040" y="1000" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="129" value="スイッチングハブ／ルータ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1167.5" y="1000" width="95" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="130" value="物理イーサネットアダプター／Wifi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="995" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="131" value="Windows NAT により&lt;br&gt;プライベートIP → グローバルIP の変換が行われ&lt;br&gt;インターネットアクセスが可能" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;fillColor=#ffe6cc;fontSize=14;direction=west;position2=0.79;base=19;size=20;position=0.73;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1430" y="940" width="330" height="90" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

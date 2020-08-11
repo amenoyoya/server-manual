@@ -182,7 +182,7 @@ mod_php などが提供される以前の技術で、分離されたHTMLファ�
 
 セキュリティ的に脆弱な部分も多く、現在では mod_php や fastCGI などで代替されている
 
-SSI を利用するには設定ファイルで `Options +Includes` を設定し、Includes機能を有効化する必要がある
+SSI を利用するには、`a2enmod include` コマンドで mod_include を有効化した上で、設定ファイルに `Options +Includes` を設定する必要がある
 
 また、SSI ディレクティブで解析されるファイル拡張子を以下のように設定する必要がある
 

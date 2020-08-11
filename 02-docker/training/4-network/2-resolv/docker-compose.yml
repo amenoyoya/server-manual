@@ -1,0 +1,29 @@
+version: "3"
+
+# 自動作成される docker-compose ネットワークに所属するコンテナ
+services:
+  # server サービスコンテナ
+  server:
+    image: busybox
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    # ターミナルを利用可能に
+    tty: true
+    # 自動作成される docker-compose ネットワークに所属することを明示
+    ## => サービス名で名前解決が可能となる
+    networks:
+      - default
+  
+  # client サービスコンテナ
+  client:
+    image: busybox
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    # ターミナルを利用可能に
+    tty: true
+    # 自動作成される docker-compose ネットワークに所属することを明示
+    ## => サービス名で名前解決が可能となる
+    networks:
+      - default

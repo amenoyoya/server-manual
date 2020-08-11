@@ -17,7 +17,7 @@ services:
     volumes:
       # ./html/ => service://web:/var/www/html/
       ## コンテナ側からデータ読み書きできるように rw モードでマウント
-      # - ./html/:/var/www/html/:rw
+      - ./html/:/var/www/html/:rw
       
       # 演習01動作確認用
       # - ./training/01/html/:/var/www/html/
@@ -29,7 +29,7 @@ services:
       # - ./training/05/site1/:/var/www/site1/
       # - ./training/05/site2/:/var/www/site2/
       # 演習06動作確認用
-      - ./training/06/html/:/var/www/html/
+      # - ./training/06/html/:/var/www/html/
 
       # --------------------------------------------------
 
