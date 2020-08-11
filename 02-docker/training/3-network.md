@@ -58,7 +58,9 @@ IP                     | IP(1)     | IP(2)     | IP(3)     | IP(4)
     - => 10進数表記: `0` ～ `255`
     - ただし、最下位ビットに `0`, `255` は使えないため `1` ～ `254` が答えとなる
 
-以上より、`docker0` ネットワークでは、各コンテナに `172.17.0.1` ～ `172.17.255.254` のIPv4アドレスが割り当てられることになる
+以上より、`docker0` ネットワークでは、`172.17.0.1` ～ `172.17.255.254` のIPv4アドレスが割り当て可能となる
+
+ただし、最下位ビット `1` はゲートウェイとして利用されるため、実際に各コンテナには `172.17.0.2` ～ `172.17.255.254` のIPv4アドレスが割り振られる
 
 - 参考: [サブネットマスク電卓](https://note.cman.jp/network/subnetmask.cgi)
 
@@ -138,8 +140,8 @@ $ docker network inspect 1-default_default
             # ...
             "Config": [
                 {
-                    "Subnet": "192.168.80.0/20", # ネットワーク範囲
-                    "Gateway": "192.168.80.1"
+                    "Subnet": "192.168.112.0/20", # ネットワーク範囲
+                    "Gateway": "192.168.112.1"
                 }
             ]
         },
@@ -147,17 +149,13 @@ $ docker network inspect 1-default_default
         "Containers": {
             "3910e5b9cc840bdfba2e91558ca08f5ecbcad8abb63d3a31d6ddcb24b5c29ad1": {
                 "Name": "1-default_server_1",
-                "EndpointID": "8d6287166a33c89404112e6cdc34e839814ba12a391c4a17bb0fa0cf946951eb",
-                "MacAddress": "02:42:c0:a8:50:03",
-                "IPv4Address": "192.168.80.3/20", # serverサービスコンテナIP
-                "IPv6Address": ""
+                # ...
+                "IPv4Address": "192.168.112.2/20", # serverサービスコンテナIP
             },
             "e58bfe80e657a851e645bae6ca40ced9fc19be13e1fd1496d6e9ebcac1862bfc": {
                 "Name": "1-default_client_1",
-                "EndpointID": "09fcd628ed01e6892b6cc0f65944f64e4d0b8a6aa6de95192306dd6d14bf63e6",
-                "MacAddress": "02:42:c0:a8:50:02",
-                "IPv4Address": "192.168.80.2/20", # clientサービスコンテナIP
-                "IPv6Address": ""
+                # ...
+                "IPv4Address": "192.168.112.3/20", # clientサービスコンテナIP
             }
         },
         # ...
@@ -166,7 +164,7 @@ $ docker network inspect 1-default_default
 
 # 3. serverサービスコンテナ内で hostname -i コマンドを使ってIP確認
 $ docker-compose exec server hostname -i
-192.168.80.3 # <= docker network inspect 1-default_default で確認したIPと同じはず
+192.168.112.2 # <= docker network inspect 1-default_default で確認したIPと同じはず
 
 # 4. serverサービスコンテナで nc 簡易サーバ（ポート: 8888）起動
 $ docker-compose exec server nc -lp 8888
@@ -182,7 +180,7 @@ $ docker-compose exec server nc -lp 8888
 
 # 5. clientサービスコンテナで serverサービスコンテナの nc 簡易サーバ（ポート: 8888）に接続
 ## 接続先（serverサービスコンテナ）のIPは、上記で確認したIPを指定
-$ docker-compose exec client nc 192.168.80.3 8888
+$ docker-compose exec client nc 192.168.112.2 8888
 
 # => 接続されると、入力待ち状態になる
 
@@ -196,6 +194,8 @@ test
 ```
 
 ![docker-server-client.png](./img/docker-server-client.png)
+
+![1-default_network.png](./img/1-default_network.png)
 
 #### 後片付け
 ```bash
@@ -272,6 +272,34 @@ test
 $ docker-compose down
 ```
 
+### 一方向アクセス用の名前解決
+現在ではすでに非推奨の方法となっているが、`links` を利用することで一方向の名前解決も可能
+
+例えば今回の場合、`client` サービスコンテナから `server` サービスコンテナへの一方向アクセスさえできれば良いため、`client` 側に `links` として `server` を定義すれば、明示的にネットワーク所属を指定しなくても名前解決ができる
+
+```yaml
+version: "3"
+
+# 自動作成される docker-compose ネットワークに所属するコンテナ
+services:
+  # server サービスコンテナ
+  server:
+    image: busybox
+    tty: true
+  
+  # client サービスコンテナ
+  client:
+    image: busybox
+    tty: true
+    # links で server サービスコンテナとリンク
+    links:
+      # <サービス名>:<エイリアス名> で定義
+      # <サービス名> のみ記述した場合は エイリアス名 = サービス名 となる
+      - server:target
+```
+
+上記のように設定すれば、`client` サービスコンテナから `target` というエイリアス名で `server` サービスコンテナに接続できる
+
 ***
 
 ## ネットワークアドレスを指定して仮想ネットワークを作成
@@ -293,6 +321,7 @@ networks:
      config:
        # 仮想ネットワークのネットワーク範囲を指定
        ## 172.68.0.0/16 の場合、172.68.0.1 ～ 172.68.255.254 のIPアドレスを割り振れる
+       ## ただし 172.68.0.1 はゲートウェイに使われる
        - subnet: 172.68.0.0/16
 
 # 作成するサービスコンテナ
@@ -361,17 +390,13 @@ $ docker network inspect 3-ip_app_net
         "Containers": {
             "72499eace4d3eaeed6d96ceb2f2c58b06acc5e53a944d25db986529ae01f6bef": {
                 "Name": "3-ip_client_1",
-                "EndpointID": "f5eb8742388aee8b7072793e1e3039145f6fc8e105914f0718f9fb019cad7c8a",
-                "MacAddress": "02:42:b2:1b:00:14",
+                # ...
                 "IPv4Address": "178.27.0.20/16", # clientサービスコンテナのIP
-                "IPv6Address": ""
             },
             "97bc9ce7083b1331243e165f657bdf71e9d958fa0288a0389ef0c49630fcd4a3": {
                 "Name": "3-ip_server_1",
-                "EndpointID": "6ff48e41e165641e5c43f25b2a7dd7a115d89edee61907c67b9718c778be5d97",
-                "MacAddress": "02:42:b2:1b:00:0a",
+                # ...
                 "IPv4Address": "178.27.0.10/16", # serverサービスコンテナのIP
-                "IPv6Address": ""
             }
         },
         # ...
@@ -405,3 +430,219 @@ test
 # 後片付け
 $ docker-compose down
 ```
+
+***
+
+## docker のデフォルトブリッジネットワーク
+
+最初に説明したとおり、docker デフォルトの仮想ネットワークとして、docker インストール時点で作成される `docker0` ブリッジネットワークが存在している（大抵の場合は `172.17.0.0/16`）
+
+この仮想ネットワークは `docker network ls` コマンドで確認したときに `bridge` という名前で見つけることができる
+
+docker-compose で各コンテナをこの `bridge` ネットワークに所属させたい場合は `network_mode: bridge` を設定する必要がある
+
+なお、デフォルト `bridge` ネットワーク内のコンテナ同士で名前解決を行うことはできないので、`links` で一方向リンクするか、IPアドレスで通信する必要がある
+
+### 演習課題 04
+1. 以下のような2つのサービスコンテナを**それぞれ別のyamlファイルに定義**する
+    - `server` サービスコンテナ:
+        - `server.yml` に定義
+        - `busybox` イメージを利用
+        - ターミナル利用可能に（`tty: true`）
+        - `bridge` デフォルトネットワークに所属
+    - `client` サービスコンテナ:
+        - `client.yml` に定義
+        - `busybox` イメージを利用
+        - ターミナル利用可能に（`tty: true`）
+        - `bridge` デフォルトネットワークに所属
+2. 上記2つのyamlファイルを docker-compose でビルド＆起動する
+    - `docker-compose -f <yaml_file> up -d`
+3. `bridge` デフォルトネットワークのIPと所属コンテナを確認する
+    - 上記のように別のyamlファイルに定義されていたコンテナだとしても、同一のネットワーク範囲に配置されることを確認
+    - 各コンテナのIPを確認
+4. `server` で `nc` 簡易サーバ（ポート: 8888）を起動し、`client` から接続できるか確認する
+
+#### 実装
+[4-network/4-bridge/](./4-network/4-bridge/) 参照
+
+#### 動作確認
+```bash
+# -- user@localhost
+
+# 4-network/4-bridge/ ディレクトリに移動
+# cd /path/to/4-network/4-bridge/
+
+# server.yml からコンテナビルド＆起動
+$ docker-compose -f server.yml up -d
+
+# client.yml からコンテナビルド＆起動
+$ docker-compose -f client.yml up -d
+
+# bridge ネットワークと所属するコンテナを一覧表示
+$ docker network inspect bridge
+[
+    {
+        "Name": "bridge",
+        # ...
+        "IPAM": {
+            # ...
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16", # ネットワーク範囲
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        },
+        # ...
+        "Containers": {
+            "b483d8f42002a59b8562702c858002a45be0fbb2260f12898a4e73cabf58aa1c": {
+                "Name": "4-bridge_client_1",
+                # ...
+                "IPv4Address": "172.17.0.3/16", # clientサービスコンテナIP
+                "IPv6Address": ""
+            },
+            "b8f8a67df6044a6df9278c41125503954bfa829b42807a2330152f37d5149255": {
+                "Name": "4-bridge_server_1",
+                # ...
+                "IPv4Address": "172.17.0.2/16", # serverサービスコンテナIP
+            }
+        },
+        # ...
+    }
+]
+
+# serverサービスコンテナで nc 簡易サーバ（ポート: 8888）起動
+$ docker-compose -f server.yml exec server nc -lp 8888
+
+# => アイドル状態になるため、一旦このままにして別のターミナル起動
+```
+
+```bash
+# -- user@localhost
+
+# 4-network/4-bridge/ ディレクトリに移動
+# cd /path/to/4-network/4-bridge/
+
+# clientサービスコンテナで serverサービスコンテナの nc 簡易サーバ（ポート: 8888）に接続
+## 接続先: 上記で確認したIP 172.17.0.2 => serverサービスコンテナ
+$ docker-compose -f client.yml exec client nc 172.17.0.2 8888
+
+### <stdin>
+# test と入力してエンター
+test
+# => serverコンテナ側のターミナルで「test」という文字列が受信されればOK
+
+# => Ctrl + C で終了
+### </stdin>
+
+# 後片付け
+$ docker-compose -f server.yml down
+$ docker-compose -f client.yml down
+```
+
+***
+
+## docker コンテナへのポートフォワーディング
+
+以上のように、基本的に docker コンテナは、ホストLinuxとは別のネットワーク内で稼働するため、localhost から docker コンテナにアクセスすることは通常できない
+
+しかし、`ports` でポートフォワーディング設定を行うと、localhost の特定ポートと docker コンテナの特定ポートを接続することができるようになる
+
+これにより localhost => コンテナ の一方向アクセスが可能である
+
+```yaml
+services:
+  <service_name>:
+    # ポートフォワーディング設定
+    ports:
+      # localhost:1234 と <service_name>コンテナ:80 を接続
+      - "1234:80"
+```
+
+### 演習課題 05
+- 以下のような `docker-compose.yml` を作成する
+    - `web` サービスコンテナ:
+        - `nginx:alpine` イメージ利用
+        - デフォルト `bridge` ネットワーク所属
+        - `localhost:1234` を `service://web:80` にポートフォワーディング
+        - `./index.html` ファイルを `service://web:/usr/share/nginx/html/index.html` にマウント
+            - 中身は `Hello, nginx!` とする
+- dockerコンテナをビルド＆起動し http://localhost:1234 にアクセス確認
+    - `Hello, nginx!` と表示されればOK
+
+#### 実装
+[4-bridge/5-port/](./4-bridge/5-port/) 参照
+
+#### 動作確認
+```bash
+# -- user@localhost
+
+# 4-network/5-port/ ディレクトリに移動
+# cd /path/to/4-network/5-port/
+
+# コンテナビルド＆起動
+$ docker-compose up -d
+
+# アクセスログ確認用にログフォロー
+$ docker-compose logs -f web
+
+# http://localhost:1234 にアクセス
+# => 「Hello, nginx!」と表示されればOK
+# => アクセスログが記録されることを確認したら Ctrl + C でログフォロー終了
+
+# 後片付け
+$ docker-compose down
+```
+
+![docker-port_forwarding.png](./img/docker-port_forwarding.png)
+
+***
+
+## host ネットワーク
+
+最後に `host` ネットワークについて解説する
+
+これは文字通り、Linuxホストと同一のネットワーク（localhost）である
+
+localhost 上でコンテナを動かすことになるため、ポートフォワーディングは当然利用できない（コンテナのポート = localhostのポート になる）
+
+docker-compose で各コンテナをこの `host` ネットワークに所属させたい場合は `network_mode: host` を設定する必要がある
+
+なお、デフォルト `bridge` ネットワークと同様に、`host` ネットワーク内のコンテナ同士も名前解決を行うことはできないので、`links` で一方向リンクするか、ポート番号で通信する必要がある（IPアドレスは全て `127.0.0.1` になってしまうため、IPアドレスによるアクセスはできない）
+
+### 演習課題 06
+- 以下のような `docker-compose.yml` を作成する
+    - `web` サービスコンテナ:
+        - `nginx:alpine` イメージ利用
+        - localhost 上で稼働: http://localhost:80 => service://web:80
+        - `./index.html` ファイルを `service://web:/usr/share/nginx/html/index.html` にマウント
+            - 中身は `Hello, nginx!` とする
+- dockerコンテナをビルド＆起動し http://localhost にアクセス確認
+    - `Hello, nginx!` と表示されればOK
+    - ※ HTTP ポートは 80 であるため http://localhost = http://localhost:80 = service://web:80
+
+#### 実装
+[4-bridge/6-host/](./4-bridge/6-host/) 参照
+
+#### 動作確認
+```bash
+# -- user@localhost
+
+# 4-network/6-host/ ディレクトリに移動
+# cd /path/to/4-network/6-host/
+
+# コンテナビルド＆起動
+$ docker-compose up -d
+
+# アクセスログ確認用にログフォロー
+$ docker-compose logs -f web
+
+# http://localhost にアクセス
+# => 「Hello, nginx!」と表示されればOK
+# => アクセスログが記録されることを確認したら Ctrl + C でログフォロー終了
+
+# 後片付け
+$ docker-compose down
+```
+
+![docker-localhost.png](./img/docker-localhost.png)

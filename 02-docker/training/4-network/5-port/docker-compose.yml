@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  # web サービスコンテナ
+  web:
+    image: nginx:alpine
+    # ログ出力フォーマット: 基本的に json-file で良い
+    logging:
+      driver: json-file
+    # デフォルト bridge ネットワークに所属
+    network_mode: bridge
+    # ポートフォワーディング
+    ports:
+      # http://localhost:1234 => service://web:80
+      - 1234:80
+    # ボリュームマウント
+    volumes:
+      # host:./index.html => service://web:/usr/share/nginx/html/index.html
+      - ./index.html:/usr/share/nginx/html/index.html
