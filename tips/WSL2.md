@@ -299,6 +299,59 @@ $ exec $SHELL -l
 
 ***
 
+## Google Chrome by Puppeteer on WSL2
+
+せっかく WSL2 上で GUI アプリケーションを実行できるようになったため、Google Chrome ブラウザをインストールしてみる
+
+```bash
+# リポジトリ登録
+$ echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
+$ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+
+# google-chrome インストール
+$ sudo apt update && sudo apt install google-chrome-stable
+
+# google-chrome 起動
+$ google-chrome
+
+# => Google Chrome ブラウザが起動すればOK
+```
+
+### Puppeteer でブラウザ操作してみる
+```bash
+# puppeteer インストール
+$ yarn add puppeteer
+```
+
+```javascript
+// app.js
+const puppeteer = require('puppeteer')
+const fs = require('fs')
+
+const main = async () => {
+  // headless: false => GUIブラウザ起動モードで puppeteer 起動
+  const browser = await puppeteer.launch({
+    headless: false
+  })
+  const page = await browser.newPage();
+  // google.com に移動
+  await page.goto('https://www.google.com', {waitUntil: 'domcontentloaded'})
+  // スクリーンショット保存
+  fs.writeFileSync('screenshot.png', await page.screenshot({fullPage: true}))
+  // 終了
+  await browser.close()
+}
+
+main()
+```
+
+```bash
+# 実行
+$ node app.js
+```
+
+***
+
 ## CUDA on WSL2
 
 WSL2 で GPU (CUDA) を使えるようにする
