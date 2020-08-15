@@ -381,22 +381,67 @@ Ubuntu 20.04 on WSL2 を起動したときに、「ファイル システムの 
 
 その後、`wsl --shutdown` コマンドで一旦 WSL2 をシャットダウンし、再び `wsl` を起動すれば大抵直る
 
-### Setup
-[NVIDIA Drivers for CUDA on WSL](https://developer.nvidia.com/cuda/wsl/download) から WSL2 用の CUDA ドライバをダウンロードする（nVidia Developer メンバー登録が必要）
+### Update
+WSL2 Linux カーネルバージョンが `4.9.121` 以上である必要があるため、バージョン確認＆アップデートを行う
 
-CUDA on WSL ドライバをインストールしたら WSL2 環境で nvidia-docker2 (GPU対応コンテナを作成するためのDocker拡張) をインストールする
+`Win + X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# カーネルバージョン確認
+## 規定ディストロ以外のLinuxカーネルバージョンを確認したい場合は
+## > wsl -d <ディストロ名> uname -r
+> wsl uname -r
+4.19.121-microsoft-standard
+
+# 上記で確認したバージョンが 4.19.121 未満である場合はアップデートする
+## 規定ディストロ以外のLinuxカーネルバージョンをアップデートしたい場合は
+## > wsl -d <ディストロ名> --update
+> wsl --update
+```
+
+### Setup
+- 参考:
+    - [待ってました CUDA on WSL2](https://qiita.com/ksasaki/items/ee864abd74f95fea1efa) で上手くインストールできなかったため、[WSL 2 で GPU を使う](https://www.kkaneko.jp/tools/wsl/wsl_tensorflow2.html) を参考
+    - [ついにWSL2+docker+GPUを動かせるようになったらしいので試してみる](https://qiita.com/yamatia/items/a70cbb7d8f5101dc76e9)
+
+[NVIDIA Drivers for CUDA on WSL](https://developer.nvidia.com/cuda/wsl/download) から WSL2 用の CUDA ドライバをダウンロード＆インストールする（nVidia Developer メンバー登録が必要）
+
+CUDA on WSL ドライバをインストールしたら WSL2 環境で CUDA Toolkit 等をインストールする
 
 ```bash
 # -- Ubuntu 20.08 on WSL2
 
-# CUDA Toolkit 11.0 インストール
-## DockerでしかCUDAを使わない場合はインストール不要
-## WSL2 環境では Linux 用の NVIDIA ドライバをインストールしてはいけない => cuda-toolkit-<version> をインストール
-# $ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
-# $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
-# $ sudo apt update && sudo apt install -y cuda-toolkit-11-0
+# CUDA Toolkit インストール
+## Ubuntu 20.04 では CUDA 10.1 がインストールされる
+$ sudo apt -yV install nvidia-cuda-dev nvidia-cuda-toolkit nvidia-cuda-toolkit-gcc
 
-# NVIDIA Container Toolkit (nvidia-docker2) 導入
+# pyenv で Python 3.8.5 インストール
+$ pyenv install 3.8.5
+
+# python => 2.7.18
+# python3 => 3.8.5
+$ pyenv global 2.7.18 3.8.5
+
+# GPU版 Tensorflow 導入
+$ pip3 install --upgrade pip setuptools
+$ pip3 install tensorflow-gpu tensorflow_datasets
+
+# GPUが認識できているか確認
+$ python3 -c "from tensorflow.python.client import device_lib; print(device_lib.list_local_devices())"
+ :
+physical_device_desc: "device: XLA_CPU device"
+, name: "/device:XLA_GPU:0" # <= GPUを認識していることを確認
+device_type: "XLA_GPU"
+memory_limit: 17179869184
+ :
+```
+
+### Dockerで動かす
+```bash
+# nvidia-docker2 導入
+## 現在 nvidia-docker2 は非推奨で nvidia-container-toolkit を導入するほうが良いが、
+## nvidia-docker2 インストール時に nvidia-container-toolkit も一緒にインストールされるため
+## とりあえず以下のインストールコマンドでOK
 $ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
@@ -407,8 +452,17 @@ $ sudo apt update && sudo apt install -y nvidia-docker2
 $ sudo service docker restart
 
 # 動作確認
-$ docker run --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --gpus all --rm -it nvcr.io/nvidia/tensorflow:20.03-tf2-py3
+$ docker run --gpus all nvcr.io/nvidia/k8s/cuda-sample:nbody nbody -gpu -benchmark
+ :
+> Windowed mode
+> Simulation data stored in video memory
+> Single precision floating point simulation
+> 1 Devices used for simulation
+MapSMtoCores for SM 7.5 is undefined.  Default to use 64 Cores/SM
+GPU Device 0: "GeForce RTX 2060" with compute capability 7.5 # <= GPU認識
 
-# => 「nvidia-container-cli: detection error: stat failed: /dev/dxg: no such file or directory」のエラーが発生
-# => 頓挫
+> Compute 7.5 CUDA device: [GeForce RTX 2060]
+30720 bodies, total time for 10 iterations: 62.380 ms
+= 151.285 billion interactions per second
+= 3025.707 single-precision GFLOP/s at 20 flops per interaction
 ```
