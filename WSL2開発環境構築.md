@@ -555,3 +555,108 @@ ansible 2.9.10
   executable location = /home/linuxbrew/.linuxbrew/bin/ansible
   python version = 3.8.3 (default, May 30 2020, 10:59:58) [GCC 5.4.0 20160609]
 ```
+
+***
+
+## WSL2 Linux ボリュームを別ドライブに作成する場合
+
+Dockerを日常使いしていると、ストレージ容量が不足しがちになる
+
+そのため、WSL2 Linux ボリュームを外部ストレージ等に作成できると便利である
+
+ここでは、LxRunOfflineを使って、Ubuntu 20.04 システムボリュームをDドライブに作成してみる
+
+### LxRunOffline 導入
+`Win + X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# LxRunOffline インストール
+> choco install -y lxrunoffline
+
+# => C:\tools\lxrunoffline にインストールされる
+
+# PATH等の環境変数を反映するために一度 PowerShell 再起動
+
+# PowerShell再起動したらバージョン確認
+> lxrunoffline version
+LxRunOffline v3.5.0
+```
+
+### Setup
+WSL2 用のディストロ appx (Windowsストアアプリ) をインストールした状態でないと別ドライブへのボリューム作成もできないため、あらかじめ Ubuntu 20.04 ディストロ appx はインストールして、初回起動を済ませておく必要がある
+
+`Win + X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# LxRunOffline 用の Ubuntu 20.04 (focal) コアシステムファイルをダウンロード
+## https://lxrunoffline.apphb.com/download/{distro}/{version}
+## ダウンロード可能なディストロ一覧: https://github.com/DDoSolitary/LxRunOffline/wiki
+> Invoke-WebRequest -Uri https://lxrunoffline.apphb.com/download/Ubuntu/focal -OutFile $env:HOME\Downloads\ubuntu-focal.tar.gz -UseBasicParsing
+
+# D:\wsl\ubuntu-focal に ubuntu-focal というディストロ名で Ubuntu 20.04 ボリューム作成
+> lxrunoffline i -n ubuntu-focal -d D:\wsl\ubuntu-focal -f $env:HOME\Downloads\ubuntu-focal.tar.gz -UseBasicParsing
+
+# => ボリューム削除したい場合は
+## > lxrunoffline ui -n <ディストロ名>
+
+# インストール済みディストロ一覧確認
+> wsl -l
+Ubuntu-20.04 (既定) # <= appx でインストールした Ubuntu 20.04 本体
+ubuntu-focal # <= D:\wsl\ubuntu-focal にインストールした Ubuntu 20.04 独自ボリューム
+
+# ubuntu-focal ディストロを規定に設定し、WSL2にアップグレード
+> wsl --set-default ubuntu-focal
+> wsl --set-version ubuntu-focal 2
+
+# 確認
+> wsl -l -v
+ NAME            STATE           VERSION
+* ubuntu-focal    Stopped         2
+  Ubuntu-20.04    Stopped         2
+
+# ubuntu-focal 起動
+> wsl
+```
+
+```bash
+# -- root@ubuntu-focal(wsl2)
+
+# システムアップグレード
+% apt update && apt upgrade -Y
+
+# sudo コマンドインストール
+% apt install -y sudo
+
+# ログイン用ユーザ作成: user (任意名でOK)
+% adduser user
+New password: # <= ログインパスワード設定
+Retype new password: # <= パスワード再入力
+Enter the new value, or press ENTER for the default
+        Full Name []: # <= そのままENTER
+        Room Number []: # <= そのままENTER
+        Work Phone []: # <= そのままENTER
+        Home Phone []: # <= そのままENTER
+        Other []: # <= そのままENTER
+Is the information correct? [Y/n]  # <= そのままENTER
+
+# user ユーザに sudo 権限付与
+% gpasswd -a user sudo
+
+# user ユーザが sudo コマンドを実行するときにパスワード不要にする（任意）
+% echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# user ユーザの UID を確認
+% id -u user
+1000 # <= 環境により異なる（メモしておく）
+
+# 終了
+% exit
+```
+
+```powershell
+# ubuntu-focal ディストロのデフォルトユーザを先ほど作成したユーザに設定
+## -v <UID>: 先ほど確認した UID を設定（上記の場合 1000）
+> lxrunoffline su -n ubuntu-focal -v 1000
+
+# => 以降 ubuntu-focal on WSL2 ターミナルのログインユーザは user (UID: 1000) になる
+```
