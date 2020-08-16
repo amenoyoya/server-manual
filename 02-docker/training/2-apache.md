@@ -209,7 +209,7 @@ SSI ディレクティブの基本的な書き方は以下の通り
 
 php:7.4-apache イメージを使って、webサービスコンテナのみ作成する
 
-また、本来 `.htaccess` ファイルは使用しないのが無難だが、設定ファイル設定の反映のために毎回コンテナを再起動するの手間であるため、本演習では `.htaccess` ファイルを使ったアクセス制御を行う（php:7.4-apache ベースコンテナでは、Apacheの再起動 = コンテナの再起動）
+また、本来 `.htaccess` ファイルは使用しないのが無難だが、設定ファイル設定の反映のために毎回コンテナを再起動するのは手間であるため、本演習では `.htaccess` ファイルを使ったアクセス制御を行う（php:7.4-apache ベースコンテナでは、Apacheの再起動 = コンテナの再起動）
 
 ### 構成
 [3-apache](./3-apache) を参照
@@ -266,7 +266,7 @@ $ docker-compose logs -f web
 Apacheの `mod_rewrite` 機能を使い、リダイレクト処理を実現する
 
 ### 演習課題 01
-現状 indexファイルは省略しても省略しなくてもアクセス可能である（http://localhost と http://localhost/index.php , http://localhost/index.html は同じページとなる）
+現状 indexファイルは省略しても省略しなくてもアクセス可能である（http://localhost と http://localhost/index.php は同じページとなる）
 
 これは前述の通り、SEO上望ましくない
 
@@ -286,7 +286,7 @@ Apacheの `mod_rewrite` 機能を使い、リダイレクト処理を実現す�
 - リソースを表現する名詞で構成する
 
 #### 実装
-[3-apache-training/01/html/.htaccess](./3-apache-training/01/html/.htaccess) 参照
+[3-apache/training/01/html/.htaccess](./3-apache/training/01/html/.htaccess) 参照
 
 #### 動作確認
 - http://localhost/index.php
@@ -327,7 +327,7 @@ $ docker-compose logs -f web
     - 演習課題 01 と同様に `index.php(.html)` は省略された状態に正規化（302リダイレクト）
 
 #### 実装
-[3-apache-training/02/html/](./3-apache-training/02/html/) 参照
+[3-apache/training/02/html/](./3-apache/training/02/html/) 参照
 
 #### 動作確認
 - http://localhost
