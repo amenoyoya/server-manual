@@ -340,6 +340,6 @@ $ docker-compose down
     - `.htaccess` ファイルを使ったアクセス制御
     - VirtualHostを用いた複数サイト運営方法
     - SSI を使った動的サイト構築
-- [PHP開発入門](./3-network.md)
+- [Dockerネットワーク](./3-network.md)
     - WSL2 + Docker 環境の内部ネットワーク構成について学ぶ
     - Docker ネットワークの基礎およびコンテナ間通信について学ぶ
