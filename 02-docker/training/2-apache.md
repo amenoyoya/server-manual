@@ -73,9 +73,9 @@ Options +FollowSymLinks
     - アクセスがある度に設定を読み込むため、設定が増えるほどパフォーマンスが低下する
 
 ### リダイレクト制御
-Apacheサーバでリダイレクト（あるURLへのアクセスを別のURLへ変更）を行いたい場合は、`mod_redirect` を有効化する必要がある
+Apacheサーバでリダイレクト（あるURLへのアクセスを別のURLへ変更）を行いたい場合は、`mod_redirect` モジュールを有効化する必要がある
 
-通常、`mod_redirect` をApacheサーバインストール時に一緒にインストールされるが、Debian系Linuxの場合は、明示的にモジュールを有効化する必要があるので注意
+通常、`mod_redirect` モジュールはApacheサーバインストール時に一緒にインストールされるが、Debian系Linuxの場合は、明示的にモジュールを有効化する必要があるので注意
 
 ```bash
 # Debian系Linuxの場合 mod_redirect を明示的に有効化
