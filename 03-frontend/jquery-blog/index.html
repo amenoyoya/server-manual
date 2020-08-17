@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブログ風サイト by jQuery</title>
+    <!-- Tailwind CSS -->
+    <link href="https://unpkg.com/tailwindcss@^1.6/dist/tailwind.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <!-- ページ -->
+    <!--
+        flex flex-col: 内部コンテンツを縦並びに (display: flex; flex-direction: column;)
+        h-screen: 高さを100vh（画面高さと同じ）に固定 (height: 100vh;)
+    -->
+    <div class="flex flex-col h-screen">
+        <!-- ヘッダ部 -->
+        <!--
+            flex flex-row: 内部コンテンツを横並びに (display: flex; flex-direction: row;)
+            justify-between: 内部コンテンツを両端に揃えて等間隔配置 (display: flex; justify-content: space-between;)
+            p-4: 内部コンテンツの上下左右パディングを 1rem に (padding: 1rem;)
+            border-b: ヘッダコンテンツの下に 1px の線を表示 (border-bottom: 1px solid;)
+            items-center: アイテムを中央寄せする (align-items: center;)
+        -->
+        <header class="flex flex-row justify-between p-4 border-b items-center">
+            <!-- 左上表示ロゴ -->
+            <!--
+                font-semibold: やや太めのフォントに (font-weight: 600;)
+                text-xl: フォントサイズを 1.25rem に (font-size: 1.25rem;)
+                leading-tight: 行高さをフォントの 1.25倍に (line-height: 1.25)
+            -->
+          <h1 class="font-semibold text-xl leading-tight">jQuery Blog</h1>
+          <!-- 右上ボタン: ブログ記事投稿ページへのリンク -->
+          <!--
+            py-1: 内部コンテンツの上下パディングを 0.25rem に (padding-top: 0.25rem; padding-bottom: 0.25rem;)
+            px-4: 内部コンテンツの左右パディングを 1rem に (padding-left: 1rem; padding-right: 1rem;)
+            border-2: コンテンツを 2px の線で囲む (border-width: 2px;)
+            border-green-800: コンテンツを囲む線の色を #276749 に (border-color: #276749;)
+            rounded: コンテンツを囲む線を 0.25rem 丸める (border-radius: 0.25rem;)
+          -->
+          <a class="py-1 px-4 border-2 border-green-800 rounded" href="/post.html">記事投稿</a>
+        </header>
+        <!-- /ヘッダ部 -->
+        
+        <!-- メインコンテンツ: 記事一覧 -->
+        <!--
+            bg-gray-400: 背景色を #CBD5E0 に (background-color: #CBD5E0;)
+            py-1: 内部コンテンツの上下パディングを 0.25rem に (padding-top: 0.25rem; padding-bottom: 0.25rem;)
+            px-4: 内部コンテンツの左右パディングを 1rem に (padding-left: 1rem; padding-right: 1rem;)
+            h-full: 高さを100%（親コンテンツ高さと同じ）に固定 (height: 100%;)
+        -->
+        <div class="bg-gray-400 py-1 px-4 h-full">
+            <!-- 記事カード -->
+            <!--
+                block: aタグのようなインライン要素をブロック要素化 (display: block;)
+                bg-white: 背景色を #FFF に (background-color: #FFF)
+                transition: アニメーション有効化 (transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;)
+                duration-300: アニメーション速度を 300ms に (transition-duration: 300ms;)
+                transform: コンテンツの変形を有効化
+                hover:-translate-y-1: マウスオーバー時 y位置を -0.25rem する (--transform-translate-y: -0.25rem;)
+            -->
+            <a class="block bg-white transition duration-300 transform hover:-translate-y-1" href="/1.html">
+                <article class="p-2 m-1">
+                    <h2 class="font-medium">記事1</h2>
+                    <p>これは記事テスト1です。テスト...</p>
+                    <!--
+                        text-sm: フォントサイズを 0.875rem に (font-size: 0.875rem;)
+                        text-teal-500: フォント色を #48bb78 に (color: #48bb78;)
+                        text-right: テキストを右寄せ (text-align: right;)
+                    -->
+                    <div class="text-sm text-teal-500 text-right">
+                        <date>2020-08-18 13:35:20</date>
+                    </div>
+                </article>
+            </a>
+            <a class="block bg-white transition duration-300 transform hover:-translate-y-1" href="/2.html">
+                <article class="p-2 m-1">
+                    <h2 class="font-medium">記事2</h2>
+                    <p>これは記事テスト2です。テスト...</p>
+                    <div class="text-sm text-teal-500 text-right">
+                        <date>2020-08-18 13:35:20</date>
+                    </div>
+                </article>
+            </a>
+            <a class="block bg-white transition duration-300 transform hover:-translate-y-1" href="/3.html">
+                <article class="p-2 m-1">
+                    <h2 class="font-medium">記事3</h2>
+                    <p>これは記事テスト3です。テスト...</p>
+                    <div class="text-sm text-teal-500 text-right">
+                        <date>2020-08-18 13:35:20</date>
+                    </div>
+                </article>
+            </a>
+            <a class="block bg-white transition duration-300 transform hover:-translate-y-1" href="/4.html">
+                <article class="p-2 m-1">
+                    <h2 class="font-medium">記事4</h2>
+                    <p>これは記事テスト4です。テスト...</p>
+                    <div class="text-sm text-teal-500 text-right">
+                        <date>2020-08-18 13:35:20</date>
+                    </div>
+                </article>
+            </a>
+        </div>
+        <!-- /メインコンテンツ -->
+      </div>
+    <!-- /ページ -->
+</body>
+</html>
