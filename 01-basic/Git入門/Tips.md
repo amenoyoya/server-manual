@@ -10,6 +10,30 @@ Git の少し特殊な使い方やトラブルシューティング集
 
 ***
 
+## エラー解決: The following untracked working tree files would be overwritten by merge
+
+サーバへのデプロイを Git で行う場合、サーバ内でファイルの変更や新規作成を行ったりしていると、`git pull` 時に `The following untracked working tree files would be overwritten by merge` というエラーが発生することがある
+
+このエラーが出た場合、サーバで作成・更新した方の変更を優先したい場合は、Git の設計を間違えている
+
+この場合、対象のファイルは `.gitignore` で Git の管理対象から外すべきである
+
+一方、Git 側で更新された変更を優先したい場合、デプロイコマンドは以下のようにすると良い
+
+```bash
+# リモートリポジトリ: origin の master ブランチを pull
+$ git pull origin master
+
+# 上記のようなエラーが発生した場合、シェルコマンドの終了ステータスは 1 になる（成功時は 0）
+$ if [ "$?" = "1" ]; then
+    # git pull が失敗した場合は FETCH_HEAD の状態にハードリセットすれば良い
+    git fetch origin
+    git reset --hard FETCH_HEAD
+fi
+```
+
+***
+
 ## リモートのタグやブランチ削除
 
 ```bash
