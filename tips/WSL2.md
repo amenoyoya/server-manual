@@ -200,20 +200,20 @@ $ exec $SHELL -l
 ```
 
 ### 動作確認
-動作確認用に Git GUI をインストールして起動してみる
+動作確認用に gedit (GNOMEデスクトップの標準テキストエディタ) をインストールして起動してみる
 
 ```bash
-# git gui インストール
-$ sudo apt install -y git-gui
+# gedit インストール
+$ sudo apt install -y gedit
 
-# git gui 起動
+# gedit 起動
 ## 後ろに & をつけないと、GUI アプリケーション終了までコマンドを受け付けなくなる
-$ git gui &
+$ gedit &
 ```
 
-Git GUI が起動すれば OK
+gedit が起動すれば OK
 
-![git-gui.png](./img/git-gui.png)
+![gedit.png](./img/gedit.png)
 
 ### VcxSrv のスタートアップ登録
 上記設定をすると、VcxSrv が起動していないと WSL2 も起動しない状態になる
@@ -295,7 +295,10 @@ EOS
 $ exec $SHELL -l
 ```
 
-設定後、適当な GUI アプリケーションを実行し、日本語入力できるようになっていれば OK
+#### 動作確認
+gedit を起動して、日本語入力できるか確認してみる
+
+![gedit-ime.png](./img/gedit-ime.png)
 
 ***
 
@@ -312,10 +315,12 @@ $ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-
 $ sudo apt update && sudo apt install google-chrome-stable
 
 # google-chrome 起動
-$ google-chrome
+$ google-chrome &
 
 # => Google Chrome ブラウザが起動すればOK
 ```
+
+![chrome.png](./img/chrome.png)
 
 ### Puppeteer でブラウザ操作してみる
 ```bash
