@@ -1,0 +1,316 @@
+#!/bin/bash
+
+case "$1" in
+"init")
+    mkdir -p ./docker/db/dump/
+    mkdir -p ./docker/db/initdb.d/
+    mkdir -p ./docker/web/conf/
+    mkdir -p ./www/app/public/
+    tee ./docker/db/dump/.gitignore << \EOS
+/*
+!/.gitignore
+EOS
+    touch ./docker/db/initdb.d/.gitkeep
+    tee ./docker/db/my.cnf << \EOS
+[mysqld]
+character-set-server = 'utf8mb4'
+[client]
+default-character-set = 'utf8mb4'
+EOS
+    tee ./docker/web/conf/000-default.conf << \EOS
+# Apacheバージョン非表示
+ServerTokens ProductOnly
+ServerSignature off
+
+# HTTP TRACE 機能を無効化
+TraceEnable off
+
+<IfModule mod_headers.c>
+    # PHPバージョン非表示
+    ## PHP-FPM の場合は php.ini: expose_php を設定
+    Header unset X-Powered-By
+
+    # X-Frame-Options HTTP レスポンスヘッダ送信
+    ## WordPress管理画面などで必要になる場合があればコメントアウトする
+    Header append X-Frame-Options "DENY"
+
+    # Strict-Transport-Security レスポンスヘッダ送信
+    Header add Strict-Transport-Security "max-age=15768000"
+</IfModule>
+
+# .ht 系ファイル非表示
+<Files ~ "^\.ht">
+    Deny from all
+</Files>
+
+# VirtualHost: default site
+<VirtualHost *:80>
+    DocumentRoot /var/www/app/public/
+
+    ErrorLog /var/log/httpd/error.log
+    CustomLog /var/log/httpd/access.log combined
+
+    <Directory /var/www/app/>
+        # indexの存在しないディレクトリアクセス時、ファイルリストを表示させない: -Indexes
+        # 拡張子なしURLを拡張子有ファイルにリダイレクト可能に（コンテントネゴシエーション無効化）: -MultiViews
+        Options -Indexes -MultiViews +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOS
+    tee ./docker/web/conf/php.ini << \EOS
+; debug: display errors
+display_errors = on
+
+; hide php version info
+expose_php = off
+
+; sendmail => msmtp (mstmp-mta: replace msmtp => default MTA: sendmail)
+;; SMTP seetings =>  ~/.msmtprc
+sendmail_path = "/usr/bin/msmtp -t -i"
+
+; Japanese settings
+[Date]
+date.timezone = "Asia/Tokyo"
+[mbstring]
+mbstring.internal_encoding = "UTF-8"
+EOS
+    tee ./docker/web/Dockerfile << \EOS
+FROM php:7.4-apache
+
+# composer インストール
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+ENV PATH $PATH:~/.composer/vendor/bin
+
+# 開発に必要なパッケージ等のインストール
+RUN apt-get update && \
+    apt-get install -y wget curl git libicu-dev mailutils unzip vim \
+        libfreetype6-dev libjpeg62-turbo-dev libpng-dev libxml2-dev && \
+    docker-php-ext-install intl gd xml mysqli pdo pdo_mysql && \
+    : 'create log directory' && \
+    mkdir -p /var/log/httpd/ && \
+    : 'install msmtp (sendmail 互換の送信専用 MTA; ssmtp の後継)' && \
+    : 'msmtp-mta も入れておくとデフォルトの MTA を sendmail から置き換えてくれるため便利' && \
+    apt-get install -y msmtp msmtp-mta && \
+    : 'www-data ユーザで sudo 実行可能に' && \
+    apt-get install -y sudo && \
+    echo 'www-data ALL=NOPASSWD: ALL' >> '/etc/sudoers' && \
+    : 'cleanup apt-get caches' && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 作業ディレクトリ
+## docker://web:/var/www/ => host://./www/
+## DocumentRoot: docker://web:/var/www/app/public/
+WORKDIR /var/www/app/
+
+# 作業者: www-data
+USER www-data
+
+# スタートアップコマンド（docker up の度に実行される）
+## 環境変数を引き継いで sudo 実行するため -E オプションをつけている
+## execute docker://web:/var/www/startup.sh
+CMD ["sudo", "-E", "/bin/bash", "/var/www/startup.sh"]
+EOS
+    tee ./www/.gitignore << \EOS
+/*
+!/.gitignore
+!/.msmtprc
+!/startup.sh
+EOS
+    tee ./www/.msmtprc << \EOS
+# Set default values for all following accounts.
+defaults
+auth on
+tls on
+logfile ~/.msmtp.log
+
+# local smtp server: service://mailhog:1025
+account mailhog
+host mailhog
+port 1025
+from root@localhost
+## mailhog not require authentication
+auth off
+tls off
+
+# google smtp server (example)
+account gmail
+host smtp.gmail.com
+port 587
+from youraccount@gmail.com
+user youraccount@gmail.com
+password yourpassword
+
+# Set a default account
+account default : mailhog
+EOS
+    tee ./www/startup.sh << \EOS
+#!/bin/bash
+# -- sudo www-data@service://web/
+
+# 環境変数 UID が与えられていれば www-data ユーザIDを $UID に合わせる
+if [ "$UID" != "" ]; then
+    # www-data ユーザIDを変更
+    usermod -u $UID www-data
+    # www-data のホームディレクトリのパーミッション修正
+    chown -R www-data:www-data /var/www/
+fi
+
+# ~/.msmtprc のパーミッション修正
+chown www-data:www-data /var/www/.msmtprc
+chmod 600 /var/www/.msmtprc
+
+# Apache をフォアグランドで起動
+a2enmod rewrite
+a2enmod headers
+a2enmod ssl
+apachectl -D FOREGROUND
+EOS
+    if [ ! -e './www/app/public/index.php' ]; then
+        echo '<?php phpinfo() ?>' > ./www/app/public/index.php
+    fi
+    tee ./.env << \EOS
+WEB_PORT=8080
+DB_PORT=8033
+PMA_PORT=8057
+MAILHOG_PORT=8025
+EOS
+    tee ./docker-compose.yml << \EOS
+version: "3.8"
+
+networks:
+  # プロジェクト内仮想ネットワーク
+  ## 同一ネットワーク内の各コンテナはサービス名で双方向通信可能
+  lampnet:
+    driver: bridge
+    # ネットワークIP範囲を指定する場合
+    # ipam:
+    #   driver: default
+    #   config:
+    #     # 仮想ネットワークのネットワーク範囲を指定
+    #     ## 172.68.0.0/16 の場合、172.68.0.1 ～ 172.68.255.254 のIPアドレスを割り振れる
+    #     ## ただし 172.68.0.1 はゲートウェイに使われる
+    #     - subnet: 172.68.0.0/16
+
+volumes:
+  # dbコンテナ永続化用ボリュームコンテナ
+  db-data:
+    driver: local
+
+services:
+  # web service container: php + apache
+  web:
+    build: ./docker/web/
+    logging:
+      driver: json-file
+    # restart: always
+    tty: true
+    # 所属ネットワーク
+    networks:
+      - lampnet
+    # ポートフォワーディング
+    ports:
+      # http://localhost:${WEB_PORT} => service://web:80
+      - "${WEB_PORT:-8000}:80"
+    volumes:
+      # ~www-data: host://./www/ => docker://web:/var/www/
+      ## DocumentRoot: host://./www/app/public/ => docker://web:/var/app/public/
+      - ./www/:/var/www/
+      # 設定ファイル
+      - ./docker/web/conf/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/web/conf/php.ini:/etc/php.d/php.ini
+    environment:
+      # USER_ID: www-data のユーザIDを docker 実行ユーザIDに合わせたい場合に利用 (export USER_ID=$UID)
+      ## ユーザIDを合わせないと ./www/ (docker://web:/var/www/) 内のファイル編集が出来なくなる
+      UID: ${USER_ID}
+      # Composer設定
+      COMPOSER_ALLOW_SUPERUSER: 1 # root権限での実行を許可
+      COMPOSER_NO_INTERACTION: 1  # 非対話的にインストール
+      # MySQL接続設定
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: database
+      # TimeZone設定
+      TZ: Asia/Tokyo
+  
+  # db service container: MySQL server
+  db:
+    image: mysql:5.7
+    logging:
+      driver: json-file
+    # restart: always
+    tty: true
+    # ポートフォワーディング
+    ports:
+      # tcp://localhost:${DB_PORT} => service://db:3306
+      - "${DB_PORT:-8033}:3306"
+    # 所属ネットワーク
+    networks:
+      - lampnet
+    volumes:
+      # データ永続化: docker-volume.db-data => docker.db:/var/lib/mysql
+      - db-data:/var/lib/mysql
+      # MySQL設定ファイル: host:/./docker/db/my.cnf => /etc/mysql/conf.d/my.cnf 644
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      # ダンプデータやり取り用
+      - ./docker/db/dump/:/var/dump/
+      # 初回投入データ: ./docker/db/initdb.d/
+      - ./docker/db/initdb.d/:/docker-entrypoint-initdb.d/
+    working_dir: /var/dump/
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      # TimeZone設定
+      TZ: Asia/Tokyo
+  
+  # phpmyadmin service container: phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    logging:
+      driver: json-file
+    # 所属ネットワーク
+    networks:
+      - lampnet
+    # ポートフォワーディング
+    ports:
+      # http://localhost:${PMA_PORT} => service://phpmyadmin:80
+      - "${PMA_PORT:-8080}:80"
+    volumes:
+      - /sessions
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+  
+  # mailhog service container: local SMTP server + Mail catcher
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: json-file
+    # 所属ネットワーク
+    networks:
+      - lampnet
+    # ポートフォワーディング
+    ports:
+      # http://localhost:${MAILHOG_PORT} => service://mailhog:8025
+      - "${MAILHOG_PORT:-8025}:8025"
+      # - "1025" # SMTP Port: ホスト側ポートはランダムに選出
+EOS
+    ;;
+"init-laravel-project")
+    rm -rf ./www/app/
+    export USER_ID="${USER_ID:-$UID}"
+    docker-compose exec -w '/var/www/' web composer create-project --prefer-dist laravel/laravel app '8.*'
+    sed -ie 's/^DB_HOST=.*/DB_HOST=db/g' ./www/app/.env
+    sed -ie 's/^DB_DATABASE=.*/DB_DATABASE=database/g' ./www/app/.env
+    sed -ie 's/^DB_PASSWORD=.*/DB_PASSWORD=root/g' ./www/app/.env
+    sed -ie 's/^MAIL_HOST=.*/MAIL_HOST=mailhog/g' ./www/app/.env
+    sed -ie 's/^MAIL_PORT=.*/MAIL_PORT=1025/g' ./www/app/.env
+    ;;
+*)
+    export USER_ID="${USER_ID:-$UID}" && docker-compose $*
+esac
