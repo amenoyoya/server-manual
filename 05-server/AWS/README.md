@@ -184,7 +184,7 @@ s3 = session.resource(
 )
 
 # エントリー関数
-## 以下の場合、handler に lambda_handler を指定する
+## 以下の場合、Lambda 登録時の handler に lambda_handler を指定する
 def lambda_handler(event, context):
     now = datetime.now().strftime('%Y-%m-%d-%H-%M-%S') # 現在日時
     filename = now + '.txt' # ファイル名: {現在日時}.txt
@@ -235,6 +235,9 @@ $ laws lambda create-function \
     "RevisionId": "bad5c0cd-da0d-47f5-8b55-9e7b4b38a112",
     "State": "Active",
 }
+
+# 登録した Lambda 関数を削除する場合
+# $ aws lambda delete-function --function-name=<関数名>
 ```
 
 ### Lambda関数実行

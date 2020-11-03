@@ -1,0 +1,98 @@
+version: '3.8'
+
+networks:
+  # プロジェクト内仮想ネットワーク
+  ## 同一ネットワーク内の各コンテナはサービス名で双方向通信可能
+  appnet:
+    driver: bridge
+    # ネットワークIP範囲を指定する場合
+    # ipam:
+    #   driver: default
+    #   config:
+    #     # 仮想ネットワークのネットワーク範囲を指定
+    #     ## 172.68.0.0/16 の場合、172.68.0.1 ～ 172.68.255.254 のIPアドレスを割り振れる
+    #     ## ただし 172.68.0.1 はゲートウェイに使われる
+    #     - subnet: 172.68.0.0/16
+
+volumes:
+  # dbコンテナ永続化用ボリュームコンテナ
+  db-data:
+    driver: local
+
+services:
+  # web service container: zabbix-web-nginx-mysql:alpine-5.2-latest
+  ## Zabbix Web UI
+  web:
+    image: zabbix/zabbix-web-nginx-mysql:alpine-5.2-latest
+    logging:
+      driver: json-file
+    # restart: always
+    # 所属ネットワーク
+    networks:
+      - appnet
+    # ポートフォワーディング
+    ports:
+      # http://localhost:${WEB_PORT} => service://web:8080
+      - "${WEB_PORT:-8080}:8080"
+      # https://web:8443
+    environment:
+      # MySQLデータベースサーバ接続設定
+      DB_SERVER_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: zabbix
+      # Zabbixサーバ接続設定
+      ZBX_SERVER_HOST: zabbix
+      # TimeZone設定
+      PHP_TZ: Asia/Tokyo
+  
+  # db service container: mysql:5.7
+  db:
+    image: mysql:5.7
+    logging:
+      driver: json-file
+    # restart: always
+    # 所属ネットワーク
+    networks:
+      - appnet
+    # MySQLサーバのデフォルト文字コードを utf8 (collation: utf8_bin) に変更して起動
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_bin
+    volumes:
+      # データ永続化: docker-volume.db-data => docker.db:/var/lib/mysql
+      - db-data:/var/lib/mysql
+    environment:
+      # 接続設定
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: zabbix
+      # TimeZone設定
+      TZ: Asia/Tokyo
+  
+  # zabbix service container: zabbix-server-mysql:alpine-5.2-latest
+  zabbix:
+    image: zabbix/zabbix-server-mysql:alpine-5.2-latest
+    logging:
+      driver: json-file
+    # restart: always
+    # 所属ネットワーク
+    networks:
+      - appnet
+    environment:
+      # MySQLデータベースサーバ接続設定
+      DB_SERVER_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: zabbix
+      # Javaゲートウェイ接続設定
+      ZBX_JAVAGATEWAY: gateway
+      # TimeZone設定
+      TZ: Asia/Tokyo
+
+  # gateway service container: zabbix-java-gateway:alpine-5.2-latest
+  gateway:
+    image: zabbix/zabbix-java-gateway:alpine-5.2-latest
+    logging:
+      driver: json-file
+    # restart: always
+    # 所属ネットワーク
+    networks:
+      - appnet
