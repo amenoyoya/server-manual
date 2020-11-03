@@ -94,18 +94,18 @@ $ localstack -v
 ### Execution
 ```bash
 # 自分で Dockerfile, docker-compose.yml を書いて localstack/localstack イメージをコンテナとして起動してもよいが、
-# localstack start コマンドを使うと簡単に持っく環境を起動できる
-## PORT_WEB_UI 環境変数: Webユーザインタフェースを起動するポートを指定（デフォルト: 8080）
+# localstack start コマンドを使うと簡単にモック環境を起動できる
+## START_WEB 環境変数: Webユーザインタフェースを使うかどうか（デフォルト: 1）
+##      Webユーザインタフェースは非推奨となっているため使用しない方が良い
 ## EDGE_PORT 環境変数: 各 AWS サービスへの API エンドポイントポートを指定（デフォルト: 4566）
 ## DEFAULT_REGION 環境変数: AWS サービスのデフォルトリージョンを指定（デフォルト: us-east-1）
 ## ...その他環境変数については https://github.com/localstack/localstack 参照
-$ PORT_WEB_UI=5080 EDGE_PORT=5066 DEFAULT_REGION=ap-northeast-1 docker-compose 
+$ START_WEB=0 EDGE_PORT=5066 DEFAULT_REGION=ap-northeast-1 localstack start
 
-# => WebUI: http://localhost:5080
-##   最新版では廃止されているためアクセス不可
-##   ただしポートだけは専有されるため、コンフリクトしないポートを指定する必要はある
 # => API: tcp://localhost:5066
 # => Region: ap-northeast-1
+
+# => 終了する場合は Ctrl + C キー
 ```
 
 ***
@@ -121,19 +121,29 @@ $ PORT_WEB_UI=5080 EDGE_PORT=5066 DEFAULT_REGION=ap-northeast-1 docker-compose
 
 ![test.drawio.svg](./img/test.drawio.svg)
 
+### LocalStack 用の AWS CLI コマンドをエイリアス登録
+AWS CLI を LocalStack 用に使う場合 `aws --endpoint-url=http://localhost:<EDGE_PORTで指定したポート> --profile=<LocaStack用に設定したプロファイル>` というコマンドを共通して利用することになる
+
+そのため、このコマンドをエイリアスに登録しておくと便利
+
+```bash
+# LocalStack用 AWS CLI コマンドを `laws` というエイリアスに登録する
+$ alias laws='aws --endpoint-url=http://localhost:5066 --profile=localstack'
+```
+
 ### S3バケットの作成
 - AWS S3 は、クラウド上にファイルデータを保存するクラウドストレージサービス
 - S3 の中に **バケット** と呼ばれるリソースを確保し、その中にファイルデータを保存することができる
 
 ```bash
 # AWS CLI を使って localstack 環境の AWS S3 に test-bucket バケットを作成
-# $ aws s3 mb s3://<バケット名> --endpoint-url=<APIエンドポイント> --profile=<使用する設定プロファイル>
-$ aws s3 mb s3://test-bucket --endpoint=http://localhost:5066 --profile=localstack
+# $ aws s3 mb s3://<バケット名> 
+$ laws s3 mb s3://test-bucket
 make_bucket: test-bucket
 
 # 確認
-$ aws s3 ls --endpoint-url=http://localhost:5066 --profile=localstack
-2020-11-03 18:08:26 test-bucke
+$ laws s3 ls
+2020-11-03 18:08:26 test-bucket
 ```
 
 ### Lambda関数の作成
@@ -142,12 +152,13 @@ $ aws s3 ls --endpoint-url=http://localhost:5066 --profile=localstack
 - プログラムの実装言語としては以下のような言語をサポートしている
     - Java, Go, PowerShell, Node.js, C#, Python, Ruby 
 
-#### test-function.py
+#### lambda.py
 ```python
 # boto3: AWS SDK for Python
 import boto3
 from boto3.session import Session
 from datetime import datetime
+import os
 
 # AWS サービスへアクセスするためのセッションを作成
 ## localstack モック環境のため、AccessKeyID, SecretAccessKey は dummy で良い
@@ -160,8 +171,16 @@ session = Session(
 # AWS S3 に接続
 s3 = session.resource(
     service_name='s3',
-    # localstack 実行時の EDGE_PORT (今回の場合: 5066) をエンドポイントURLのポートに指定
-    endpoint_url='http://localhost:5066'
+    '''
+    endpoint_url:
+        このスクリプトはDockerコンテナ内で実行されるため、
+        Docker実行ホストマシンの localhost:${EDGE_PORT} を lookup する必要がある
+    LOCALSTACK_HOSTNAME 環境変数:
+        LocalStackのDockerコンテナを実行しているホストマシンの localhost IPv4 が格納されている
+    => http://${LOCALSTACK_HOSTNAME}:${EDGE_PORT} を指定することで
+        LocalStack(Docker)環境内のサービス同士で通信可能
+    '''
+    endpoint_url = 'http://' + os.environ['LOCALSTACK_HOSTNAME'] + ':' + os.environ['EDGE_PORT']
 )
 
 # エントリー関数
@@ -182,44 +201,39 @@ def lambda_handler(event, context):
 #### Lambda関数として登録
 ```bash
 # 作成したプログラムを zip に圧縮
-$ zip test-function.zip test-function.py
+$ zip lambda.zip lambda.py
 
 # AWS CLI を使って AWS Lambda に test-function.zip を test-function 関数として登録
 # $ aws lambda create-function
 ##    --function-name=<関数名>
 ##    --runtime=<プログラム言語>
-##    --role=<関数を実行できるIAMロール> ※今回の場合、適当なIAMロールを設定すれば良い
-##    --handler=<ファイル名>.<エントリー関数>
+##    --role=<関数を実行できるIAMロール> ※LocalStackの場合、適当なIAMロールを設定すれば良い
+##    --handler=<モジュール名>.<エントリー関数>
 ##    --zip-file=fileb://<zip圧縮したプログラムファイル>
-##    --endpoint-url=<APIエンドポイント>
-##    --profile=<使用する設定プロファイル>
-$ aws lambda create-function \
+$ laws lambda create-function \
     --function-name='test-function' \
     --runtime=python3.7 \
     --role='arn:aws:iam::123456789012:role/service-role/test-exec-role' \
-    --handler='test-function.lambda_handler' \
-    --zip-file='fileb://./test-function.zip' \
-    --endpoint-url=http://localhost:5066 \
-    --profile=localstack
+    --handler='lambda.lambda_handler' \
+    --zip-file='fileb://./lambda.zip'
 {
     "FunctionName": "test-function",
     "FunctionArn": "arn:aws:lambda:ap-northeast-1:000000000000:function:test-function",
     "Runtime": "python3.7",
     "Role": "arn:aws:iam::123456789012:role/service-role/test-exec-role",
-    "Handler": "test-function.lambda_handler",
-    "CodeSize": 949,
+    "Handler": "lambda.lambda_handler",
+    "CodeSize": 934,
     "Description": "",
     "Timeout": 3,
-    "LastModified": "2020-11-03T10:32:40.426+0000",
-    "CodeSha256": "EwYCkhQVCY0JyCbczUwVXHTKdBzxJjrzrAIVdmErVX0=",
+    "LastModified": "2020-11-03T11:26:52.329+0000",
+    "CodeSha256": "MIcbKaalHpg1Ln2pWtxnooV+8uJif7yZNaZI1dM7lw0=",
     "Version": "$LATEST",
     "VpcConfig": {},
     "TracingConfig": {
         "Mode": "PassThrough"
     },
-    "RevisionId": "561385d0-af23-4f21-9a76-ca0db502cec6",
+    "RevisionId": "bad5c0cd-da0d-47f5-8b55-9e7b4b38a112",
     "State": "Active",
-    "LastUpdateStatus": "Successful"
 }
 ```
 
@@ -227,8 +241,22 @@ $ aws lambda create-function \
 ```bash
 # AWS CLI を使って Lambda 関数を実行する
 # $ aws lambda invoke --function-name=<関数名> <ログファイル名>
-$ aws lambda invoke \
-    --function-name='test-function' result.log \
-    --endpoint-url=http://localhost:4566 \
-    --profile=localstack 
+$ laws lambda invoke --function-name='test-function' result.log
+{
+    "StatusCode": 200,
+    "LogResult": "",
+    "ExecutedVersion": "$LATEST"
+}
+
+# エラーが起きていなければ、ログファイルに Lambda エントリー関数の戻り値が記入されているはず
+$ cat result.log
+"Saved: s3://test-bucket/2020-11-03-12-40-58.txt"
+
+# S3 (test-bucket) にファイルが保存されているか確認
+$ laws s3 ls s3://test-bucket/
+2020-11-03 21:40:58         43 2020-11-03-12-40-58.txt
+
+# 上記ファイルの中身を確認
+$ laws s3 cp s3://test-bucket/2020-11-03-12-40-58.txt -
+This file generated at 2020-11-03-12-40-58.
 ```
