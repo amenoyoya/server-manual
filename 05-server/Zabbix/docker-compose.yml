@@ -96,3 +96,19 @@ services:
     # 所属ネットワーク
     networks:
       - appnet
+  
+  # aws service container: amazonlinux:2
+  ## 動作確認用: 監視対象サーバ
+  aws:
+    build: ./aws/
+    tty: true
+    privileged: true # 特権モード: systemctl を使えるようにする
+    logging:
+      driver: json-file
+    networks:
+      - appnet
+    ports:
+      # http://localhost:${AWS_WEB_PORT} => service://aws:80
+      - "${AWS_WEB_PORT:-9080}:80"
+      # ssh://localhost:${AWS_SSH_PORT} => service://aws:22
+      - "${AWS_SSH_PORT:-9022}:22"
