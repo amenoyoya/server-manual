@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  amazonlinux2:
+    build: ./docker/amazonlinux2/
+    tty: true
+    privileged: true # 特権モード: systemctl を使えるようにする
+    ports:
+      - "18073:80" # http
+      - "12273:22" # ssh
+
+  centos6:
+    # build: ./docker/centos6/
+    image: centos:6
+    tty: true
+    privileged: true # 特権モード: systemctl を使えるようにする
+    ports:
+      - "28073:80" # http
+      - "22273:22" # ssh

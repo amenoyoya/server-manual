@@ -492,6 +492,42 @@ PowerShell を起動し、以下のコマンドを実行
 > wsl --shutdown
 ```
 
+### Dockerコンテナ起動時に Exit(139) が発生する場合
+WSL2 環境では CentOS6 など、古いベースイメージの起動に失敗する
+
+この場合、kernelCommandLine に `vsyscall=emulate` を設定する必要がある
+
+`Win + X` |> `A` キー => 管理者権限 PowerShell 起動
+
+```powershell
+# %USERPROFILE%/.wslconfig に kernelCommandLine 設定追記
+> Write-Output '[wsl2]
+kernelCommandLine=vsyscall=emulate' | Add-Content "$env:USERPROFILE/.wslconfig"
+
+# WSL2 シャットダウン
+> wsl --shutdown
+
+# WSL2 再起動
+> wsl
+
+# 設定が反映されているか確認
+$ cat /proc/cmdline
+initrd=\initrd.img panic=-1 nr_cpus=12 swiotlb=force  pty.legacy_count=0 vsyscall=emulate
+
+# CentOS6 Dockerイメージ起動できるか確認
+$ sudo service docker start
+$ docker pull centos:6
+$ docker run -itd centos:6
+$ docker ps
+
+CONTAINER ID  IMAGE     COMMAND      CREATED        STATUS        PORTS  NAMES
+27e33339071c  centos:6  "/bin/bash"  7 seconds ago  Up 6 seconds
+
+# 確認できたらコンテナを削除
+$ docker stop 27e33339071c
+$ docker rm 27e33339071c
+```
+
 ***
 
 ## Ansible 導入
