@@ -1,5 +1,39 @@
 # WSL2 Tips
 
+## WSL2 でスタートアップスクリプトを実行する Hack
+
+WSL2 では起動時に systemd を自動スタートさせたり、`/etc/rc.local` によるスタートアップスクリプトの実行ができない
+
+そのため、Windowsスケジューラによるサービス登録などでなんとかする必要がある
+
+しかし、[WSL2 が起動時に /sbin/mount -a を呼び出すことを利用した Hack](https://linux.srad.jp/story/20/06/25/1855205/) もある
+
+### WSL2用スタートアップスクリプト作成
+WSL2 では起動時に `/sbin/mount -a` コマンドが呼び出されるため、これをフックすることで `/sbin/mount.rc` をスタートアップスクリプトとして使うことができる
+
+```bash
+# /sbin/mount -a 実行時に rc ファイルシステムをマウントするように設定
+$ echo 'none none rc defaults 0 0' | sudo tee -a /etc/fstab
+
+# => これにより起動時に /sbin/mount.rc ファイルが呼び出されるようになる
+
+# /sbin/mount.rc ファイルを実行可能スクリプトとして作成
+$ echo '#!/bin/bash' | sudo tee /sbin/mount.rc
+$ sudo chmod +x /sbin/mount.rc
+```
+
+### 起動時に Docker サービスを開始するように設定
+```bash
+# service docker start を /sbin/mount.rc に追記
+$ echo 'service docker start' | sudo tee -a /sbin/mount.rc
+
+# WSL2 には cgroup 用ディレクトリがデフォルトで作られていないため、これもスタートアップスクリプトに登録しておく
+## これをしておかないと Docker でプロセスのグループ化が必要になったときにエラーが起きる
+$ echo 'mkdir -p /sys/fs/cgroup/systemd && mount -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd' | sudo tee -a /sbin/mount.rc
+```
+
+***
+
 ## VPN 接続
 
 現状、Windows の VPN クライアントを使って VPN 接続すると、WSL2 のネットワークが上手く動かないことが多い

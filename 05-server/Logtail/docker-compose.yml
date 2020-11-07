@@ -10,8 +10,8 @@ services:
       - "12273:22" # ssh
 
   centos6:
-    # build: ./docker/centos6/
-    image: centos:6
+    build: ./docker/centos6/
+    # image: centos:6
     tty: true
     privileged: true # 特権モード: systemctl を使えるようにする
     ports:

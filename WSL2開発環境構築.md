@@ -480,6 +480,19 @@ $ docker-compose up -d
 $ docker-compose stop
 ```
 
+### /sys/fs/cgroup/systemd マウントを永続化できないか
+`sudo mount -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd` のコマンドで cgroup をマウントしているが、これは当然 WSL2 を再起動すれば消えてしまう設定である
+
+これを永続化する方法として、以下のように `/etc/fstab` に設定する方法が真っ先に思いつく
+
+```bash
+$ echo 'cgroup /sys/fs/cgroup/systemd cgroup none,name=systemd' | sudo tee -a /etc/fstab
+```
+
+しかし、WSL2 再起動時点で `/sys/fs/cgroup/systemd` は存在しない（消えてしまっている）ため、この方法は上手く行かない
+
+この回避方法として [WSL2 でスタートアップスクリプトを実行する Hack](./tips/WSL2.md) が使える
+
 ### Dockerコンテナを起動する度にメモリが圧迫される場合
 2020年7月時点の WSL2 は、Dockerコンテナ作成時にメモリリークが起こるバグがある
 
