@@ -5,7 +5,7 @@ COPY ./authorized_keys /root/.ssh/authorized_keys
 RUN : 'install packages' && \
     yum update -y && yum install -y \
         glibc-locale-source glibc-langpack-ja \
-        sudo vim openssh-server openssh-clients && \
+        sudo vim openssh-server openssh-clients procps && \
     : 'set locale' && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 && \
     : 'change root password' && \
@@ -36,4 +36,3 @@ ENV TZ="Asia/Tokyo" \
 
 EXPOSE 22
 CMD ["bash", "-c", "exec /sbin/init && /usr/sbin/sshd -D && /usr/sbin/httpd -k start"]
-# CMD ["bash", "-c", "exec /sbin/init"]

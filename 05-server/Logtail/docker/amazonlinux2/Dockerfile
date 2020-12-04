@@ -5,7 +5,7 @@ COPY ./authorized_keys /root/.ssh/authorized_keys
 RUN : 'install packages' && \
     yum update -y && yum install -y \
         glibc-locale-source glibc-langpack-ja \
-        sudo vim openssh-server openssh-clients && \
+        sudo vim openssh-server openssh-clients procps && \
     : 'set locale' && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 && \
     : 'change root password' && \
