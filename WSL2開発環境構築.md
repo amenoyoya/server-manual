@@ -156,11 +156,11 @@ $ sudo apt update && sudo apt upgrade -y
 
 # Linuxbew の動作に必要な curl, git, ruby をインストール
 ## openjdk は android 開発を行う時など必要になるタイミングが多いため一応インストールしている
-## zlib1g-dev, libssl-dev, libbz2-dev, libsqlite3-dev, libffi-dev は Python ビルドに必要
+## zlib1g-dev, libssl-dev, libbz2-dev, libsqlite3-dev, libffi-dev, liblzma-dev は Python ビルドに必要
 ## add-apt-repository コマンドを使うために software-properties-common もインストールしておく
 ## https通信を可能にするために apt-transport-https, ca-certificates もインストールしておく
 $ sudo apt install -y vim curl git ruby openjdk-14-jdk \
-    zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev libffi-dev \
+    zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev libffi-dev liblzma-dev \
     software-properties-common apt-transport-https ca-certificates
 
 # Linuxbrew (Linux版の Homebrew パッケージマネージャ) 導入
