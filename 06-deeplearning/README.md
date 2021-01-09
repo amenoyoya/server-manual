@@ -142,3 +142,58 @@ GPU Device 0: "GeForce RTX 2060" with compute capability 7.5 # <= GPU認識
 = 151.285 billion interactions per second
 = 3025.707 single-precision GFLOP/s at 20 flops per interaction
 ```
+
+***
+
+## PyTorch + JupyterLb Docker Template
+
+### Preparation
+```bash
+# Add execution permission to the CLI tool
+$ chmod +x ./x
+
+# Generate docker template
+$ ./x init
+```
+
+### Structure
+```bash
+./ # => mount to service://app:/work/
+|_ docker/
+|  |_ conf/
+|  |  |_ crontab # cron scheduled script settings file
+|  |  |_ supervisord.conf # daemon service settings file: [crond, ipynb] services
+|  |  |_ jupyter_notebook_config.py # jupyter notebook (lab) settings file
+|  |
+|  |_ Dockerfile # service://app docker container building settings file
+|
+|_ .env # environmental variables settings file
+|_ docker-compose.yml # docker containers settings file
+```
+
+### Docker containers
+- networks:
+    - **appnet**: `bridge`
+        - Docker containers belong to this virtual network
+- services:
+    - **app**: `pytorch/pytorch:1.6.0-cuda10.1-cudnn7-devel`
+        - Python 3.7 + PyTorch + JupyterLab service container
+        - network:
+            - http://localhost:{$JUPYTER_PORT:-8888} => service://app:8888
+                - JupyterLab: http://localhost:8888/?token=jupyter0docker
+
+### Setup
+```bash
+# Build docker containers
+$ ./x build
+
+# Startup docker containers in background
+$ ./x up -d
+
+# => service://app: http://localhost:8888/?token=jupyter0docker
+```
+
+### PyTorch: GPU 確認
+`torch.cuda.is_available()` 関数で GPU の利用可否を確認可能
+
+=> [00_pytorch-gpu.ipynb](./notebook/00_pytorch-gpu.ipynb)

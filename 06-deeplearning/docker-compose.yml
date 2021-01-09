@@ -1,0 +1,54 @@
+# ver 2.4 or 3.6 >= required: enable '-w' option for 'docker-compose exec'
+# ver 2.3 >= required: use 'runtime' setting (ver 3.x not supported)
+version: "2.4"
+
+networks:
+  # プロジェクト内仮想ネットワーク
+  ## 同一ネットワーク内の各コンテナはサービス名で双方向通信可能
+  appnet:
+    driver: bridge
+    # ネットワークIP範囲を指定する場合
+    # ipam:
+    #   driver: default
+    #   config:
+    #     # 仮想ネットワークのネットワーク範囲を指定
+    #     ## 172.68.0.0/16 の場合、172.68.0.1 ～ 172.68.255.254 のIPアドレスを割り振れる
+    #     ## ただし 172.68.0.1 はゲートウェイに使われる
+    #     - subnet: 172.68.0.0/16
+
+services:
+  # app service container: python 3.7 / jupyterlab + pytorch
+  app:
+    build:
+      context: ./docker/
+      args:
+        # use current working user id
+        UID: $USER_ID
+    logging:
+      driver: json-file
+    # restart: always
+    # 所属ネットワーク
+    networks:
+      - appnet
+    # ポートフォワーディング
+    ports:
+      # http://localhost:${JUPYTER_PORT} => service://app:8888
+      - "${JUPYTER_PORT:-8888}:8888"
+    # DNSサーバにGoogleDNS利用
+    dns: 8.8.8.8
+    # enable terminal
+    tty: true
+    volumes:
+      # host://./ => docker://app:/work/
+      - ./:/work/
+      # Docker socket 共有
+      - /var/run/docker.sock:/var/run/docker.sock
+      # 設定ファイル
+      - ./docker/conf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+      - ./docker/conf/crontab:/var/spool/cron/crontabs/user
+      - ./docker/conf/jupyter_notebook_config.py:/home/user/.jupyter/jupyter_notebook_config.py
+    # nvidia-container-toolkit を runtime として利用
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
