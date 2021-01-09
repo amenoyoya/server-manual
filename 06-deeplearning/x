@@ -145,6 +145,9 @@ USER user
 ## 環境変数を引き継いで sudo 実行するため -E オプションをつけている
 CMD ["sudo", "-E", "/bin/bash", "-c", "busybox crontab /var/spool/cron/crontabs/user && cd /root/ && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
 EOS
+    tee ./.gitignore << \EOS
+.ipynb_checkpoints/
+EOS
     tee ./.env << \EOS
 JUPYTER_PORT=8888
 EOS
