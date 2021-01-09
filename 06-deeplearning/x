@@ -146,14 +146,7 @@ WORKDIR /work/
 USER user
 
 # 作業ユーザで Julia パッケージインストール
-RUN julia -e 'using Pkg; Pkg.add("IJulia");' && \
-    julia -e 'using Pkg; Pkg.add("HTTP");' && \
-    julia -e 'using Pkg; Pkg.add("DataFrames");' && \
-    julia -e 'using Pkg; Pkg.add("Match");' && \
-    julia -e 'using Pkg; Pkg.add("PyCall");' && \
-    julia -e 'using Pkg; Pkg.add("Images");' && \
-    julia -e 'using Pkg; Pkg.add("ImageMagick");' && \
-    julia -e 'using Pkg; Pkg.add("Nettle");'
+RUN julia -e 'using Pkg;Pkg.add("IJulia");Pkg.add("HTTP");Pkg.add("DataFrames");Pkg.add("Match");Pkg.add("PyCall");Pkg.add("Images");Pkg.add("ImageMagick");Pkg.add("Nettle");'
 
 # スタートアップコマンド（docker up の度に実行される）: activate crontab && launch supervisor daemon
 ## 環境変数を引き継いで sudo 実行するため -E オプションをつけている
