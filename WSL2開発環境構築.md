@@ -709,3 +709,82 @@ Is the information correct? [Y/n]  # <= そのままENTER
 
 # => 以降 ubuntu-focal on WSL2 ターミナルのログインユーザは user (UID: 1000) になる
 ```
+
+***
+
+## WSL2 のボリューム容量を増やす
+
+WSL2 の仮想ディスクは、デフォルトで 256GB となっている
+
+上記の手順で別ドライブに WSL2 ボリュームを作ったので、ついでにボリューム容量も増やしておくと良い
+
+`Win + X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# WSL2 をシャットダウン
+> wsl --shutdown
+
+# インストール済ディストロを確認
+> lxrunoffline l
+ubuntu-focal
+Ubuntu-20.04
+
+# 容量を増やしたいディストロ（今回の場合 ubuntu-focal）の仮想ディスク保存パスを確認
+> lxrunoffline di -n ubuntu-focal
+D:\wsl\ubuntu-focal
+
+# DISKPART を起動
+> diskpart
+
+# 上記で確認した仮想ディスク保存先パスの ext4.vhdx を操作対象として選択
+DISKPART> select vdisk file="D:\wsl\ubuntu-focal\ext4.vhdx"
+
+# 仮想ディスクの詳細を確認しておく
+DISKPART> detail vdisk
+
+デバイスの種類 ID: 0 (不明)
+ベンダー ID: {00000000-0000-0000-0000-000000000000} (不明)
+状態: 追加済み
+仮想サイズ:  256 GB
+物理サイズ:  247 GB
+ファイル名: D:\wsl\ubuntu-focal\ext4.vhdx
+子: いいえ
+親ファイル名:
+関連付けられたディスク番号: 見つかりません。
+
+# 仮想ディスクの最大サイズを 600GB に増やす
+## expand vdisk maximum={最大サイズをMB単位で指定}
+DISKPART> expand vdisk maximum=600000
+
+# 確認
+DISKPART> detail vdisk
+ :
+仮想サイズ:  585 GB
+物理サイズ:  247 GB
+ :
+
+# DISKPART 終了
+DISKPART> exit
+
+# WSL2 を起動
+> wsl
+
+# -- user@ubuntu-focal
+
+# Linux の ext4 ストレージを確認
+$ sudo mount -t devtmpfs none /dev
+$ mount | grep ext4
+/dev/sdb on / type ext4 (rw,relatime,discard,errors=remount-ro,data=ordered)
+
+# 上記で確認したストレージ（今回の場合 /dev/sdb）を最大サイズまで拡張
+$ sudo resize2fs /dev/sdb
+
+# ストレージサイズ確認
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdb        576G  243G  308G  45% /
+tools           461G  292G  169G  64% /init
+none            3.9G     0  3.9G   0% /dev
+tmpfs           3.9G     0  3.9G   0% /sys/fs/cgroup
+ :
+```

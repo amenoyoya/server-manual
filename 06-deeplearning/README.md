@@ -177,7 +177,7 @@ $ ./x init
         - Docker containers belong to this virtual network
 - services:
     - **app**: `pytorch/pytorch:1.6.0-cuda10.1-cudnn7-devel`
-        - Python 3.7 + PyTorch + JupyterLab service container
+        - Python 3.7 + PyTorch + JupyterLab + Julia 1.5 service container
         - network:
             - http://localhost:{$JUPYTER_PORT:-8888} => service://app:8888
                 - JupyterLab: http://localhost:8888/?token=jupyter0docker
