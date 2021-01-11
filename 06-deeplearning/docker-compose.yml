@@ -39,8 +39,10 @@ services:
     # enable terminal
     tty: true
     volumes:
-      # host://./ => docker://app:/work/
+      # host://./ => service://app:/work/
       - ./:/work/
+      # host://./.cache/ => service://app:/home/user/.cache/
+      - ./.cache/:/home/user/.cache/
       # Docker socket 共有
       - /var/run/docker.sock:/var/run/docker.sock
       # 設定ファイル

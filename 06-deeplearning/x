@@ -5,7 +5,12 @@ export USER_ID="${USER_ID:-$UID}"
 
 case "$1" in
 "init")
+    mkdir ./.cache/
     mkdir -p ./docker/conf/
+    tee ./.cache/ << \EOS
+/*
+!/.gitignore
+EOS
     touch ./docker/conf/crontab
     tee ./docker/conf/supervisord.conf << \EOS
 [supervisord]
@@ -200,8 +205,10 @@ services:
     # enable terminal
     tty: true
     volumes:
-      # host://./ => docker://app:/work/
+      # host://./ => service://app:/work/
       - ./:/work/
+      # host://./.cache/ => service://app:/home/user/.cache/
+      - ./.cache/:/home/user/.cache/
       # Docker socket 共有
       - /var/run/docker.sock:/var/run/docker.sock
       # 設定ファイル
