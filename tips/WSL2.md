@@ -222,10 +222,10 @@ VcXsrv を使うことで WSL2 上で Linux GUI アプリケーションを実�
 $ sudo apt install -y libgl1-mesa-dev xorg-dev
 
 # DISPLAY 環境変数を Windows 側 VcXsrv IP にする
-## シェルログイン時に一度設定されればよいため ~/.profile に設定を記述
+## ログイン時に一度だけ実行されれば良いため ~/.profile に設定
 ## << \EOS と書くことで内部テキストを変数展開せずに echo 可能
-$ sudo tee -a ~/.profile << \EOS
-# WSL2 VcXsrv 設定
+$ tee -a ~/.profile << \EOS
+# WSL2 VcXsrv setting
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
 EOS
 
@@ -284,12 +284,17 @@ $ sudo fc-cache -fv
 $ sudo apt -y install language-pack-ja
 
 # ロケールを日本語に設定
-$ sudo update-locale LANG=ja_JP.UTF8
+$ echo 'export LANGUAGE=ja_JP.UTF-8' >> ~/.profile
+$ echo 'export LC_ALL=ja_JP.UTF-8' >> ~/.profile
+$ exec $SHELL -l
+$ sudo update-locale LANG=ja_JP.UTF-8
 
 # いったん終了して再起動すればアプリケーションで日本語が使えるようになる
 $ exit
 
 # --- 再起動後 ---
+
+$ exec $SHELL -l
 
 # タイムゾーンをJSTに設定
 $ sudo dpkg-reconfigure tzdata
@@ -311,7 +316,7 @@ $ dbus-uuidgen | sudo tee /var/lib/dbus/machine-id
 $ set -o noclobber
 
 # 必要な環境変数等を ~/.profile に追記
-$ sudo tee -a ~/.profile << \EOS
+$ tee -a ~/.profile << \EOS
 # fcitx 設定
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
@@ -327,10 +332,19 @@ EOS
 
 # シェル再起動
 $ exec $SHELL -l
+
+# 入力設定確認のため fcitx-config-gtk3 を実行
+$ fcitx-config-gtk3
 ```
+
+![fcitx-config-gtk3.png](./img/fcitx-config-gtk3.png)
+
+入力メソッドとして「Mozc」が設定されているか確認し、「Mozc」が存在しない場合は、下の「＋」ボタンから追加する（日本語化してからインストールした場合は既に設定されているはず）
 
 #### 動作確認
 gedit を起動して、日本語入力できるか確認してみる
+
+（入力メソッドを Mozc に切り替えるには `Ctrl + Space` キーを押す）
 
 ![gedit-ime.png](./img/gedit-ime.png)
 
