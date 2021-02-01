@@ -402,3 +402,20 @@ main()
 # 実行
 $ node app.js
 ```
+
+***
+
+## Calibre (電子書籍読み込み・編集ソフト)
+
+### 導入
+普通に apt でインストールすると、上手く動かない古いバージョンがインストールされてしまうため、[公式の手順](https://calibre-ebook.com/download_linux) に沿って導入する
+
+```bash
+$ sudo -v && wget --no-check-certificate -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
+```
+
+### ebook-convert コマンドを使った電子書籍変換
+```bash
+# epub形式の電子書籍をpdfに変換
+$ ebook-convert book.epub book.pdf
+```
