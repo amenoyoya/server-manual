@@ -9,6 +9,7 @@ services:
     build: ./docker/amazonlinux2/
     tty: true
     privileged: true # 特権モード: systemctl関連コマンドを使えるようにする
+    working_dir: /root/
     volumes:
       - ./scripts/amazonlinux2/:/root/scripts/
       - ./s3-php/:/root/s3-php/
@@ -23,6 +24,7 @@ services:
     # image: centos:6
     tty: true
     privileged: true # 特権モード: service関連コマンドを使えるようにする
+    working_dir: /root/
     volumes:
       - ./scripts/centos6/:/root/scripts/
       - ./s3-php/:/root/s3-php/
@@ -31,6 +33,19 @@ services:
     ports:
       - "28073:80" # http
       - "22273:22" # ssh
+  
+  db:
+    image: mysql:5.7
+    networks:
+      - appnet
+    volumes:
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ./docker/db/initdb.d/:/docker-entrypoint-initdb.d/
+    working_dir: /docker-entrypoint-initdb.d/
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      TZ: Asia/Tokyo
   
   # minio service container: local AWS S3 storage
   minio:

@@ -9,7 +9,7 @@ RUN : 'fix yum repository' && \
     : 'install packages' && \
     yum update -y && yum install -y \
         glibc-locale-source glibc-langpack-ja \
-        sudo vim openssh-server openssh-clients procps && \
+        sudo vim openssh-server openssh-clients procps libxslt tar unzip && \
     : 'set locale' && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 && \
     : 'install cron' && \
@@ -32,13 +32,18 @@ RUN : 'fix yum repository' && \
         libwebp libmcrypt libtool-ltdl libtidy libXpm libtiff \
         ncurses-compat-libs gd-last autoconf automake httpd && \
     yum install -y --enablerepo=remi,remi-php73 t1lib && \
-    yum install -y --enablerepo=epel,remi,remi-php73 php php-mbstring php-gd && \
+    yum install -y --enablerepo=epel,remi,remi-php73 php php-xml php-mbstring php-gd && \
     chkconfig httpd on && \
     : 'install mysql' && \
     yum localinstall --nogpgcheck -y https://dev.mysql.com/get/mysql57-community-release-el6-8.noarch.rpm && \
     yum -y update --enablerepo=mysql57-community && \
     yum install -y --enablerepo=mysql57-community mysql-community-server mysql-community-devel && \
     chkconfig mysqld on && \
+    : 'install aws cli' && \
+    curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip && \
+    unzip ./awscliv2.zip && \
+    ./aws/install && \
+    rm -rf ./aws ./awscliv2.zip && \
     : 'clear yum cache' && \
     yum clean all
 
