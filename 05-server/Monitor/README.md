@@ -1,4 +1,4 @@
-# ログ監視
+# サービス死活監視
 
 ## Environment
 
@@ -42,32 +42,7 @@ $ docker-compose up -d
 
 ## ログ監視サービス実装 (CentOS:7 以上)
 
-### httpdサービス死活監視
-
-httpd (apache) サーバの死活監視を行い、自動的に復旧する
-
-少し変更すれば httpd だけでなく、nginx や mysqld にも応用可能である
-
-#### /opt/monit/httpd.sh
-```bash
-# journalctl でログ監視し、ログが更新されたタイミングで発火
-journalctl -f | while read line; do
-    # httpd が running 状態か確認
-    STAT=`systemctl status httpd | grep running`
-    if [ "$STAT" = ""  ]; then
-        # ゾンビ化した httpd プロセスがあるかもしれないため念の為 kill
-        # kill -9 `ps auxw | grep httpd | awk '{print $2}'`
-        # httpd 再起動
-        systemctl start httpd
-        # ログ記録
-        echo "$(date) | httpd start automatically" | tee -a /opt/monit/httpd.log
-    fi
-done
-```
-
-***
-
-## ログ監視サービス実装 (CentOS:6 以下)
+[CentOS7系と6系のコマンドの違いについて](https://qiita.com/shotaTsuge/items/9f337bad9f73c3953af1)
 
 ### httpdサービス死活監視
 

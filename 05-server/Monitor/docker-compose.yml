@@ -1,0 +1,49 @@
+version: "3.8"
+
+networks:
+  appnet:
+    driver: bridge
+
+services:
+  amazonlinux2:
+    build: ./docker/amazonlinux2/
+    tty: true
+    privileged: true # 特権モード: systemctl関連コマンドを使えるようにする
+    volumes:
+      - ./scripts/amazonlinux2/:/root/scripts/
+      - ./s3-php/:/root/s3-php/
+    networks:
+      - appnet
+    ports:
+      - "18073:80" # http
+      - "12273:22" # ssh
+
+  centos6:
+    build: ./docker/centos6/
+    # image: centos:6
+    tty: true
+    privileged: true # 特権モード: service関連コマンドを使えるようにする
+    volumes:
+      - ./scripts/centos6/:/root/scripts/
+      - ./s3-php/:/root/s3-php/
+    networks:
+      - appnet
+    ports:
+      - "28073:80" # http
+      - "22273:22" # ssh
+  
+  # minio service container: local AWS S3 storage
+  minio:
+    image: minio/minio:latest
+    networks:
+      - appnet
+    ports:
+      # http://localhost:9000 => service://minio:9000
+      - "9000:9000"
+    command: minio server /data
+    volumes:
+      - ./docker/minio/data/:/data/
+    environment:
+      # AWS ACCESS KEY ID, AWS SECRET ACCESS KEY
+      - MINIO_ACCESS_KEY=minio
+      - MINIO_SECRET_KEY=minio123
