@@ -8,7 +8,7 @@ function monitor() {
     local server_name="$2"
     local log_path="${3:-/var/log/service_monitor.log}"
     local slack_endpoint="$4"
-    local slack_channel="${5:-#サーバ監視}"
+    local slack_channel="#${5:-サーバ監視}"
     local slack_username="${6:-サーバ監視Bot}"
     local slack_emoji="${7:-:satellite_antenna:}"
     # 対象サービスが落ちていた場合復旧する
@@ -20,7 +20,7 @@ function monitor() {
         echo -e "$message" | tee -a "$log_path"
         # slack_endpoint が指定されている場合はSlack通知
         if [ "$slack_endpoint" != "" ]; then
-            curl -X POST --data-urlencode "payload={\"channel\": \"$slack_chennel\", \"username\": \"$slack_username\", \"text\": \"$message\", \"icon_emoji\": \"$slack_emoji\"}" "$slack_endpoint" \
+            curl -X POST --data-urlencode "payload={\"channel\": \"$slack_channel\", \"username\": \"$slack_username\", \"text\": \"$message\", \"icon_emoji\": \"$slack_emoji\"}" "$slack_endpoint" \
             && echo ''
         fi
     fi
