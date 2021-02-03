@@ -8,13 +8,20 @@ export AWS_SECRET_ACCESS_KEY=minio123
 export AWS_DEFAULT_REGION=ap-northeast-1
 export AWS_ENDPOINT_URL=http://minio:9000 # 通常のAWSを使う場合は指定不要
 
+# Slack通知用変数（Slack通知が必要な場合）
+# export SLACK_ENDPOINT=https://hooks.slack.com/services/xxxx/xxxx/xxxx
+# export SLACK_CHANNEL=サーバ監視
+# export SLACK_USERNAME=サーババックアップBot
+# export SLACK_EMOJI=:robot_face:
+
 # サイトデータバックアップ
 function backup_site() {
     local site_dir="$1"
     if [ ! -d ./backup/ ]; then
         mkdir ./backup/
     fi
-    tar czvf ./backup/site_data.tar.gz "$site_dir"
+    # Warningを無視するため 終了ステータス1 は捨てる
+    tar czvf ./backup/site_data.tar.gz "$site_dir" || [[ $? == 1 ]]
 }
 
 # DBデータバックアップ
@@ -51,9 +58,26 @@ function upload_backup() {
     fi
 }
 
+# エラー処理
+function handle_error() {
+    local message="${1:-バックアップに失敗しました}\n"
+    local log_path="${2:-/var/log/backup_error.log}"
+    local slack_endpoint="$SLACK_ENDPOINT"
+    local slack_channel="#${SLACK_CHANNEL:-サーバ監視}"
+    local slack_username="${SLACK_USERNAME:-サーババックアップBot}"
+    local slack_emoji="${SLACK_EMOJI:-:robot_face:}"
+    # ログ保存
+    echo -e "$message" | tee -a "$log_path"
+    # slack_endpoint が指定されている場合はSlack通知
+    if [ "$slack_endpoint" != "" ]; then
+       curl -X POST --data-urlencode "payload={\"channel\": \"$slack_channel\", \"username\": \"$slack_username\", \"text\": \"$message\", \"icon_emoji\": \"$slack_emoji\"}" "$slack_endpoint" \
+       && echo ''
+    fi
+}
+
 # バックアップ実行
-backup_site /root/scripts
-backup_db db 3306 root root app
+backup_site /root/scripts || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nサイトデータのバックアップに失敗しました"
+backup_db db 3306 root root app || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nデータベースのバックアップに失敗しました"
 
 # S3アップロード
-upload_backup amazonlinux2 3
+upload_backup amazonlinux2 3 || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nS3アップロードに失敗しました"
