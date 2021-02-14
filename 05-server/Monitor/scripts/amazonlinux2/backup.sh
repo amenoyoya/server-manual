@@ -40,16 +40,24 @@ function backup_db() {
 # S3アップロード
 function upload_backup() {
     local bucket="$1"
-    local generations="$2"
-    local command=`test "$AWS_ENDPOINT_URL" != "" && echo "aws --endpoint-url=$AWS_ENDPOINT_URL" || echo 'aws'`
+    local dir="${2:-backup}"
+    local command=`test "$AWS_ENDPOINT_URL" != "" && echo "/usr/local/bin/aws --endpoint-url=$AWS_ENDPOINT_URL" || echo '/usr/local/bin/aws'`
     # ./backup/ => s3://{bucket}/backup.{Ymd_HMS}/
-    $command s3 cp --recursive ./backup/ "s3://$bucket/backup.$(date '+%Y%m%d_%H%M%S')/"
+    $command s3 cp --recursive ./backup/ "s3://$bucket/$dir.$(date '+%Y%m%d_%H%M%S')/"
+}
+
+# S3ローテショーン
+function rotate_backup() {
+    local bucket="$1"
+    local generations="$2"
+    local dir="${3:-backup}"
+    local command=`test "$AWS_ENDPOINT_URL" != "" && echo "/usr/local/bin/aws --endpoint-url=$AWS_ENDPOINT_URL" || echo '/usr/local/bin/aws'`
     # 保持する世代数が指定されている場合は、溢れた分のバックアップを削除
     if [ "$generations" != "" ]; then
-        local backup_count=`$command s3 ls s3://$bucket/ | awk '{print $NF}' | grep -Ec '^backup\.[0-9]+_[0-9]+/$'`
+        local backup_count=`$command s3 ls s3://$bucket/ | awk '{print $NF}' | grep -Ec "^$dir\.[0-9]+_[0-9]+/$"`
         if [ $backup_count -gt $generations ]; then
             # バックアップディレクトリを古い順に並べて配列化
-            local backups=(`$command s3 ls s3://$bucket/ | awk '{print $NF}' | grep -E '^backup\.[0-9]+_[0-9]+/$'`)
+            local backups=(`$command s3 ls s3://$bucket/ | awk '{print $NF}' | grep -E "^$dir\.[0-9]+_[0-9]+/$"`)
             # 保持世代数から溢れた分だけS3から削除
             for ((i = 0; i < $backup_count - $generations; ++i)); do
                 $command s3 rm --recursive "s3://$bucket/${backups[$i]}"
@@ -80,4 +88,8 @@ backup_site /root/scripts || handle_error "[BackupAlert: amazonlinux2] $(/bin/da
 backup_db db 3306 root root app || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nデータベースのバックアップに失敗しました"
 
 # S3アップロード
-upload_backup amazonlinux2 3 || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nS3アップロードに失敗しました"
+upload_backup amazonlinux2 || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nS3アップロードに失敗しました"
+
+# S3世代ローテーション
+## @TODO: エラーハンドリングが上手く行かないため要修正
+rotate_backup amazonlinux2 || handle_error "[BackupAlert: amazonlinux2] $(/bin/date)\nS3世代ローテーションに失敗しました"
