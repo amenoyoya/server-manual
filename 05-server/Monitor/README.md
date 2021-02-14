@@ -40,6 +40,43 @@ $ docker-compose up -d
 
 ***
 
+## AWS S3 へのバックアップ
+
+### AWS S3 バケットポリシー設定
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::{iam_user_id}:user/{iam_user_name}"
+            },
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::{bucket_name}",
+                "arn:aws:s3:::{bucket_name}/*"
+            ]
+        }
+    ]
+}
+```
+
+パブリックアクセスは全てブロックで良い
+
+### AWS CLI インストール
+```bash
+$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+$ unzip awscliv2.zip
+$ sudo ./aws/install
+
+# version確認
+$ /usr/local/bin/aws --version
+aws-cli/2.1.26 Python/3.7.3 Linux/3.10.0-1062.18.1.el7.x86_64 exe/x86_64.centos.7 prompt/off
+```
+
+***
+
 ## ログ監視サービス実装 (CentOS:7 以上)
 
 [CentOS7系と6系のコマンドの違いについて](https://qiita.com/shotaTsuge/items/9f337bad9f73c3953af1)
