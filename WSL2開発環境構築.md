@@ -788,3 +788,82 @@ none            3.9G     0  3.9G   0% /dev
 tmpfs           3.9G     0  3.9G   0% /sys/fs/cgroup
  :
 ```
+
+***
+
+## 既存の仮想ディスク（vhd）を WSL2 環境にインポートする
+
+LxRunOffline を使って別ドライブに WSL2 Linux 環境を構築した場合、そのディスクを別のマシンに持っていて使いたくなることがある
+
+そういった場合は、以下の手順で既存 Linux 仮想ディスクを WSL2 環境にインポートすることができる
+
+（なお WSL2 の環境構築は済んでいるものとする）
+
+まず前提として、インポートしたい仮想ディスク（vhd）環境が `D:\wsl\ubuntu-focal\` ディレクトリにあり、以下のようなディレクトリ構成になっているとする
+
+```
+D:\wsl\ubuntu-focal\
+  |_ temp\
+  |_ ext4.vhdx
+  |_ fsserver
+```
+
+別の WSL2 環境で使われている仮想ディスクは、**アクセスが拒否されるため、必ず最初にコピーをとる**必要がある
+
+コピーをとらずに直接 WSL2 環境にインポートすると、最悪の場合仮想ディスクが壊れる可能性があるため、要注意
+
+`Win + X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# D:\wsl\ubuntu-focal ディレクトリを D:\wsl\ubuntu-2004 ディレクトリにコピーする
+> copy -r D:\wsl\ubuntu-focal D:\wsl\ubuntu-2004
+
+# 確認
+> dir D:\wsl\ubuntu-2004\
+    ディレクトリ: D:\wsl\ubuntu-2004
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        2021/01/21     12:14                temp
+-a----        2021/02/23      9:04    83722502144 ext4.vhdx
+-a----        2021/01/21      9:58              0 fsserver
+
+# コピーした仮想ディスク（Linux環境）を WSL2 にインポート
+## lxrunoffline register -n <WSL2登録名> -d <インポート元仮想ディスクのあるディレクトリ>
+> lxrunoffline register -n ubuntu-2004 -d D:\wsl\ubuntu-2004\
+
+# 登録されている Linux ディストロ名を確認
+## 上記手順で ubuntu-2004 が登録されているはず
+> lxrunoffline list
+Ubuntu-20.04
+ubuntu-2004 # <= New!
+
+# インポートした ubuntu-2004 環境を起動
+> lxrunoffline run -n ubuntu-2004
+
+# -- root@ubuntu-2004
+
+# ログイン用メインユーザのIDを確認
+## 今回のインポート元 ubuntu-focal 環境では、メインユーザは user だったため、以下のようにしてユーザID確認
+% id -u user
+1000 # <= 環境により異なる（メモしておく）
+
+# ログインユーザIDを確認できたら一旦終了
+% exit
+
+# -- powershell@localhost
+
+# ubuntu-2004 のログインユーザを root から user (ログイン用メインユーザ: 環境により異なる) に変更
+## 上記で確認したユーザIDを指定する
+> lxrunoffline su -n ubuntu-2004 -v 1000
+
+# ubuntu-2004 環境を規定のディストロに設定
+> wsl --set-default ubuntu-2004
+
+# 確認
+> wsl -l -v
+  NAME            STATE           VERSION
+* ubuntu-2004     Running         2
+  Ubuntu-20.04    Stopped         2
+
+# => これで、以降 wsl コマンドで ubuntu-2004 の WSL2 Linux 環境を使うことができる
+```
