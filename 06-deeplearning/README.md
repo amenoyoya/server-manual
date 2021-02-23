@@ -31,6 +31,8 @@
 ### Windows10 Setup
 Windows 10 Build 20150 の環境が必要なため、2020年10月時点では Windows Insider Preview に参加する必要がある
 
+※ メインPCで不安定な Window Insider Preview DEVチャンネル に参加するのが不安な場合は [Boot from VHD 機能で Windows Insider Preview を安全に試す](https://qiita.com/ksasaki/items/4e802da17f51d602b17d) を参考にすると良い  
+
 1. `Win + X` |> `N` キー => Windows設定ダイアログ
 2. 更新とセキュリティ > Window Insider Preview > 開始する
 3. 「DEVチャンネル」に参加する
