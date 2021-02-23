@@ -87,6 +87,55 @@ VSCode は、WSL2 環境との相性も良く、便利なプラグインが無�
 > code --install-extension Perkovec.emoji # 絵文字挿入プラグイン
 ```
 
+#### VSCode 設定ファイル
+`%AppData%\Code\User\settings.json`
+
+```jsonc
+{
+    "hediet.vscode-drawio.theme": "atlas",
+    "files.eol": "\n", // Unix系ツールは`\r`が入っていると動作がおかしくなるものが多い
+    "terminal.integrated.shell.windows": "C:\\tools\\msys64\\usr\\bin\\bash.exe", // bash
+    "diffEditor.renderSideBySide": false, // Git の差分を行内に表示
+    "editor.colorDecorators": false, // カラーデコレーターを非表示
+    "editor.minimap.renderCharacters": false, // ミニマップの表示文字をブロックに変更
+    "editor.minimap.showSlider": "always", // 表示領域をミニマップで常にハイライト
+    "editor.multiCursorModifier": "ctrlCmd", // マウスでの複数選択時の修飾キーを変更
+    "editor.renderControlCharacters": true, // 制御文字を表示
+    "editor.renderLineHighlight": "all", // 選択行を行番号含めすべてハイライト
+    "editor.renderWhitespace": "all", // 半角スペースを常に表示
+    "editor.snippetSuggestions": "top", // Emmet などのスニペット候補を優先して表示
+    // タブ幅 = 2 space の言語設定
+    "[javascript]": {
+        "editor.tabSize": 2
+    },
+    "[javascriptreact]": {
+        "editor.tabSize": 2
+    },
+    "[json]": {
+        "editor.tabSize": 2
+    },
+    "[jsonc]": {
+        "editor.tabSize": 2
+    },
+    "[ruby]": {
+        "editor.tabSize": 2
+    },
+    "[vue]": {
+        "editor.tabSize": 2
+    },
+    "[typescript]": {
+        "editor.tabSize": 2
+    },
+    "[html]": {
+        "editor.tabSize": 2,
+        "editor.suggest.insertMode": "replace",
+        "gitlens.codeLens.scopes": [
+            "document"
+        ]
+    },
+}
+```
+
 ### WSL2 Tips
 - [tips/WSL2.md](./tips/WSL2.md)
     - WSL2 の少し踏み込んだ使い方や、Linux GUI アプリを Windows 上で稼働させる方法など
