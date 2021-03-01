@@ -161,7 +161,7 @@ $ sudo apt update && sudo apt upgrade -y
 ## https通信を可能にするために apt-transport-https, ca-certificates もインストールしておく
 $ sudo apt install -y vim curl git ruby openjdk-14-jdk \
     zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev libffi-dev liblzma-dev \
-    software-properties-common apt-transport-https ca-certificates
+    software-properties-common apt-transport-https ca-certificates build-essential
 
 # Linuxbrew (Linux版の Homebrew パッケージマネージャ) 導入
 ## Linuxbrew を使うことで最新の開発ツール等を導入しやすくなる
