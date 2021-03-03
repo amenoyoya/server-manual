@@ -1,5 +1,12 @@
 # 機械学習・ディープラーニング入門
 
+## Windows 10: GPU + Python 環境構築
+
+WSL2環境を使わない、Windowsネイティブ環境におけるセットアップ方法
+
+Read [SetupWindows.md](./SetupWindows.md).
+
+***
 ## Environment
 
 - Host
