@@ -146,6 +146,44 @@ $ laws s3 ls
 2020-11-03 18:08:26 test-bucket
 ```
 
+### S3バケットポリシーの設定
+S3 の各バケットには、個別にアクセス制限をかけることができる
+
+よく使うバケットポリシー設定は、以下のような、特定の IAM ユーザのみアクセス可能とするもの
+
+```jsonc
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            // 特定のIAMユーザに限定しない場合は
+            //   "Principal": "*"
+            // とする
+            "Principal": {
+                "AWS": "arn:aws:iam::{IAM_User_ID}:user/{IAM_User_Name}"
+            },
+            // S3のアップロードのみ、ダウンロードのみ許可したい場合は
+            //   "Action": ["s3:PutObject", "s3:GetObject"]
+            // などに設定する
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::{S3_Bucket_Name}",
+                "arn:aws:s3:::{S3_Bucket_Name}/*"
+            ]
+        }
+    ]
+}
+```
+
+バケットポリシーの JSON ファイルを作成したら、それを AWS にアップロードすれば設定される
+
+```bash
+# AWS CLI を使って AWS S3 にバケットポリシーを作成
+# $ aws s3api put-bucket-policy --bucket <バケット名> --policy file://<JSONファイルパス> 
+$ laws s3api put-bucket-policy --bucket test-bucket --policy file://policy.json
+```
+
 ### Lambda関数の作成
 - AWS Lambda は、クラウド上にサーバ不要なプログラム（関数）を登録するサービス
 - Lambda関数は、様々なイベントをトリガーとして任意のプログラムを実行できる

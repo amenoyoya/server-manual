@@ -151,7 +151,7 @@ MPCPLAYLIST
 
 ```bash
 # 一時ファイルなしで $file を上書き更新
-$ (rm "$file" && CMD1 | CMD2 | ... > "file") < "$file"
+$ (rm "$file" && CMD1 | CMD2 | ... > "$file") < "$file"
 ```
 
 よって、最終的なワンライナーは以下の通り
