@@ -377,6 +377,8 @@ Enter password: # <= 設定したパスワード入力
 ## 基本的に root ユーザでMySQLサーバにログインするのはセキュリティ的によろしくない
 ## データベースごとに専用のユーザを作成するのが運用上望ましい
 ## > CREATE USER 'ユーザ名'@'接続先DBホスト' IDENTIFIED BY '接続パスワード';
+### ※ データベースサーバは別建てして専用のエンドポイントホスト名を設定することが多いため、その場合は localhost ではなくそのエンドポイント名を指定すること
+### ※ 接続ホスト名を省略した場合（CREATE USER 'ユーザ名' IDENTIFIED BY ...）はワイルドカード指定と同じ意味（CREATE USER 'ユーザ名'@'%' IDENTIFIED BY ...）
 > CREATE USER 'test_usr'@'localhost' IDENTIFIED BY 'PWD!tE_sT@456';
 
 # test_usr ユーザにデータベース操作権限を与える
