@@ -1,4 +1,4 @@
-# HTML/CSS と Webデザイン
+# HTML/CSS から始めるフロントエンド開発
 
 Webエンジニアの職種を大別すると **フロントエンドエンジニア** と **バックエンドエンジニア** に分けられる
 
@@ -1184,3 +1184,242 @@ p { color: black; }
 ```
 
 ![css-overload.png](./img/css-overload.png)
+
+***
+
+## VSCodeエディタを使ったフロントエンド開発
+
+CSSは実際にWebデザインをコーディングしながら覚えていった方が早い
+
+また、これまでは Web Maker を使って簡単にコーディングしていたが、実際にはエディタを使って HTML/CSS ファイルを作成してWeb制作を進めていく
+
+そのため、本稿ではVSCodeエディタを使って HTML/CSS ファイルを作成しながら、一通りコーディングを体験してみる
+
+### VSCode Live Server 拡張機能の導入
+VSCodeエディタには、Web Maker と同じようにリアルタイムにHTMLをプレビューできる **Live Server** という拡張機能がある
+
+https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
+
+この拡張機能は、フロントエンド開発において便利なためここで導入しておく
+
+ターミナル（Bash, PowerShell 等）を開いて以下のコマンドを実行する
+
+```bash
+# ターミナルから VSCode Live Server 拡張機能をインストール
+## VSCode を開いて Ctrl+P |> `ext install ritwickdey.liveserver` でも導入できる
+## もしくは VSCode 上で Ctrl+Shift+X |> `Live Server` で検索してインストールでも良い
+$ code --install-extension ritwickdey.liveserver
+```
+
+### index.html の作成
+通常、Webサイトのトップページには `index.html` というHTMLファイルを設置する
+
+これは、Webサーバの設定でアクセス先のパスから `index.html` を自動的に探して表示するようになっていることが通例のためである
+
+例えば `https://www.example.com/` というURLにアクセスした場合、`https://www.example.com/index.html` が自動的に表示されるということである
+
+まずは、フロントエンド開発用の適当なディレクトリを作成し、VSCodeでディレクトリを開く
+
+![vscode-open.png](./img/vscode-open.png)
+
+続いてエクスプローラサイドバー（表示されていない場合は `Ctrl + Shift + E` キーで開く）で、右クリック→「新しいファイル」から `index.html` というファイルを作成する
+
+![vscode-index.drawio.png](./img/vscode-index.drawio.png)
+
+VSCodeにはHTMLコーディング用のショートカットが豊富に用意されており、`html:5` と記述した後 `Tab` キーを入力すると、Web Maker と同じように以下のようなHTMLテンプレートが自動的に挿入されるようになっている
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+```
+
+また、`div` |> `Tab` キーで `<div></div>` というタグが自動挿入されたりといった便利な機能もあるため、活用するとコーディングの効率が非常に良くなる
+
+### Live Server 拡張機能の使い方
+動作確認のため、`index.html` を以下のように記述してみる
+
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フロントエンド開発入門</title>
+</head>
+<body>
+  <h1>フロントエンド開発入門</h1>
+  <p>VSCode Live Server を使って効率的に開発する。</p>
+</body>
+</html>
+```
+
+Live Server 拡張機能が正常にインストールされていれば、VSCode の右下に「Go Live」というボタンがあるはずなので、これを押す
+
+すると自動的にブラウザが立ち上がり、`index.html` の内容を表示してくれるはずである
+
+![vscode-liveserver.drawio.png](./img/vscode-liveserver.drawio.png)
+
+なお、`index.html` の中身を変更して保存すると、自動的にブラウザ側の表示にも反映されるため、非常に便利である
+
+### 2カラムレイアウト
+最後にCSSを使って、よく見かける2カラムレイアウトのWebページを作成してみる
+
+ディレクトリ内に以下のようなファイルを配置してブラウザの表示を確かめてみる
+
+```bash
+./
+|_ index.html # トップページHTML
+|_ style.css  # index.html から読み込まれるCSS
+```
+
+#### index.html
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フロントエンド開発入門</title>
+  <!-- 同じ階層にある style.css を読み込む -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- ヘッダー領域 -->
+  <header>
+    <!-- ナビゲーションメニュー -->
+    <nav class="main-navi">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/info/">Information</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </nav>
+    <!-- タイトル・サブタイトル -->
+    <h1>フロントエンド開発入門</h1>
+    <p class="sub-title">VSCode Live Server を使って効率的に開発する</p>
+  </header>
+  <!-- メインコンテンツ＋サイドバーをグループ化 -->
+  <div class="container">
+    <!-- メインコンテンツ -->
+    <main>
+      <article>
+        <h2>HTML/CSS 入門</h2>
+        <p>CSSは実際にWebデザインをコーディングしながら覚えていった方が早い</p>
+        <p>そのため、本稿ではVSCodeエディタを使って HTML/CSS ファイルを作成しながら、一通りコーディングを体験してみる</p>
+      </article>
+    </main>
+    <!-- サイドバー -->
+    <aside>
+      <h2>開発環境</h2>
+      <dl>
+        <dt>ブラウザ</dt><dd>Microsoft Edge</dd>
+        <dt>エディタ</dt><dd>VSCode</dd>
+      </dl>
+    </aside>
+  </div>
+</body>
+</html>
+```
+
+#### style.css
+```css
+/* body領域 */
+body {
+    width: 80vw; /* 幅を表示領域の80%に */
+    margin: 1.5rem auto; /* 上下の空白を 1.5rem, 左右の空白をauto（センタリング）に */
+}
+
+/* ヘッダー領域 */
+header {
+    background-color: #c3b79d; /* 文字色を薄茶色に */
+    color: #f0ffff; /* 文字色を azure に */
+    padding: 1.5rem 0; /* ヘッダー内部に上下 1.5rem のスペースを挿入 */
+}
+
+/* メインナビゲーション */
+nav.main-navi ul {
+    display: flex; /* フレキシブルボックスレイアウト対応 */
+    flex-direction: row; /* 中の要素を横に並べる */
+    justify-content: space-around; /* 中の要素を均等間隔で並べる */
+    list-style-type: none; /* リストの記号（点）をなしに */
+    margin: 0; /* 上下左右の空白を0 に */
+    margin-bottom: 0.8rem; /* 下に 0.8rem のスペースを挿入 */
+}
+
+/* ヘッダー領域内リンク */
+header a {
+    color: #f0ffff; /* 文字色を azure に */
+    text-decoration: none; /* リンクの下線等の飾り付けを削除 */
+    font-weight: 600; /* フォントをやや太字に */
+}
+header a:hover { /* マウスを乗せたときのスタイル */
+    text-decoration: underline; /* 下線を表示 */
+}
+
+/* ヘッダー内タイトル */
+header h1 {
+    margin: 0 2rem; /* 上下の空白を0, 左右の空白を 2rem に */
+    font-size: 1.8rem; /* フォントサイズを 1.8rem に */
+}
+
+/* ヘッダー内サブタイトル */
+header p.sub-title {
+    margin: 0 2rem; /* 上下の空白を0, 左右の空白を 2rem に */
+    font-size: 0.9rem; /* フォントサイズを 0.9rem に */
+}
+
+/* メインコンテンツ＋サイドバー領域 */
+div.container {
+    display: flex; /* フレキシブルボックスレイアウト対応 */
+    flex-direction: row; /* 中の要素を横に並べる */
+}
+
+/* メインコンテンツ領域 */
+main {
+    width: 80%; /* 親要素の70%幅: 80vw x 70% = 56vw */
+    color: #666; /* 文字色を濃い灰色に */
+    padding: 0.5rem 1rem; /* main内部に上下 0.5rem, 左右 1rem のスペースを挿入 */
+}
+
+/* サイドバー領域 */
+aside {
+    width: 30%; /* 親要素の30%幅: 80vw x 30% = 24vw */
+    background-color: #fff8dc; /* 背景色を cornsilk に */
+    margin: 1rem 0; /* 上下の空白を 1rem に */
+    color: #666; /* 文字色を濃い灰色に */
+}
+
+/* サイドバー内タイトル */
+aside h2 {
+    background-color: #800000; /*  */
+    color: #fff8dc; /* 文字色を cornsilk に */
+    margin: 0; /* 上下左右の空白をなしに */
+    padding: 0.2rem 1rem; /* h2内に上下 0.2rem, 左右 1rem のスペースを挿入 */
+    font-size: 1.2rem; /* フォントサイズを 1.2rem に */
+}
+
+/* サイドバー内コンテンツ */
+aside dl {
+    margin: 0.6rem 1.2rem; /* 上下の空白を 0.6rem, 左右の空白を 1.2rem に */
+    font-size: 0.9rem; /* フォントサイズを 0.9rem に */
+}
+```
+
+#### ブラウザの表示確認
+以下のように、文字色や背景色、レイアウト等の整った表示になっていればOK
+
+![layout-2column.png](./img/layout-2column.png)
