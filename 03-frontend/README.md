@@ -1405,7 +1405,7 @@ aside {
 
 /* サイドバー内タイトル */
 aside h2 {
-    background-color: #800000; /*  */
+    background-color: #800000; /* 背景色を maroon に */
     color: #fff8dc; /* 文字色を cornsilk に */
     margin: 0; /* 上下左右の空白をなしに */
     padding: 0.2rem 1rem; /* h2内に上下 0.2rem, 左右 1rem のスペースを挿入 */
