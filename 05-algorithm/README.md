@@ -43,9 +43,17 @@
     - [x] 他のプロセスを管理するための処理能力が高いシェルに似た機能を有する
     - [x] Lispに似たマクロや他のメタプログラミング機能を有する
     - [ ] JITコンパイラで事前ビルドされるため、起動が遅い
-        - 基本的に研究目的で使われるため、JupyterLab 等で常時起動状態で使われるのが現状の最適解
-    - [ ] 配列の添字が 1 から始まるため、既存の言語に慣れている場合は違和感を感じる
+        - 基本的に研究目的で使われるため、JupyterLab 等で常時起動状態で使われるのが現状の最適解かもしれない
+        - ただし、起動速度の問題はここ1年ほどでどんどん改善されており、[PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl) 等、起動速度を改善させるためのパッケージも出てきている
+    - [ ] 配列の添字が 1 から始まるため、既存の言語に慣れている場合は違和感を感じる可能性がある
+        - ただし、[Comparison of programming languages (array)](https://en.wikipedia.org/wiki/Comparison_of_programming_languages_%28array%29#Array_system_cross-reference_list) を見てみると添字が 1 で始まる言語は比較的多いことが分かる
+        - 特に Fortran, Mathematica, MATLAB, R 等、数値計算においてよく使われる言語はほぼすべて 1 始まりである
+        - そもそも Julia は任意の添字で始めることが可能なようにデザインされており、必ずしも 1 始まりで固定という訳ではない
+            - 参考実装: https://github.com/JuliaArrays/OffsetArrays.jl
     - [ ] 活発に開発されており、バージョンにより言語仕様が大きく変わることがある
+        - ただし2018年8月にリリースされたバージョン 1.0 以降についてはその限りではない
+        - [開発者のコメント](https://discourse.julialang.org/t/psa-julia-is-not-at-that-stage-of-development-anymore/44872)を見ると、バージョン 1.0 から 2.0 までの間（つまりバージョン 1.x の間）はセマンティックバージョニングの標準に従い、破壊的な仕様変更は行わないと約束している
+        - そのため、少なくともこれから Julia を使い始める場合は気にするようなデメリットではない
 
 筆者の所感としては、PythonとRubyを足したような書き味で、実行速度の早い言語というイメージである
 

@@ -41,7 +41,7 @@ Webpack は、モジュールバンドラの一つで、複数の JavaScript フ
 
 元々 JavaScript には、別のファイルに記述された JavaScript モジュールを読み込むという機能がないため、それを実現するモジュールバンドラの登場で大規模な JavaScript 開発が可能になりました
 
-また、JavaScript には EMAScript という標準規格が制定されていますが、Webブラウザごとにサポート状況が異なります
+また、JavaScript には ECMAScript という標準規格が制定されていますが、Webブラウザごとにサポート状況が異なります
 
 それらの差異を吸収するために Babel というトランスコンパイラ（JavaScript を JavaScript にコンパイルするコンパイラ）がよく使われるのですが、Webpack を使うことで ECMAScript をよりシームレスに使うことも可能です
 
