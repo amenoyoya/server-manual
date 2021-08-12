@@ -171,6 +171,19 @@ $ git filter-branch -f --env-filter "GIT_AUTHOR_NAME='$name'; GIT_AUTHOR_EMAIL='
 $ git push -f
 ```
 
+特定のコミットの Author および Committer を変更したい場合は if シェルを使うと良い
+
+```bash
+$ git filter-branch --env-filter '
+    if [ $GIT_COMMIT = "<commit_id>" ]
+    then
+        export GIT_AUTHOR_NAME="<author_name>"
+        export GIT_AUTHOR_EMAIL="<author_email>"
+        export GIT_COMMITTER_NAME="<committer_name>"
+        export GIT_COMMITTER_EMAIL="<committer_email>"
+    fi'
+```
+
 ### 過去のコミットからファイルを削除・更新する
 公開リポジトリにパスワード情報ファイルなどをコミットしてしまった場合などに使う
 
