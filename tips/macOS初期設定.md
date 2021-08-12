@@ -94,6 +94,30 @@ $ brew tap homebrew/core
 $ git -C $(brew --repo homebrew/core) checkout master
 ```
 
+### Finder のコンテキストメニューに「Codeで開く」を追加
+- `Command` + `Space` |> `automator.app`
+    - 新規書類 > クイックアクション
+        - ワークフローが受け取る現在の項目: `ファイルまたはフォルダ`
+        - 検索対象: `Finder.app`
+        - ワークフローに `シェルスクリプトを実行` を追加
+            - シェル: `/bin/zsh`
+            - 入力の引き渡し方法: `引数として`
+            - スクリプトは以下の通り
+
+```bash
+for f in "$@"; do
+    open -a 'Visual Studio Code' "$f"
+done
+```
+
+![automator.png](./img/automator.png)
+
+- 続き:
+    - `Commad` + `S` (保存) |> `Codeで開く`
+        - => `~/Library/Services/Codeで開く.workflow` に保存される
+    - => Finder でファイル・フォルダを右クリックしたときに「Codeで開く」メニューが表示されるようになる
+
+
 ### anyenv 環境構築
 以降、シェルは zsh である前提のため、シェルプロファイルは `.zshrc` としている
 
@@ -156,4 +180,29 @@ v14.17.4
 
 $ yarn -v
 1.22.10
+```
+
+### VSCode で Swift 開発環境を整える
+基本的に macOS での開発（主に Swift 言語）は Xcode 環境を前提としているが、VSCode で開発したい場合は **sourcekit-lsp** (Swift 用の Language Server Protocol) を使う
+
+sourcekit-lsp のビルドに Xcode Command Line Tools と Node.js が必要なため、未導入の場合には導入しておく
+
+- Xcode Command Line Tools:
+    - 最新の Homebrew を導入する際に自動的に入るはず
+    - 入っていない場合は `xcode-select --install` コマンドで導入可能
+- Node.js:
+    - 基本的には nodenv や nvm のような複数バージョンの Node.js 管理ができる環境を導入すると良い
+    - Node.js のバージョンは基本的に 12.x 以降を入れておけば間違いないはず
+
+```bash
+# sourcekit-lsp リポジトリを ~/sourcekit-lsp/ に clone
+$ git clone https://github.com/apple/sourcekit-lsp.git ~/sourcekit-lsp
+
+# VSCode extension をビルド
+$ cd ~/sourcekit-lsp/Editors/vscode/
+$ npm install
+$ npm run dev-package
+
+# VSCode に sourcekit-lsp extension インストール
+$ code --install-extension sourcekit-lsp-development.vsix
 ```
