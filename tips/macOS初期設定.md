@@ -7,6 +7,10 @@
 - App Store アップデート
     - Apple > App Store > すべてアップデート
 
+### Environment
+- OS: macOS 11 Big Sur
+- Shell: zsh
+
 ***
 
 ## 各種システム関連設定・開発環境構築

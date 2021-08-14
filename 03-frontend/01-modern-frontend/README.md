@@ -448,29 +448,327 @@ Live Server を起動して、以下のようにカウンターアプリケー�
 
 ***
 
-## Vue + Node.js (Webpack + Babel) 環境での本格的フロントエンド開発入門
+## Node.js 入門
 
 前述の通り、Vue も React もただ使うだけであれば、Node.js を開発環境に導入する必要はない
 
 しかしながら、Vue SFC や React JSX 等、事前にピュアJSにコンパイルしておいた方が、ブラウザ上でいちいちコンパイルしなくて良くなるためパフォーマンス的に有利である
 
-そこでここでは、Node.js 環境を構築し、Vue + Webpack + Babel というフロントエンド開発環境でのモダンな開発手法を体験してみる
+そこでここでは Node.js 環境を構築し、その基本的な使い方を習得する
 
 ### Setup
 [WSL開発環境構築](../../WSL開発環境構築.md) で環境構築してある場合は、anyenv + nodenv を使って Node.js 環境済みのはずである
 
+上記で Linux (Ubuntu 20.04) での環境構築方法は紹介済みのため、ここでは macOS (11 Big Sur) と Windows 10 (WSL2 を使わない場合) での環境構築方法を掲載する
+
+なお、環境構築時に Node.js のサードパーティ製パッケージマネージャとして `yarn` を導入しているが、これはかつての `npm` パッケージマネージャがインストール速度やセキュリティの問題を抱えていたためである
+
+現在では **`npm` 側に `yarn` の多くの機能が取り込まれ、実質的な機能の差はほとんどなくなっている**ため、必ずしも `yarn` を導入する必要はないと考えている
+
+#### Setup on macOS 11 Big Sur
+基本的には Linux と大きく変わらない
+
+`Command` + `Space` |> `terminal.app`
+
+（以下、デフォルトシェルが `zsh` である前提で進める）
+
 ```bash
-# Linuxbrew で Node.js インストール
-$ brew install node
+# --- anyenv 導入 ---
 
-# Node.js バージョン確認
+# Homebrew 未導入の場合は導入しておく
+## 最近のインストーラは自動的に Xcode Command Line Tools も入れてくれるため、一通りの開発環境は簡単に整う
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# Linuxbrew で anyenv 導入
+$ brew install anyenv
+$ anyenv install --init
+## Do you want to checkout ? [y/N]: <= y
+
+# anyenv 初期化スクリプトを .zshrc に記述
+$ echo 'eval "$(anyenv init -)"' >> ~/.zshrc
+$ source ~/.zshrc
+
+# anyenv update plugin の導入
+$ mkdir -p $(anyenv root)/plugins
+$ git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update
+$ anyenv update
+
+# バージョン確認
+$ anyenv -v
+anyenv 1.1.4
+
+
+# --- pyenv 導入 ---
+## npm package の中には python を必要とするものも多いため、ここで Python 環境を導入しておく
+
+# anyenv を使って pyenv 導入
+## pyenv を使うことで、複数バージョンの Python 環境を構築できる
+$ anyenv install pyenv
+$ exec $SHELL -l
+
+# pyenv で Python 2.7.18 と 3.7.7 をインストール
+$ pyenv install 2.7.18
+$ pyenv install 3.7.7
+
+# pyenv では 2系 と 3系 を同時に指定できる
+## python  => 2.7.18
+## python3 => 3.7.7
+$ pyenv global 2.7.18 3.7.7
+
+# 現在選択されているバージョンを確認
+$ pyenv versions
+* 2.7.18 (set by /home/user/.anyenv/envs/pyenv/version)
+* 3.7.7 (set by /home/user/.anyenv/envs/pyenv/version)
+
+$ python --version
+2.7.18
+
+$ python --version
+3.7.7
+
+# pip パッケージマネージャを更新しておく
+$ pip install --upgrade pip setuptools
+$ pip3 install --upgrade pip setuptools
+
+
+# --- nodenv 導入 ---
+
+# anyenv を使って nodenv 導入
+## nodenv を使うことで、複数バージョンの Node.js 環境を構築できる
+$ anyenv install nodenv
+$ exec $SHELL -l
+
+## nodenv-yarn-install プラグイン導入: nodenv install 時に yarn もインストールする
+$ mkdir -p "$(nodenv root)/plugins"
+$ git clone https://github.com/pine/nodenv-yarn-install.git "$(nodenv root)/plugins/nodenv-yarn-install"
+$ echo 'export PATH="$HOME/.yarn/bin:$PATH"' >> ~/.zshrc
+
+# Node.js インストール可能なバージョンを確認
+$ nodenv install --list
+
+# Node.js 14.17.5 インストール
+$ touch $(nodenv root)/default-packages
+$ nodenv install 14.17.5
+
+# Node.js 14.17.5 に切り替え
+$ nodenv global 14.17.5
+
+# 現在選択されているバージョンを確認
+$ nodenv versions
+* 14.17.5 (set by ~/.anyenv/envs/nodenv/version)
+
+# 一度シェルを再起動しないと Node.js が使えない
+$ exec $SHELL -l
+
+# バージョン確認
 $ node -v
-v13.5.0
+v14.17.5
 
-# ついでに yarn パッケージマネージャをインストールしておく
-$ npm i -g yarn
-
-# yarn バージョン確認
 $ yarn -v
-1.21.1
+1.22.11
+```
+
+#### Setup on Windows 10
+Windows 環境の場合、WSL2 を導入可能であれば WSL2 + anyenv + nodenv 環境を使うのが現状の最適解と思われる
+
+しかし、事情により WSL2 を使えない場合もあると思われるため、ここでは WSL2 を使わない場合の Windows 10 での環境構築手順を掲載する
+
+Windows 10 ネイティブ環境では nodenv が使えないため、[nvm-windows](https://github.com/coreybutler/nvm-windows) を使う（無論、無理して Node.js のバージョン管理システムを導入しなくても良いのだが、手動でバージョン管理しようとすると複数の案件を回そうとしたときに辛くなりやすい）
+
+`Win` + `X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# パッケージマネージャとして Chocolatey ではなく scoop を使う
+## Chocolatey で nvm を導入した場合、非管理者権限で npm グローバルインストール系のコマンドがこけることが多かったため
+### (おそらく `C:\Program Files\` で node.js 周りのファイル管理をしているためと思われる)
+> iwr -useb get.scoop.sh | iex
+
+# powershell script の実行ポリシーを付与
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+
+# => 設定変更を反映するため、一度 PowerShell 再起動
+
+# scoop で nvm インストール
+> scoop install nvm
+
+# => 自動的に環境変数情報が変更されるため、再び PowerShell 再起動
+
+# nvm で Node.js 14.17.5 インストール
+> nvm install 14.17.5
+
+# Node.js 14.17.5 を使う
+> nvm use 14.17.5
+
+# npm, yarn パッケージマネージャを更新しておく
+> npm update -g npm yarn
+
+# yarn global bin の PATH をユーザ環境変数に追加しておく
+> [System.Environment]::SetEnvironmentVariable("PATH", [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";$(yarn global bin)", "User")
+
+# バージョン確認
+$ node -v
+v14.17.5
+
+$ yarn -v
+1.22.11
+```
+
+### Node.js で Hello, world
+以上で Node.js が使えるようになったため、動作確認を兼ねて `Hello, world` を表示してみる
+
+ファイル名は任意だが、ここでは `hello.js` というファイルを作成し、以下のように JavaScript コードを記述してみる
+
+```bash
+# hello.js ファイルを作成しながら VSCode で開く
+$ code hello.js
+```
+
+```javascript
+// コンソールに "Hello, world" と表示
+console.log('Hello, world');
+```
+
+スクリプトファイルを作成したら、以下のコマンドで Node.js を実行する
+
+```bash
+# Node.js で hello.js ファイルを実行する
+$ node hello.js
+Hello, world
+```
+
+### npm でパッケージをインストールしてみる
+Node.js エコシステムには便利なパッケージが多くある
+
+ここでは、コンソールに色をつけることのできる `colors` というパッケージを `npm` でインストールして使ってみる
+
+```bash
+# npm で colors パッケージインストール
+$ npm install colors
+
+## 短縮形で `npm i colors` という書き方も可
+```
+
+上記コマンドを実行すると、カレントディレクトリに `node_modules/` ディレクトリが作成される
+
+このディレクトリ内に各種パッケージがインストールされるという仕組みになっている
+
+なお、一緒に `package.json` というファイルも作成されるが、このファイルにはインストールパッケージの情報等が記述されている
+
+このファイルがあれば `node_modules/` ディレクトリを削除しても `package.json` の情報をもとに、使われていたパッケージを再インストールすることができるという仕組みになっている
+
+```bash
+# ./package.json の情報をもとにパッケージを一括インストール
+## 短縮形で `npm i` という書き方も可
+$ npm install
+```
+
+話がそれてしまったが、インストールした `colors` パッケージを使って、コンソールに色付き文字を表示してみる
+
+```javascript
+// hello.js
+
+// Node.js では require 関数を使って、別ファイルに記述された JavaScript モジュール（パッケージ）を読み込むことができる
+// 以下のようにして colors パッケージを読み込む
+require('colors');
+
+// 黄色テキストで "Hello, world" 表示
+console.log('Hello, world'.yellow);
+```
+
+これで `node hello.js` を実行すると、黄色テキストで `Hello, world` と表示されるはずである
+
+#### パッケージのグローバルインストールとローカルインストール
+今回、パッケージは作業ディレクトリにローカルインストールしたが、作業ディレクトリ以外の JavaScript プログラムからも読み込むことができるようにグローバルインストールすることも可能である
+
+その場合は `npm` に `-g` オプションをつけてインストールを行う
+
+```bash
+# colors パッケージをグローバルインストール
+## 別ディレクトリにあるプログラムからでも require('colors') できるようにする
+$ npm install -g colors
+
+## 短縮形で `npm i -g colors` という書き方も可
+```
+
+なお、`require` でグローバルインストールしたパッケージを読み込みたい場合、環境変数 `NODE_PATH` で npm グローバルインストール先ディレクトリを設定しておく必要があるため注意が必要である
+
+本稿では、環境構築時に `NODE_PATH` の設定を行っていないが、これは基本的にグローバルインストールを推奨していないためである
+
+パッケージをグローバルインストールしてしまうと、他の開発環境において同じパッケージ環境を再現するのが難しくなってしまうため、本稿においては、グローバルインストールして使うのは `npm` や `yarn` のようなコマンドとして利用されることを前提としてパッケージのみとしている
+
+今回サンプルとして使った `colors` のような、`require` で読み込んで使うパッケージは、ローカルインストールして使うことを推奨している
+
+ローカルインストールであれば、`package.json` ファイルを共有するだけで、同じパッケージ環境を再現できるためである
+
+### 依存パッケージのアップデート
+Node.js で開発をしていると、依存パッケージが高い頻度で更新されて困ることが多い
+
+特に GitHub リポジトリでコード管理していると、「このパッケージは脆弱性があります、そのパッケージは推奨されません」という親切なセキュリティアラートで埋め尽くされることが度々ある
+
+こういった場合、`npm outdated` コマンドを使うことで各パッケージのアップデートを確認することはできるが、一つ一つのパッケージをすべて確認してアップデートを行うのは非常に面倒である
+
+また通常、パッケージのアップデートは `npm update` コマンドを用いて行うが、このコマンドの問題点として **package.json に記述されたバージョンの範囲で** しか最新バージョンにアップデートしてくれないという問題がある
+
+例えば、`"package": "^3.2.1"` などのように記述されている場合、そのパッケージの最新版として `4.0.0` がリリースされていたとしても、そのバージョンまでは上げてくれないということである
+
+そういった場合は手動で `npm install package@4.0.0` のようにバージョンを指定して再インストールするしかない
+
+以上のような理由で、依存パッケージのバージョン管理を行うのに `npm` コマンドだけでは労力がかかってしまうため、`npm-check-updates` というパッケージを利用すると便利である
+
+#### npm-check-updates の導入
+基本的には `npm-check-updates` パッケージをグローバルインストールして `npm-check-updates` コマンドを使えるようにすれば良い
+
+```bash
+# npm-check-updates のグローバルインストール
+$ npm i -g npm-check-updates
+
+# 以降、`npm-check-updates` コマンドが使えるようになる
+$ npm-check-updates -h
+Usage: npm-check-updates [options] [filter]
+  :
+```
+
+しかし、正直 `npm-check-updates` コマンドはそれほど頻繁に使うようなコマンドではないため、あまりグローバルインストールして環境を汚したくない、という場合も多い
+
+そういった場合に便利なコマンドとして `npx` というコマンドが用意されている
+
+これは `npm` コマンドをより簡単に使えるように拡張されたコマンドで、`npm@5.2.0` から同梱されており、Node.js 8.2 以降であればデフォルトでインストールされているはずである
+
+`npx` は以下のような機能を有している
+
+- `run-script` を使用せずにローカルインストールしたコマンドを実行可能
+- グローバルインストールせずに一度だけコマンドを実行可能
+- GitHub や Gist で公開されているコマンドを実行可能
+
+上記2番目の機能を利用することで、グローバルインストールすることなく一度だけ `npm-check-updates` コマンドを実行することが可能である
+
+```bash
+# グローバルインストールせずに一度だけ npm-check-updates コマンドを実行
+$ npx npm-check-updates -h
+Ok to proceed? (y) # <= そのまま Enter して実行
+
+Usage: npm-check-updates [options] [filter]
+  :
+```
+
+#### npm-check-updates による package.json の更新
+`npm-check-updates` コマンドの動作原理は単純で、`package.json` に記述された各パッケージのバージョン情報を確認し、最新バージョンがあれば `package.json` に記述された各パッケージのバージョン情報を書き換えるだけである
+
+これにより `npm install` コマンドを実行するだけで最新バージョンのパッケージが再インストールされる、という仕組みである
+
+```bash
+# ncu でアップデート可能なパッケージの確認
+$ npx npm-check-updates -c 'ncu'
+Checking package.json
+  :
+
+# ncu -u を実行すると package.json が更新される
+$ npx npm-check-updates -c 'ncu -u'
+Checking package.json
+  :
+Run npm install to install new versions.
+
+# 更新された package.json をもとに npm install の実行
+## => 最新パッケージが再インストールされる
+$ npm install
 ```
