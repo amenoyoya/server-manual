@@ -1177,9 +1177,22 @@ module.exports = {
 ```vue
 <template>
   <div>
-    <p>Hello, Vue!</p>
+    <!-- script タグで定義された Vue 変数 `message` を表示 -->
+    <p>{{ message }}</p>
   </div>
 </template>
+
+<script>
+  export default {
+    // Vue 変数宣言
+    data() {
+      return {
+        // {{ message }} で埋め込まれる変数
+        message: 'Hello, Vue!',
+      };
+    },
+  }
+</script>
 ```
 
 #### src/index.js
@@ -1282,14 +1295,26 @@ module.exports = {
 #### src/App.vue
 ```vue
 <template>
-    <!-- Vuetifyコンポーネントを使う場合は v-appタグで囲むこと！ -->
-    <v-app>
-        <v-content>
-            <!-- Alertコンポーネントを使ってみる -->
-            <v-alert :value="true" type="success">Hello, Vuetify!</v-alert>
-        </v-content>
-    </v-app>
+  <!-- Vuetifyコンポーネントを使う場合は v-appタグで囲むこと！ -->
+  <v-app>
+    <v-content>
+      <!-- Alertコンポーネントを使ってみる -->
+      <v-alert :value="true" type="success">{{ message }}</v-alert>
+    </v-content>
+  </v-app>
 </template>
+
+<script>
+  export default {
+    // Vue 変数宣言
+    data() {
+      return {
+        // {{ message }} で埋め込まれる変数
+        message: 'Hello, Vuetify!',
+      };
+    },
+  }
+</script>
 ```
 
 #### src/index.js
