@@ -222,9 +222,8 @@ VcXsrv を使うことで WSL2 上で Linux GUI アプリケーションを実�
 $ sudo apt update && sudo apt install -y libgl1-mesa-dev xorg-dev
 
 # DISPLAY 環境変数を Windows 側 VcXsrv IP にする
-## ログイン時に一度だけ実行されれば良いため ~/.profile に設定
 ## << \EOS と書くことで内部テキストを変数展開せずに echo 可能
-$ tee -a ~/.profile << \EOS
+$ tee -a ~/.bashrc << \EOS
 # WSL2 VcXsrv setting
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
 EOS
@@ -241,13 +240,14 @@ $ exec $SHELL -l
 $ sudo apt install -y gedit
 
 # gedit 起動
-## 後ろに & をつけないと、GUI アプリケーション終了までコマンドを受け付けなくなる
-$ gedit &
+$ gedit
 ```
 
 gedit が起動すれば OK
 
 ![gedit.png](./img/gedit.png)
+
+起動確認できたら gedit は終了する
 
 ### VcxSrv のスタートアップ登録
 上記設定をすると、VcxSrv が起動していないと WSL2 も起動しない状態になる
@@ -284,8 +284,8 @@ $ sudo fc-cache -fv
 $ sudo apt -y install language-pack-ja
 
 # ロケールを日本語に設定
-$ echo 'export LANGUAGE=ja_JP.UTF-8' >> ~/.profile
-$ echo 'export LC_ALL=ja_JP.UTF-8' >> ~/.profile
+$ echo 'export LANGUAGE=ja_JP.UTF-8' >> ~/.bashrc
+$ echo 'export LC_ALL=ja_JP.UTF-8' >> ~/.bashrc
 $ exec $SHELL -l
 $ sudo update-locale LANG=ja_JP.UTF-8
 
@@ -315,8 +315,8 @@ $ dbus-uuidgen | sudo tee /var/lib/dbus/machine-id
 # fcitx 設定
 $ set -o noclobber
 
-# 必要な環境変数等を ~/.profile に追記
-$ tee -a ~/.profile << \EOS
+# 必要な環境変数等を ~/.bashrc に追記
+$ tee -a ~/.bashrc << \EOS
 # fcitx 設定
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
@@ -360,10 +360,10 @@ $ echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/
 $ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 
 # google-chrome インストール
-$ sudo apt update && sudo apt install google-chrome-stable
+$ sudo apt update && sudo apt install -y google-chrome-stable
 
 # google-chrome 起動
-$ google-chrome &
+$ google-chrome
 
 # => Google Chrome ブラウザが起動すればOK
 ```
