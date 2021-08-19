@@ -219,7 +219,7 @@ VcXsrv を使うことで WSL2 上で Linux GUI アプリケーションを実�
 ```bash
 # Xorg GUI 環境をインストール
 ## Ubuntu では様々な GUI 環境を利用できるため、好みに応じてインストールすれば良い
-$ sudo apt install -y libgl1-mesa-dev xorg-dev
+$ sudo apt update && sudo apt install -y libgl1-mesa-dev xorg-dev
 
 # DISPLAY 環境変数を Windows 側 VcXsrv IP にする
 ## ログイン時に一度だけ実行されれば良いため ~/.profile に設定
