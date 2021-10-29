@@ -606,8 +606,8 @@ Windows 10 ネイティブ環境では nodenv が使えないため、[nvm-windo
 # Node.js 14.17.5 を使う
 > nvm use 14.17.5
 
-# npm, yarn パッケージマネージャを更新しておく
-> npm update -g npm yarn
+# yarn パッケージマネージャをインストールしておく
+> npm i -g yarn
 
 # yarn global bin の PATH をユーザ環境変数に追加しておく
 > [System.Environment]::SetEnvironmentVariable("PATH", [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";$(yarn global bin)", "User")
