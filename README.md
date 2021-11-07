@@ -82,6 +82,7 @@ VSCode は、WSL2 環境との相性も良く、便利なプラグインが無�
 > code --install-extension MS-CEINTL.vscode-language-pack-ja # 日本語パッケージ
 > code --install-extension ms-vscode-remote.remote-wsl # WSL2 で VSCode を起動するためのプラグイン
 > code --install-extension mhutchie.git-graph # git ブランチをグラフィカルに表示するプラグイン
+> code --install-extension eamodio.gitlens # git のコミット履歴をインライン表示するプラグイン
 > code --install-extension vector-of-bool.gitflow # git-flow 実行プラグイン
 > code --install-extension hediet.vscode-drawio # フローチャート等の作図ツール
 > code --install-extension Perkovec.emoji # 絵文字挿入プラグイン
@@ -92,9 +93,10 @@ VSCode は、WSL2 環境との相性も良く、便利なプラグインが無�
 
 ```jsonc
 {
+    "workbench.colorTheme": "Default Dark+",
+    "security.workspace.trust.untrustedFiles": "open",
     "hediet.vscode-drawio.theme": "atlas",
     "files.eol": "\n", // Unix系ツールは`\r`が入っていると動作がおかしくなるものが多い
-    "terminal.integrated.shell.windows": "C:\\tools\\msys64\\usr\\bin\\bash.exe", // bash
     "diffEditor.renderSideBySide": false, // Git の差分を行内に表示
     "editor.colorDecorators": false, // カラーデコレーターを非表示
     "editor.minimap.renderCharacters": false, // ミニマップの表示文字をブロックに変更

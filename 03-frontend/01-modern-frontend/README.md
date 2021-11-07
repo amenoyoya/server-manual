@@ -585,15 +585,15 @@ Windows 10 ネイティブ環境では nodenv が使えないため、[nvm-windo
 `Win` + `X` |> `A` => 管理者権限 PowerShell 起動
 
 ```powershell
-# パッケージマネージャとして Chocolatey ではなく scoop を使う
-## Chocolatey で nvm を導入した場合、非管理者権限で npm グローバルインストール系のコマンドがこけることが多かったため
-### (おそらく `C:\Program Files\` で node.js 周りのファイル管理をしているためと思われる)
-> iwr -useb get.scoop.sh | iex
-
 # powershell script の実行ポリシーを付与
 > Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 
 # => 設定変更を反映するため、一度 PowerShell 再起動
+
+# パッケージマネージャとして Chocolatey ではなく scoop を使う
+## Chocolatey で nvm を導入した場合、非管理者権限で npm グローバルインストール系のコマンドがこけることが多かったため
+### (おそらく `C:\Program Files\` で node.js 周りのファイル管理をしているためと思われる)
+> iwr -useb get.scoop.sh | iex
 
 # scoop で nvm インストール
 > scoop install nvm

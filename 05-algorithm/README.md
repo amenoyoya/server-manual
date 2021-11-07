@@ -106,7 +106,7 @@ Docker を使った環境構築については [こちら](./SetupDocker.md)
 > Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 # Julia インストール
-> conda install -c conda-forge julia
+> choco install -y julia
 
 # => 環境変数を反映するために一度 PowerShell 再起動
 
@@ -134,10 +134,10 @@ pkg> ^C
 # Conda.jl で JupyterLab インストール
 ## JupyterLab: Jupyter Notebook の後継
 ## * Jupyter Notebook: ノートブック形式でデータを可視化しながらプログラミング言語（主にPython）を実行できるIDE環境
-## * 合わせて nodejs と ipywidgets もインストールしておくと Jupyter 上で Rich UI を使えるようになる
+## * 合わせて ipywidgets もインストールしておくと Jupyter 上で Rich UI を使えるようになる
 # $ conda install -y -c conda-forge jupyterlab nodejs ipywidgets
 julia> using Conda
-julia> Conda.add(["jupyterlab", "nodejs", "ipywidgets"]; channel="conda-forge")
+julia> Conda.add(["jupyterlab", "ipywidgets"]; channel="conda-forge")
 
 # JupyterLab で Julia カーネルを使えるようにするため IJulia パッケージインストール
 julia> ]
@@ -149,9 +149,18 @@ julia> exit()
 
 # ユーザ環境変数 PATH に Anaconda in Julia の PATH 追加
 > [System.Environment]::SetEnvironmentVariable("PATH", [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";${ENV:USERPROFILE}\.julia\conda\3\Scripts;${ENV:USERPROFILE}\.julia\conda\3\Library\bin", "User")
-> [System.Environment]::SetEnvironmentVariable("JUPYTER_PATH", "${ENV:USERPROFILE}\.julia\conda\3\Scripts;${ENV:USERPROFILE}\.julia\conda\3\Library\bin", "User")
+> [System.Environment]::SetEnvironmentVariable("JUPYTER_PATH", "${ENV:USERPROFILE}\.julia\conda\3\share\jupyter", "User")
 
-# => 環境変数を反映するために一度 PowerShell 再起動
+# PowerShell起動時に Anaconda をアクティベーションするために
+## PowerShell script (.ps1) を実行可能できるようにポリシー変更
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+
+# PowerShell起動時に Anaconda をアクティベーションするプロファイル作成
+> New-Item -ItemType Directory "$env:USERPROFILE\Documents\WindowsPowerShell"
+
+> echo "(& `"$env:USERPROFILE\.julia`\conda\3\Scripts\conda.exe`" `"shell.powershell`" `"hook`") | Out-String | Invoke-Expression" | Out-File -Append -Encoding utf8 -FilePath "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
+
+# => 環境変数反映・プロファイル読み込みのため一度 PowerShell 再起動
 
 # Jupyter カーネル確認
 > jupyter kernelspec list
@@ -214,6 +223,12 @@ $ echo 'export PATH="$PATH:$HOME/.julia/conda/3/bin"' >> ~/.bashrc
 $ echo 'export JUPYTER_PATH="$HOME/.julia/conda/3/bin"' >> ~/.bashrc
 $ . ~/.bashrc
 
+# bash 用に Anaconda 環境を初期化
+$ conda init bash
+$ . ~/.bashrc
+
+# => 以降、ターミナルに現在の Anaconda 環境が表示されるようになる
+
 # install PyCall.jl package
 ## PyCall.jl: Julia から Python を使うためのパッケージ
 ## * Conda.jl 環境の Python (~/.julia/conda/2/bin/python) を使うように指定してインストールする
@@ -222,9 +237,9 @@ $ julia -e 'ENV["PYTHON"] = "~/.julia/conda/3/bin/python"; using Pkg; Pkg.add("P
 # install JupyterLab by Conda.jl
 ## JupyterLab: Jupyter Notebook の後継
 ## * Jupyter Notebook: ノートブック形式でデータを可視化しながらプログラミング言語（主にPython）を実行できるIDE環境
-## * 合わせて nodejs と ipywidgets もインストールしておくと Jupyter 上で Rich UI を使えるようになる
+## * 合わせて ipywidgets もインストールしておくと Jupyter 上で Rich UI を使えるようになる
 # $ conda install -y -c conda-forge jupyterlab nodejs ipywidgets
-$ julia -e 'using Conda; Conda.add(["jupyterlab", "nodejs", "ipywidgets"]; channel="conda-forge")'
+$ julia -e 'using Conda; Conda.add(["jupyterlab", "ipywidgets"]; channel="conda-forge")'
 
 # install IJulia.jl (Jupyter kernel for Julia)
 $ julia -e 'using Pkg; Pkg.add("IJulia")'
