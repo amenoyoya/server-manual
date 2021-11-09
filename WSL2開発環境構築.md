@@ -159,7 +159,7 @@ $ sudo apt update && sudo apt upgrade -y
 ## zlib1g-dev, libssl-dev, libbz2-dev, libsqlite3-dev, libffi-dev, liblzma-dev は Python ビルドに必要
 ## add-apt-repository コマンドを使うために software-properties-common もインストールしておく
 ## https通信を可能にするために apt-transport-https, ca-certificates もインストールしておく
-$ sudo apt install -y vim curl git ruby openjdk-14-jdk \
+$ sudo apt install -y vim curl git ruby \
     zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev libffi-dev liblzma-dev \
     software-properties-common apt-transport-https ca-certificates build-essential
 

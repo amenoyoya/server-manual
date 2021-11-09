@@ -53,7 +53,7 @@
     - Teams: `> choco install -y microsoft-teams`
     - Slack: `> choco install -y slack`
     - Zoom: `> choco install -y zoom`
-- メディア系ソフトウェア
+- Office・メディア系ソフトウェア
+    - LibreOffice: `> choco install -y libreoffice-fresh`
     - PDF XChange Viewer: `> choco install -y pdfxchangeviewer --version=2.5.308.0`
     - MPC-BE: `> choco install -y mpc-be`
-    - Calibre: `> choco install -y calibre`
