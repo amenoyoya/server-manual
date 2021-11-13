@@ -48,6 +48,8 @@
     - `> choco install -y googlejapaneseinput`
 - Thunderbird メールクライント
     - `> choco install -y thunderbird`
+- VMWare Workstation Player
+    - `> choco install -y vmware-workstation-player`
 - チャット・ミーティング系ソフトウェア
     - Discord: `> choco install -y discord`
     - Teams: `> choco install -y microsoft-teams`
@@ -57,3 +59,44 @@
     - LibreOffice: `> choco install -y libreoffice-fresh`
     - PDF XChange Viewer: `> choco install -y pdfxchangeviewer --version=2.5.308.0`
     - MPC-BE: `> choco install -y mpc-be`
+- その他ユーティリティ
+    - Rainmeter: `> choco install -y rainmeter`
+    - posh-git: 以下参照
+
+#### posh-git
+posh-git は PowerShell 上に git ステータスを表示できるようにするツール（要 Git for Windows）
+
+管理者権限 PowerShell で以下の手順に従ってインストール・設定する
+
+https://qiita.com/kaitaku/items/bd927f8139947847cee1
+
+```powershell
+# PowerShell version 確認 (Version 5.x 以上が必要)
+> $PSVersionTable.PSVersion
+
+# NuGet インストール (未インストールであれば)
+> Install-Module PowerShellGet -Scope CurrentUser -Force -AllowClobber
+
+# PowerShellGet インストール (未インストールであれば)
+> Install-Module -Name PowerShellGet -Force
+
+# PowerShellGet バージョン更新 (-AllowPrerelease オプションの使えるバージョンが必要)
+> Update-Module -Name PowerShellGet
+
+# -- 一度 PowerShell を開き直す
+
+# posh-git インストール
+> PowerShellGet\Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force
+> Import-Module posh-git
+
+# 管理者以外のユーザでも使えるように設定変更
+> Add-PoshGitToProfile
+> Add-PoshGitToProfile -AllHosts -Force
+> Add-PoshGitToProfile -AllUsers -AllHosts -Force
+
+# posh-git の設定項目は以下のコマンドで確認できる
+> $GitPromptSettings
+
+## 例: 現在のパスをオレンジ色にしたい場合
+## > $GitPromptSettings.DefaultPromptPath.ForegroundColor = 'Orange'
+```
