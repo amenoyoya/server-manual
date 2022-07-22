@@ -6,6 +6,19 @@ WSL2 を使うと、VirtualBox + Vagrant や VMware を使うよりシームレ�
 
 ここでは、WSL2 を導入し、その上に Ubuntu 20.04 をインストール => Docker 環境を構築する
 
+- 2021/11/13 追記:
+    - VMWare については、VMWare Workstation 15.5.5 以降、Hyper-V をサポートするようになった
+        - https://blogs.vmware.com/workstation/2020/05/vmware-workstation-now-supports-hyper-v-mode.html
+    - そのため、WSL2 と VMWare は共存可能である（以下の手順で最新の VMWare Workstation Player をインストールして確認済み）
+        - Chocolatey で VMWare Workstation Player インストール
+            - 管理者権限 PowerShell: `choco install -y vmware-workstation-player`
+        - PC再起動
+            - 管理者権限 PowerShell: `shutdown /r /t 0`
+        - VMWare Workstation Player 起動（無償で使用する）
+            - ![vmware-start.png](./img/vmware-start.png)
+        - 適当な仮想マシンを作成して起動
+
+
 ## Environment
 
 - Host
@@ -159,7 +172,7 @@ $ sudo apt update && sudo apt upgrade -y
 ## zlib1g-dev, libssl-dev, libbz2-dev, libsqlite3-dev, libffi-dev, liblzma-dev は Python ビルドに必要
 ## add-apt-repository コマンドを使うために software-properties-common もインストールしておく
 ## https通信を可能にするために apt-transport-https, ca-certificates もインストールしておく
-$ sudo apt install -y vim curl git ruby openjdk-14-jdk \
+$ sudo apt install -y vim curl git ruby \
     zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev libffi-dev liblzma-dev \
     software-properties-common apt-transport-https ca-certificates build-essential
 

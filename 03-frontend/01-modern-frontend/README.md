@@ -105,17 +105,24 @@ ES2015 は JavaScript の歴史上でも最⼤のアップデートであり、�
 ### Webpack について
 **Webpack** はモジュールバンドラの一つで、複数の JavaScript ファイルを1ファイルにパッキングするものである
 
-元々 JavaScript には、別のファイルに記述された JavaScript モジュールを読み込むという機能がないため、それを実現するモジュールバンドラの登場で大規模な JavaScript 開発が可能となった
+ES2015 仕様以前の JavaScript には、別のファイルに記述された JavaScript モジュールを読み込むという機能がないため、それを実現するモジュールバンドラの登場で大規模な JavaScript 開発が可能となった
+（なお ES2015 では [ES Module](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/import) という仕様が策定され、モジュール読み込みが可能となっている）
 
 特に npm パッケージマネージャを中心としたエコシステムを十分活用するためには、それぞれ分かれて開発されている各モジュールを上手く一つにまとめる機能は必須となる
 
-そのため、フロントエンド開発において Node.js 環境を導入する場合、Webpack の使用もほぼ必須となってくる
+そのため、フロントエンド開発において Node.js 環境を導入する場合、ES2015 仕様に未対応のブラウザで動く JavaScript 開発が必要であれば Webpack の使用もほぼ必須となってくる
 
-Webpack と Babel は一緒に使われることが多いため、ごっちゃになってしまっている人も多そうだが、あくまで用途は別のものである
+Webpack と Babel は利用ケースがほぼ同じため、ごっちゃになってしまっている人も多そうだが、あくまで用途は別のものである
 
-なお、最近のブラウザ内 JavaScript では、[ES Module](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/import) という仕様が採用されており、モジュール読み込み機能が使えるようになりつつある
+モジュールバンドラの仕組みは単純で、ES Module の構文（`import`）を探し、その部分に直接 import 元の JavaScript ファイルの内容を埋め込む、という仕組みになっている
 
-そのため、これから先のフロントエンド開発では Webpack は必ずしも必要なくなり、ES Module 機能を効率的に扱うための [Snowpack](https://www.snowpack.dev/) のような開発環境が主流になっていく可能性が高い
+なお、Webpack の機能として面白いのが、モジュールバンドルの対象が JavaScript だけに限定されないところで、CSS や WebFont 等、比較的何でもバンドルすることができる
+
+これにより、グローバル汚染されがちなWebデザイン（CSSスタイル）をコンポーネント単位で分割して、スタイルの影響範囲をコンポーネント内に効率的に閉じ込めることも可能である
+
+余談だが、最近のブラウザは ES2015 への対応が完了しており、古いブラウザをサポートする目的がなければ必ずしも Webpack は必須ではなくなってきている
+
+そのため、これから先のフロントエンド開発では ES Module 機能を効率的に扱うための [Snowpack](https://www.snowpack.dev/) のような開発環境が主流になっていく可能性が高い
 
 ### React, Vue 等のフロントエンドライブラリの出現
 ここまで紹介してきたようにフロントエンドを取り巻く仕様、技術は⾼度化している
@@ -448,29 +455,896 @@ Live Server を起動して、以下のようにカウンターアプリケー�
 
 ***
 
-## Vue + Node.js (Webpack + Babel) 環境での本格的フロントエンド開発入門
+## Node.js 入門
 
 前述の通り、Vue も React もただ使うだけであれば、Node.js を開発環境に導入する必要はない
 
 しかしながら、Vue SFC や React JSX 等、事前にピュアJSにコンパイルしておいた方が、ブラウザ上でいちいちコンパイルしなくて良くなるためパフォーマンス的に有利である
 
-そこでここでは、Node.js 環境を構築し、Vue + Webpack + Babel というフロントエンド開発環境でのモダンな開発手法を体験してみる
+そこでここでは Node.js 環境を構築し、その基本的な使い方を習得する
 
 ### Setup
 [WSL開発環境構築](../../WSL開発環境構築.md) で環境構築してある場合は、anyenv + nodenv を使って Node.js 環境済みのはずである
 
+上記で Linux (Ubuntu 20.04) での環境構築方法は紹介済みのため、ここでは macOS (11 Big Sur) と Windows 10 (WSL2 を使わない場合) での環境構築方法を掲載する
+
+なお、環境構築時に Node.js のサードパーティ製パッケージマネージャとして `yarn` を導入しているが、これはかつての `npm` パッケージマネージャがインストール速度やセキュリティの問題を抱えていたためである
+
+現在では **`npm` 側に `yarn` の多くの機能が取り込まれ、実質的な機能の差はほとんどなくなっている**ため、必ずしも `yarn` を導入する必要はないと考えている
+
+#### Setup on macOS 11 Big Sur
+基本的には Linux と大きく変わらない
+
+`Command` + `Space` |> `terminal.app`
+
+（以下、デフォルトシェルが `zsh` である前提で進める）
+
 ```bash
-# Linuxbrew で Node.js インストール
-$ brew install node
+# --- anyenv 導入 ---
 
-# Node.js バージョン確認
+# Homebrew 未導入の場合は導入しておく
+## 最近のインストーラは自動的に Xcode Command Line Tools も入れてくれるため、一通りの開発環境は簡単に整う
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# Linuxbrew で anyenv 導入
+$ brew install anyenv
+$ anyenv install --init
+## Do you want to checkout ? [y/N]: <= y
+
+# anyenv 初期化スクリプトを .zshrc に記述
+$ echo 'eval "$(anyenv init -)"' >> ~/.zshrc
+$ source ~/.zshrc
+
+# anyenv update plugin の導入
+$ mkdir -p $(anyenv root)/plugins
+$ git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update
+$ anyenv update
+
+# バージョン確認
+$ anyenv -v
+anyenv 1.1.4
+
+
+# --- pyenv 導入 ---
+## npm package の中には python を必要とするものも多いため、ここで Python 環境を導入しておく
+
+# anyenv を使って pyenv 導入
+## pyenv を使うことで、複数バージョンの Python 環境を構築できる
+$ anyenv install pyenv
+$ exec $SHELL -l
+
+# pyenv で Python 2.7.18 と 3.7.7 をインストール
+$ pyenv install 2.7.18
+$ pyenv install 3.7.7
+
+# pyenv では 2系 と 3系 を同時に指定できる
+## python  => 2.7.18
+## python3 => 3.7.7
+$ pyenv global 2.7.18 3.7.7
+
+# 現在選択されているバージョンを確認
+$ pyenv versions
+* 2.7.18 (set by /home/user/.anyenv/envs/pyenv/version)
+* 3.7.7 (set by /home/user/.anyenv/envs/pyenv/version)
+
+$ python --version
+2.7.18
+
+$ python --version
+3.7.7
+
+# pip パッケージマネージャを更新しておく
+$ pip install --upgrade pip setuptools
+$ pip3 install --upgrade pip setuptools
+
+
+# --- nodenv 導入 ---
+
+# anyenv を使って nodenv 導入
+## nodenv を使うことで、複数バージョンの Node.js 環境を構築できる
+$ anyenv install nodenv
+$ exec $SHELL -l
+
+## nodenv-yarn-install プラグイン導入: nodenv install 時に yarn もインストールする
+$ mkdir -p "$(nodenv root)/plugins"
+$ git clone https://github.com/pine/nodenv-yarn-install.git "$(nodenv root)/plugins/nodenv-yarn-install"
+$ echo 'export PATH="$HOME/.yarn/bin:$PATH"' >> ~/.zshrc
+
+# Node.js インストール可能なバージョンを確認
+$ nodenv install --list
+
+# Node.js 14.17.5 インストール
+$ touch $(nodenv root)/default-packages
+$ nodenv install 14.17.5
+
+# Node.js 14.17.5 に切り替え
+$ nodenv global 14.17.5
+
+# 現在選択されているバージョンを確認
+$ nodenv versions
+* 14.17.5 (set by ~/.anyenv/envs/nodenv/version)
+
+# 一度シェルを再起動しないと Node.js が使えない
+$ exec $SHELL -l
+
+# バージョン確認
 $ node -v
-v13.5.0
+v14.17.5
 
-# ついでに yarn パッケージマネージャをインストールしておく
-$ npm i -g yarn
-
-# yarn バージョン確認
 $ yarn -v
-1.21.1
+1.22.11
 ```
+
+#### Setup on Windows 10
+Windows 環境の場合、WSL2 を導入可能であれば WSL2 + anyenv + nodenv 環境を使うのが現状の最適解と思われる
+
+しかし、事情により WSL2 を使えない場合もあると思われるため、ここでは WSL2 を使わない場合の Windows 10 での環境構築手順を掲載する
+
+Windows 10 ネイティブ環境では nodenv が使えないため、[nvm-windows](https://github.com/coreybutler/nvm-windows) を使う（無論、無理して Node.js のバージョン管理システムを導入しなくても良いのだが、手動でバージョン管理しようとすると複数の案件を回そうとしたときに辛くなりやすい）
+
+`Win` + `X` |> `A` => 管理者権限 PowerShell 起動
+
+```powershell
+# powershell script の実行ポリシーを付与
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+
+# => 設定変更を反映するため、一度 PowerShell 再起動
+
+# パッケージマネージャとして Chocolatey ではなく scoop を使う
+## Chocolatey で nvm を導入した場合、非管理者権限で npm グローバルインストール系のコマンドがこけることが多かったため
+### (おそらく `C:\Program Files\` で node.js 周りのファイル管理をしているためと思われる)
+> iwr -useb get.scoop.sh | iex
+
+# scoop で nvm インストール
+> scoop install nvm
+
+# => 自動的に環境変数情報が変更されるため、再び PowerShell 再起動
+
+# nvm で Node.js 14.17.5 インストール
+> nvm install 14.17.5
+
+# Node.js 14.17.5 を使う
+> nvm use 14.17.5
+
+# yarn パッケージマネージャをインストールしておく
+> npm i -g yarn
+
+# yarn global bin の PATH をユーザ環境変数に追加しておく
+> [System.Environment]::SetEnvironmentVariable("PATH", [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";$(yarn global bin)", "User")
+
+# バージョン確認
+$ node -v
+v14.17.5
+
+$ yarn -v
+1.22.11
+```
+
+### Node.js で Hello, world
+以上で Node.js が使えるようになったため、動作確認を兼ねて `Hello, world` を表示してみる
+
+ファイル名は任意だが、ここでは `hello.js` というファイルを作成し、以下のように JavaScript コードを記述してみる
+
+```bash
+# hello.js ファイルを作成しながら VSCode で開く
+$ code hello.js
+```
+
+```javascript
+// コンソールに "Hello, world" と表示
+console.log('Hello, world');
+```
+
+スクリプトファイルを作成したら、以下のコマンドで Node.js を実行する
+
+```bash
+# Node.js で hello.js ファイルを実行する
+$ node hello.js
+Hello, world
+```
+
+### npm でパッケージをインストールしてみる
+Node.js エコシステムには便利なパッケージが多くある
+
+ここでは、コンソールに色をつけることのできる `colors` というパッケージを `npm` でインストールして使ってみる
+
+```bash
+# npm で colors パッケージインストール
+## --save (-S) オプション: パッケージのインストール情報も保存
+$ npm install --save colors
+
+## 短縮形で `npm i -S colors` という書き方も可
+```
+
+```bash
+# npm の代わりに yarn パッケージマネージャを使うこともできる
+## 筆者は yarn の方が使いやすいと感じているため、こちらを使うことが多い
+
+# yarn で colors パッケージインストール
+## yarn の場合は特にオプションをつけなくても自動的にパッケージのインストール情報も保存される
+$ yarn add colors
+```
+
+上記コマンドを実行すると、カレントディレクトリに `node_modules/` ディレクトリが作成される
+
+このディレクトリ内に各種パッケージがインストールされるという仕組みになっている
+
+なお、`--save` (短縮形: `-S`) オプションを付けると、一緒に `package.json` というファイルも作成されるが、このファイルにはインストールパッケージの情報等が記述されている
+
+このファイルがあれば `node_modules/` ディレクトリを削除しても `package.json` の情報をもとに、使われていたパッケージを再インストールすることができるようになっている
+（チーム開発においては、`node_modules/` ディレクトリは共有せず、`package.json` ファイルのみ共有して各開発者がそれぞれパッケージをインストールして開発を進めることが多い）
+
+- ※ `nvm-windows` 版の `npm` について、筆者環境では `package.json` が生成されないバグが発生することがあった
+    - => そのため、Windows 10 ネイティブ環境では `yarn` パッケージマネージャを使う方が良いかもしれない
+
+```bash
+# ./package.json の情報をもとにパッケージを一括インストール
+## 短縮形で `npm i` という書き方も可
+$ npm install
+```
+
+```bash
+# yarn の場合は `yarn install` もしくは `yarn` コマンドで同じことができる
+
+# ./package.json の情報をもとにパッケージを一括インストール
+$ yarn
+```
+
+話がそれてしまったが、インストールした `colors` パッケージを使って、コンソールに色付き文字を表示してみる
+
+```javascript
+// hello.js
+
+// Node.js では require 関数を使って、別ファイルに記述された JavaScript モジュール（パッケージ）を読み込むことができる
+// 以下のようにして colors パッケージを読み込む
+require('colors');
+
+// 黄色テキストで "Hello, world" 表示
+console.log('Hello, world'.yellow);
+```
+
+これで `node hello.js` を実行すると、黄色テキストで `Hello, world` と表示されるはずである
+
+#### パッケージのグローバルインストールとローカルインストール
+今回、パッケージは作業ディレクトリにローカルインストールしたが、作業ディレクトリ以外の JavaScript プログラムからも読み込むことができるようにグローバルインストールすることも可能である
+
+その場合は `npm` に `-g` オプションをつけてインストールを行う
+
+```bash
+# colors パッケージをグローバルインストール
+$ npm install -g colors
+
+## 短縮形で `npm i -g colors` という書き方も可
+```
+
+```bash
+# yarn の場合は `yarn global ***` という形でコマンドを呼び出す
+
+# colors パッケージをグローバルインストール
+$ yarn global add colors
+```
+
+なお、`require` でグローバルインストールしたパッケージを読み込みたい場合、環境変数 `NODE_PATH` で npm グローバルインストール先ディレクトリを設定しておく必要があるため注意が必要である
+
+本稿では、環境構築時に `NODE_PATH` の設定を行っていないが、これは基本的にグローバルインストールしてパッケージを使うことを想定していないためである
+
+パッケージをグローバルインストールしてしまうと、他の開発環境において同じパッケージ環境を再現するのが難しくなってしまうため、本稿においては、グローバルインストールして使うのは `npm` や `yarn` のようなコマンドとして利用されることを前提としているパッケージのみとしている
+
+今回サンプルとして使った `colors` のような、`require` で読み込んで使うパッケージは、ローカルインストールして使うことを推奨している
+
+ローカルインストールであれば、`package.json` ファイルを共有するだけで、同じパッケージ環境を再現できるためである
+
+### 依存パッケージのアップデート
+Node.js で開発をしていると、依存パッケージが高い頻度で更新されて困ることが多い
+
+特に GitHub リポジトリでコード管理していると、「このパッケージは脆弱性があります、そのパッケージは推奨されません」という親切なセキュリティアラートで埋め尽くされることが度々ある
+
+こういった場合、`npm outdated` コマンドを使うことで各パッケージのアップデートを確認することはできるが、一つ一つのパッケージをすべて確認してアップデートを行うのは非常に面倒である
+
+また通常、パッケージのアップデートは `npm update` コマンドを用いて行うが、このコマンドの問題点として **package.json に記述されたバージョンの範囲で** しか最新バージョンにアップデートしてくれないという問題がある
+
+例えば、`"package": "^3.2.1"` などのように記述されている場合、そのパッケージの最新版として `4.0.0` がリリースされていたとしても、そのバージョンまでは上げてくれないということである
+
+そういった場合は手動で `npm install package@4.0.0` のようにバージョンを指定して再インストールするしかない
+
+以上のような理由で、依存パッケージのバージョン管理を行うのに `npm` コマンドだけでは労力がかかってしまうため、`npm-check-updates` というパッケージを利用すると便利である
+
+#### npm-check-updates の導入
+基本的には `npm-check-updates` パッケージをグローバルインストールして `npm-check-updates` コマンドを使えるようにすれば良い
+
+```bash
+# npm-check-updates のグローバルインストール
+$ npm i -g npm-check-updates
+
+# 以降、`npm-check-updates` コマンドが使えるようになる
+$ npm-check-updates -h
+Usage: npm-check-updates [options] [filter]
+  :
+```
+
+しかし、正直 `npm-check-updates` コマンドはそれほど頻繁に使うようなコマンドではないため、あまりグローバルインストールして環境を汚したくない、という場合も多い
+
+そういった場合に便利なコマンドとして `npx` というコマンドが用意されている
+
+これは `npm` コマンドをより簡単に使えるように拡張されたコマンドで、`npm@5.2.0` から同梱されており、Node.js 8.2 以降であればデフォルトでインストールされているはずである
+
+`npx` は以下のような機能を有している
+
+- `run-script` を使用せずにローカルインストールしたコマンドを実行可能
+- グローバルインストールせずに一度だけコマンドを実行可能
+- GitHub や Gist で公開されているコマンドを実行可能
+
+上記2番目の機能を利用することで、グローバルインストールすることなく一度だけ `npm-check-updates` コマンドを実行することが可能である
+
+```bash
+# グローバルインストールせずに一度だけ npm-check-updates コマンドを実行
+$ npx npm-check-updates -h
+Ok to proceed? (y) # <= そのまま Enter して実行
+
+Usage: npm-check-updates [options] [filter]
+  :
+```
+
+#### npm-check-updates による package.json の更新
+`npm-check-updates` コマンドの動作原理は単純で、`package.json` に記述された各パッケージのバージョン情報を確認し、最新バージョンがあれば `package.json` に記述された各パッケージのバージョン情報を書き換えるだけである
+
+これにより `npm install` コマンドを実行するだけで最新バージョンのパッケージが再インストールされる、という仕組みである
+
+```bash
+# ncu でアップデート可能なパッケージの確認
+$ npx npm-check-updates -c 'ncu'
+Checking package.json
+  :
+
+# ncu -u を実行すると package.json が更新される
+$ npx npm-check-updates -c 'ncu -u'
+Checking package.json
+  :
+Run npm install to install new versions.
+
+# 更新された package.json をもとに npm install の実行
+## => 最新パッケージが再インストールされる
+$ npm install
+```
+
+***
+
+## Webpack 開発入門
+
+ここまでで Node.js の使い方はある程度確認できた
+
+次は Node.js のエコシステム (npm パッケージ資産) をクライアントサイド（ブラウザ内蔵の JavaScript エンジン）で利用することを考えてみる
+
+前述の通り、ES2015 仕様以前のクライアントサイドJSではモジュール読み込み機能（ES Module）がないため、npm パッケージの資産を効率よく利用するためには、Webpack のようなモジュールバンドラを利用する必要がある
+
+### Webpack + Babel 環境構築
+まずは、Webpack と Babel をインストールする
+
+改めてそれぞれのパッケージの目的を以下にまとめておく
+
+- Webpack:
+    - ES2015 以前の JavaScript しかサポートしていないブラウザにおいて、ES Module の機能を使って npm パッケージ資産を効率よく利用するために必要
+    - 別ファイルに実装された JavaScript モジュールや CSS, WebFont 等を一つの JavaScript ファイルにパッキングすることができる
+- Babel:
+    - ES2015 以前の JavaScript しかサポートしていないブラウザにおいて、ES2015 の構文を使うために必要
+    - ES2015 の構文を古い JavaScript の構文に変換することができる
+
+```bash
+# yarn で Webpack系のパッケージと Babel系の必要なパッケージをインストール
+## -D オプション: devDependencies (開発環境用の依存パッケージ) としてパッケージをローカルインストール
+$ yarn add -D webpack webpack-cli babel-loader @babel/core @babel/preset-env babel-polyfill
+
+# npm を使う場合
+# $ npm i -D webpack webpack-cli babel-loader @babel/core @babel/preset-env babel-polyfill
+```
+
+#### webpack.config.js
+続いて、Webpack の設定ファイルである `webpack.config.js` をカレントディレクトリに作成し、以下のように記述する
+
+```javascript
+// 絶対パスを記述する際などに必要なため path パッケージを使う
+const path = require('path');
+
+module.exports = {
+  // 実行モード: development => 開発, production => 本番
+  // production を指定すると、パッキング後のファイルサイズを削減し、より早く JS ファイルを読み込めるようになる
+  // webpack4系以降はmodeを指定しないと警告が出る
+  mode: 'development',
+
+  // エントリーポイント: ソースとなる JS ファイル
+  // ここで指定した JS ファイルに、必要なモジュールをすべて読み込む想定
+  entry: './src/index.js',
+  
+  // 出力設定
+  output: {
+    // バンドル後のファイル名
+    filename: 'bundle.js',
+    // 出力先のパス（※絶対パスで指定すること）
+    path: path.join(__dirname, 'public')
+  },
+
+  // => ここまでの設定で ./src/index.js（と関連モジュール）が ./public/bundle.js にパッキングされる
+
+  // モジュール読み込みの設定
+  module: {
+    rules: [
+      // JavaScript（.js ファイル）読み込み設定
+      {
+        test: /\.js$/, // 指定正規表現にマッチするファイルを読み込む
+        // ファイル読み込み時に使うローダーを指定
+        use: [
+          // babel-loader: ES2015以上の JavaScript をすべてのブラウザで使える JavaScript にトランスコンパイルするローダー
+          {
+            loader: 'babel-loader',
+            // babel-loader のオプション
+            options: {
+              // @babel/preset-env をプリセットとして使うといい感じの JavaScript にトランスコンパイルしてくれる
+              presets: ['@babel/preset-env']
+            }
+          },
+        ]
+      },
+    ]
+  },
+};
+```
+
+#### Webpack 動作確認
+Webpack の設定が完了したら、ES2015 以上の JavaScript のコードを書いて、Webpack + Babel で変換しながら1ファイルにバンドルしてみる
+
+まず、バンドル後の JavaScript ファイル（`bundle.js`）を読み込むだけの HTML を `./public/index.html` に作成する
+
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>動作確認</title>
+</head>
+<body>
+    <!-- Webpack でバンドルされた bundle.js を読み込む -->
+    <script src="bundle.js"></script>
+</body>
+</html>
+```
+
+続いて、Webpack のバンドル対象としてエントリーポイントに設定した `./src/index.js` と、モジュール用の `./src/mylib.js` を作成する
+
+```javascript
+// ./src/mylib.js
+
+// ES2015 以上の JavaScript はアロー関数が使える
+const hello = () => {
+  alert("こんにちは！Webpack");
+};
+
+// hello関数を export
+export {
+  hello
+};
+```
+
+```javascript
+// ./src/index.js
+
+// ES Module 機能を使い ./mylib.js を読み込む
+import { hello } from "./mylib";
+
+// IE11/Safari9用のpolyfill
+// babel-polyfill を import するだけで IE11/Safari9 に対応した JavaScript にトランスコンパイルされる
+import 'babel-polyfill';
+
+// mylib.jsに定義された hello 関数を実行
+hello();
+```
+
+ここまでで、プロジェクトディレクトリは以下のような構成になっているはず
+
+```bash
+./
+|_ node_modules/ # Node.js の各種パッケージがインストールされている
+|
+|_ public/
+|   |_ index.html # bundle.js を読み込む HTML
+|
+|_ src/
+|   |_ index.js # エントリーポイント（メインソースファイル）
+|   |_ mylib.js # index.js から読み込まれるモジュール
+|
+|_ package.json # インストールしたパッケージ情報等が記述されている
+|_ webpack.config.js # Webpack バンドル設定
+|_ yarn.lock # yarn パッケージマネージャを使っていると作られる lock ファイル
+```
+
+問題なければ、Webpack を使って JavaScript ファイルをバンドルしてみる
+
+```bash
+# yarn webpack で ./node_modules/.bin/webpack が実行される
+## npm を使う場合は `npm run webpack`
+$ yarn webpack
+
+## => webpack.config.js の設定に従って Webpack が実行される
+## => ./public/bundle.js が作成されるはず
+```
+
+バンドル済みファイル `./public/bundle.js` が作成されたら VSCode Live Server を起動して、`public/` ディレクトリを確認する
+
+`http://localhost:5500/public/` が開かれ、「こんにちは！Webpack」というアラートが表示されたらOKである
+
+![webpack.drawio.png](./img/webpack.drawio.png)
+
+### Webpack開発サーバの導入
+今のままでは、ファイルを修正したりした際、毎回 Webpack を実行しブラウザで確認するという作業をしなければならない
+
+特にフロントエンド開発では、デザインやレイアウトの修正が頻繁に行われるため、ファイルの変更を監視して自動的にコンパイル＆ブラウザリロードできると便利である
+
+Webpack にもこういった自動化ツールが存在するため導入しておく
+
+```bash
+# Webpack開発サーバをインストール
+$ yarn add -D webpack-dev-server
+```
+
+`webpack-dev-server` をインストールしたら、`webpack.config.js` に設定を追加する
+
+```javascript
+// ...(略)...
+module.exports = {
+  // ...(略)...
+
+  // モジュール読み込みの設定
+  module: {
+    // ...(略)...
+  },
+
+  // 開発サーバー設定
+  devServer: {
+    // 起点ディレクトリを ./public/ に設定 => ./public/index.html がブラウザで開かれる
+    contentBase: path.join(__dirname, 'public'),
+    
+    // ポートを 3000 に設定
+    // 重複しないポートを指定すること
+    port: 3000,
+  },
+};
+```
+
+ここまで設定したら `webpack-dev-server` を起動する
+
+```bash
+# Webpack開発サーバを実行
+$ yarn webpack serve
+
+## => 開発サーバを終了したい場合は Ctrl + C キー
+```
+
+この状態で http://localhost:3000 にアクセスすると `./public/index.html` の内容が表示されるはずである
+
+これだけでは何が良いのかよく分からないと思うため、この状態のまま `./src/mylib.js` を以下のように変更してみる
+
+```javascript
+const hello = () => {
+  alert("Webpack Development Server による自動コンパイル＆ブラウザリロード");
+};
+
+// hello関数を export
+export {
+  hello
+};
+```
+
+ファイルを保存した瞬間に Webpack によるコンパイル処理が走り、`./public/bundle.js` が更新 => http://localhost:3000 ページが自動リロードされたはずである
+
+即座に変更されたプログラムの内容をブラウザで確認することができるため非常に便利である
+
+### npm script を書いてみる
+Webpack開発サーバは `yarn webpack serve` という比較的長いコマンドを打たなければならないので面倒な場合も多い
+
+こういった場合には **npm script** を書くと便利である
+
+npm script は `package.json` の `scripts` 項目に定義するコマンドスクリプトで、様々なコマンドを自由に記述することができる
+
+ここでは、`webpack serve` コマンドを `start` コマンドで実行できるように、以下のように記述してみる
+
+```json
+{
+  "scripts": {
+    "start": "webpack serve"
+  },
+  "devDependencies": {
+    // ...(略)...
+  }
+}
+```
+
+上記のように scripts を記述すると `yarn start` コマンドで `yarn webpack server` を呼び出すことができる
+
+```bash
+# `yarn start` で `yarn webpack serve` コマンドを間接実行
+$ yarn start
+```
+
+***
+
+## Vue 開発環境構築
+
+Node.js と Webpack によるフロントエンド開発環境が整ったため、続いて Vue 開発環境を構築していく
+
+### Vue と VueLoader のインストール
+```bash
+# vue, vue-loader インストール
+$ yarn add -D vue vue-loader vue-template-compiler
+```
+
+インストールしたら `webpack.config.js` に設定を追加し、`.vue` ファイルを `vue-loader` でコンパイルするようにする
+
+```javascript
+// 絶対パスを記述する際などに必要なため path パッケージを使う
+const path = require('path');
+// vue-loader plugin を使う
+const VueLoaderPlugin = require('vue-loader/lib/plugin'); 
+
+module.exports = {
+  // ...(略)...
+
+  // モジュール設定
+  module: {
+    rules: [
+      // JavaScript（.js ファイル）読み込み設定
+      {
+        // ...(略)...
+      },
+
+      // Vue単一ファイルコンポーネント（.vue ファイル）読み込み設定
+      {
+        // 拡張子 .vue の場合
+        test: /\.vue$/,
+        // vue-loaderを使って .vue ファイルをコンパイル
+        use: [
+          {
+            loader: "vue-loader",
+          },
+        ],
+      },
+    ]
+  },
+  
+  // import文で読み込むモジュールの設定
+  resolve: {
+    extensions: [".js", ".vue"], // .js, .vue をimport可能に
+    modules: ["node_modules"], // node_modulesディレクトリからも import できるようにする
+    alias: {
+      // vue-template-compilerに読ませてコンパイルするために必要な設定
+      vue$: 'vue/dist/vue.esm.js',
+    },
+  },
+
+  // VueLoaderPluginを使う
+  plugins: [new VueLoaderPlugin()],
+
+  // 開発サーバー設定
+  // ...(略)...
+};
+```
+
+### Vue の動作確認
+設定が完了したら Vue の動作確認を行うために、以下のようにプロジェクトを構成する
+
+```bash
+./
+|_ node_modules/
+|
+|_ public/
+|   |_ index.html
+|   |_ bundle.js # Webpack が作成するバンドル済みファイル
+|
+|_ src/
+|   |_ App.vue # index.js から読み込まれる Vue単一ファイルコンポーネント(Vue SFC)
+|   |_ index.js
+|
+|_ package.json
+|_ webpack.config.js
+|_ yarn.lock
+```
+
+#### public/index.html
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue 動作確認</title>
+</head>
+<body>
+  <!-- Vueにより id="app" の要素が置き換えられる -->
+  <div id="app"></div>
+  
+  <!-- Webpack でバンドルされた bundle.js を読み込む -->
+  <script src="bundle.js"></script>
+</body>
+</html>
+```
+
+#### src/App.vue
+ここでは Vue SFC については詳しく記載しないが、テンプレート（HTML に Vue の機能を埋め込んだもの）とスクリプト（Vue JavaScript）およびスタイル（CSS, SCSS）を一つのファイルにまとめたものである
+
+詳しくは [公式リファレンス](https://v3.ja.vuejs.org/guide/single-file-component.html) を参照
+
+```vue
+<template>
+  <div>
+    <!-- script タグで定義された Vue 変数 `message` を表示 -->
+    <p>{{ message }}</p>
+  </div>
+</template>
+
+<script>
+  export default {
+    // Vue 変数宣言
+    data() {
+      return {
+        // {{ message }} で埋め込まれる変数
+        message: 'Hello, Vue!',
+      };
+    },
+  }
+</script>
+```
+
+#### src/index.js
+```javascript
+import Vue from 'vue'; // Vue を使う
+import App from './App'; // ./App.vue を読み込む
+
+// IE11/Safari9用のpolyfill
+// babel-polyfill を import するだけで IE11/Safari9 に対応した JavaScript にトランスコンパイルされる
+import 'babel-polyfill';
+
+new Vue({
+  el: '#app', // Vueでマウントする要素
+  render: h => h(App), // App.vue をレンダリング
+});
+```
+
+#### 動作確認
+```bash
+# webpack-dev-server 起動
+$ yarn webpack serve
+```
+
+http://localhost:3000 にアクセスして「Hello, Vue!」と表示されたらOK
+
+### Vuetify を使ってみる
+せっかくなので、Webpack が CSS や Icon などもパッキングできることを確認しておく
+
+動作確認用に今回は **Vuetify** を使ってみる
+
+Vuetify は、Googleが提唱したマテリアルデザインの考えにのっとって構成された Vue ベースの UI コンポーネントで、格好いいデザインのインタフェースを手軽に作成することができる
+
+```bash
+# CSS, Icon 等を Webpack で読み込むためのローダーをインストール
+$ yarn add -D css-loader style-loader url-loader
+
+# Vuetify インストール
+$ yarn add -D vuetify
+
+# フォントアイコン類をインストール
+$ yarn add -D material-design-icons-iconfont @fortawesome/fontawesome-free
+```
+
+各種パッケージをインストールしたら `webpack.config.js` に設定を追加し、`.css` や `.svg` 等のファイルをバンドルできるようにする
+
+```javascript
+// ...(略)...
+
+module.exports = {
+  // ...(略)...
+
+  // モジュール設定
+  module: {
+    rules: [
+      // ...(略)...
+      
+      // スタイルシート（.css ファイル）読み込み設定
+      {
+        // .css ファイル: css-loader => vue-style-loader の順に適用
+        // - css-loader: cssをJSにトランスコンパイル
+        // - style-loader: <link>タグにスタイル展開
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+
+      /* アイコンローダーの設定 */
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'url-loader?mimetype=image/svg+xml'
+        }],
+      },
+      {
+        test: /\.woff(\d+)?(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'url-loader?mimetype=application/font-woff'
+        }],
+      },
+      {
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'url-loader?mimetype=application/font-woff'
+        }],
+      },
+      {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'url-loader?mimetype=application/font-woff'
+        }],
+      },
+    ]
+  },
+
+  // ...(略)...
+};
+```
+
+設定したら、ソーススクリプトを修正し、Vuetify に対応させる
+
+#### src/App.vue
+```vue
+<template>
+  <!-- Vuetifyコンポーネントを使う場合は v-appタグで囲むこと！ -->
+  <v-app>
+    <v-content>
+      <!-- Alertコンポーネントを使ってみる -->
+      <v-alert :value="true" type="success">{{ message }}</v-alert>
+    </v-content>
+  </v-app>
+</template>
+
+<script>
+  export default {
+    // Vue 変数宣言
+    data() {
+      return {
+        // {{ message }} で埋め込まれる変数
+        message: 'Hello, Vuetify!',
+      };
+    },
+  }
+</script>
+```
+
+#### src/index.js
+```javascript
+import Vue from 'vue'; // Vue を使う
+import App from './App'; // ./App.vue を読み込む
+
+// IE11/Safari9用のpolyfill
+// babel-polyfill を import するだけで IE11/Safari9 に対応した JavaScript にトランスコンパイルされる
+import 'babel-polyfill';
+
+// vuetify を使う
+import Vuetify from 'vuetify';
+// vuetify のスタイルシートを読み込む
+import 'vuetify/dist/vuetify.min.css';
+// material-design-icons を読み込む
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
+Vue.use(Vuetify); // Vuetifyのコンポーネントを使用可能に
+
+new Vue({
+  el: '#app', // Vueでマウントする要素
+  vuetify: new Vuetify(), // Vuetify を使う
+  render: h => h(App) // App.vue をレンダリング
+});
+```
+
+#### 動作確認
+修正したら `webpack-dev-server` を起動し http://localhost:3000 を確認する
+
+Vuetify が適用されていれば以下のような見た目になるはずである
+
+![vuetify-test.png](./img/vuetify-test.png)

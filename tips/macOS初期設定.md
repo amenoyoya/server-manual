@@ -7,6 +7,10 @@
 - App Store アップデート
     - Apple > App Store > すべてアップデート
 
+### Environment
+- OS: macOS 11 Big Sur
+- Shell: zsh
+
 ***
 
 ## 各種システム関連設定・開発環境構築
@@ -116,7 +120,6 @@ done
     - `Commad` + `S` (保存) |> `Codeで開く`
         - => `~/Library/Services/Codeで開く.workflow` に保存される
     - => Finder でファイル・フォルダを右クリックしたときに「Codeで開く」メニューが表示されるようになる
-
 
 ### anyenv 環境構築
 以降、シェルは zsh である前提のため、シェルプロファイルは `.zshrc` としている
