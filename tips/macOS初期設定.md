@@ -206,3 +206,13 @@ $ npm run dev-package
 # VSCode に sourcekit-lsp extension インストール
 $ code --install-extension sourcekit-lsp-development.vsix
 ```
+
+## zsh ターミナルを色付け + Git ブランチ表示
+
+Starship を使うのが簡単
+
+```bash
+$ brew install starship
+$ echo 'eval "$(starship init zsh)"' >> ~/.zshrc
+$ . ~/.zshrc
+```
