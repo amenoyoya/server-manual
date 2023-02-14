@@ -17,6 +17,7 @@ $ git config --global user.email '<mail@example.dev>' # 自分のメールアド
 $ git config --global core.editor 'code -w' # VSCodeをデフォルトエディターに（-w オプションをつけないとエディタの終了を待ってくれない）
 $ git config --global core.autoCRLF false # 改行コードを勝手に修正するのを無効化
 $ git config --global core.quotepath false # 日本語ファイル名等をquoteするのを無効化
+$ git config --global core.filemode false # ファイルパーミッションの変更を無視
 ```
 
 ### Gitとは何か
