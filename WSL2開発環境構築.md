@@ -433,6 +433,8 @@ $ sudo service docker start
 
 # Windows再起動の度に sudo service docker start すれば良いだけなので、ここではスタートアップ登録までは行わない
 
+# ⇒ 追記: [WSL2 でスタートアップスクリプトを実行する Hack](./tips/WSL2.md#wsl2-でスタートアップスクリプトを実行する-hack)
+
 # WSL2 には cgroup 用ディレクトリがデフォルトで作られていないため作成しておく
 ## これをしておかないと Docker でプロセスのグループ化が必要になったときにエラーが起きる
 $ sudo mkdir -p /sys/fs/cgroup/systemd
